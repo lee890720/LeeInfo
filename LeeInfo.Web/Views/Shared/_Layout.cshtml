@@ -1,35 +1,24 @@
-﻿<!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
+﻿@using LeeInfo.Web.Infrastructure
+@using LeeInfo.Data
+@inject AppMenu  _menu
+@inject UserManager<AppIdentityUser> _userManager
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 2 | Starter</title>
+    <title>@ViewData["Title"] | LeeInfo</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="~/lib/ionicons/css/ionicons.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="~/lib/adminLTE/dist/css/AdminLTE.min.css">
-    <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
-          page. However, you can choose any other skin. Make sure you
-          apply the skin class to the body tag so the changes take effect. -->
-    <link rel="stylesheet" href="~/lib/adminLTE/dist/css/skins/skin-blue.min.css">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    <!-- Google Font -->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <environment>
+        <link rel="stylesheet" type="text/css" href="~/css/adminlte.min.css" />
+        <!-- Google Font -->
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+        <link rel="stylesheet" href="~/css/site.min.css" />
+        <style type="text/css" class="init">
+        </style>
+        <script src="~/js/adminlte.min.js"></script>
+    </environment>
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -56,7 +45,7 @@ desired effect
         <!-- Main Header -->
         <header class="main-header">
             <!-- Logo -->
-            <a href="@Url.Action("Index", "Home", new { area=""})" class="logo">
+            <a asp-action="Index" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b>L</b>IF</span>
                 <!-- logo for regular state and mobile devices -->
@@ -88,7 +77,7 @@ desired effect
                                             <a href="#">
                                                 <div class="pull-left">
                                                     <!-- User Image -->
-                                                    <img src="~/lib/adminLTE/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                    <img src="~/lib/adminlte/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                                                 </div>
                                                 <!-- Message title and timestamp -->
                                                 <h4>
@@ -174,16 +163,16 @@ desired effect
                             <!-- Menu Toggle Button -->
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <!-- The user image in the navbar-->
-                                <img src="~/lib/adminLTE/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                                <img src="~/lib/adminlte/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
                                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                                <span class="hidden-xs">Alexander Pierce</span>
+                                <span class="hidden-xs">@_userManager.GetUserName(User)</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- The user image in the menu -->
                                 <li class="user-header">
-                                    <img src="~/lib/adminLTE/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                    <img src="~/lib/adminlte/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                                     <p>
-                                        Alexander Pierce - Web Developer
+                                        @_userManager.GetUserName(User) - LeeInfo
                                         <small>Member since Nov. 2012</small>
                                     </p>
                                 </li>
@@ -205,10 +194,10 @@ desired effect
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <a href="/Identity/Account/UserCreate" class="btn btn-default btn-flat">Profile</a>
+                                        <a id="editModal" data-toggle="modal" asp-action="Edit" asp-controller="UserAdmin" asp-route-area="AppIdentity" asp-route-id="@_userManager.GetUserId(User)" data-target="#modal-action" class="btn btn-default btn-flat">Profile</a>
                                     </div>
                                     <div class="pull-right">
-                                        <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                        <a asp-action="Logout" asp-controller="Account" asp-route-area="AppIdentity" class="btn btn-default btn-flat">Sign Out</a>
                                     </div>
                                 </li>
                             </ul>
@@ -228,10 +217,10 @@ desired effect
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel">
                     <div class="pull-left image">
-                        <img src="~/lib/adminLTE/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                        <img src="~/lib/adminlte/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                     </div>
                     <div class="pull-left info">
-                        <p>Alexander Pierce</p>
+                        <p>@_userManager.GetUserName(User) </p>
                         <!-- Status -->
                         <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                     </div>
@@ -249,46 +238,69 @@ desired effect
                 </form>
                 <!-- /.search form -->
                 <!-- Sidebar Menu -->
-                <ul class="sidebar-menu" data-widget="tree">
-                    <li class="header">HEADER</li>
-                    <!-- Optionally, you can add icons to the links -->
-                    <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
-                    <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-link"></i> <span>Multilevel</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a href="#">Link in level 2</a></li>
-                            <li><a href="#">Link in level 2</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                @{
+                    List<AppSidemenu> sidemenu = _menu.GetAll();
+                    <ul class="sidebar-menu" data-widget="tree">
+                        <li class="header">Header</li>
+                        @foreach (var s1 in sidemenu.Where(s => s.Grade == 1).OrderBy(or => or.Sequence).ToList())
+                        {
+                            if (Context.Request.Path.ToString().IndexOf(s1.Area) != -1)
+                            {
+                                <li class="active treeview">
+                                    <a href="#">
+                                        <i class="@s1.Ico"></i><span>@s1.Name</span>
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="treeview-menu">
+                                        @foreach (var s2 in sidemenu.Where(s => s.Grade == 2 && s.Follow == s1.Sequence).OrderBy(or => or.Sequence).ToList())
+                                        {
+                                            if (Context.Request.Path.ToString().IndexOf(s2.Area) != -1 && Context.Request.Path.ToString().IndexOf(s2.Controller) != -1)
+                                            {
+                                                <li class="active">
+                                                    <a asp-action=@s2.Action asp-controller=@s2.Controller asp-route-area=@s2.Area><i class="@s2.Ico"></i>@s2.Name</a>
+                                                </li>
+                                            }
+                                            else
+                                            {
+                                                <li>
+                                                    <a asp-action=@s2.Action asp-controller=@s2.Controller asp-route-area=@s2.Area><i class="@s2.Ico"></i>@s2.Name</a>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="treeview">
+                                    <a href="#">
+                                        <i class="@s1.Ico"></i><span>@s1.Name</span>
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="treeview-menu">
+                                        @foreach (var s2 in sidemenu.Where(s => s.Grade == 2 && s.Follow == s1.Sequence).OrderBy(or => or.Sequence).ToList())
+                                        {
+                                            <li>
+                                                <a asp-action=@s2.Action asp-controller=@s2.Controller asp-route-area=@s2.Area><i class="@s2.Ico"></i>@s2.Name</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        }
+                    </ul>
+                }
                 <!-- /.sidebar-menu -->
             </section>
             <!-- /.sidebar -->
         </aside>
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
-            <section class="content-header">
-                <h1>
-                    Page Header
-                    <small>Optional description</small>
-                </h1>
-                <ol class="breadcrumb">
-                    <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
-                    <li class="active">Here</li>
-                </ol>
-            </section>
-            <!-- Main content -->
-            <section class="content container-fluid">
-                @RenderBody()
-            </section>
-            <!-- /.content -->
+            @RenderBody()
         </div>
         <!-- /.content-wrapper -->
         <!-- Main Footer -->
@@ -371,15 +383,8 @@ desired effect
         <div class="control-sidebar-bg"></div>
     </div>
     <!-- ./wrapper -->
-    <!-- REQUIRED JS SCRIPTS -->
-    <!-- jQuery 3 -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap 3.3.7 -->
-    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- AdminLTE App -->
-    <script src="~/lib/adminLTE/dist/js/adminlte.min.js"></script>
-    <!-- Optionally, you can add Slimscroll and FastClick plugins.
-         Both of these plugins are recommended to enhance the
-         user experience. -->
+    @RenderSection("Scripts", required: false)
+    @Html.Partial("_Modal", new BootstrapModel { ID = "modal-action", AreaLabeledId = "modal-action-label", Size = ModalSize.Medium })
+    <script src="~/js/modal-index.js" asp-append-version="true"></script>
 </body>
 </html>

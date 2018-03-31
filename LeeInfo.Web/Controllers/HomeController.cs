@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LeeInfo.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LeeInfo.Web.Controllers
 {
+    [Authorize(Roles ="Admins")]
     public class HomeController : Controller
     {
         public IActionResult Index()

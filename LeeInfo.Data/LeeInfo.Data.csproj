@@ -5,11 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20180325103342_InitAppIdentity.cs" />
-    <Compile Remove="Migrations\20180325112147_initidentity.cs" />
-    <Compile Remove="Migrations\20180325112647_initidentity.cs" />
-    <Compile Remove="Migrations\20180325112823_initidentity.cs" />
-    <Compile Remove="Migrations\20180325113042_initidentity.cs" />
+    <Compile Remove="App\**" />
+    <EmbeddedResource Remove="App\**" />
+    <None Remove="App\**" />
   </ItemGroup>
 
   <ItemGroup>

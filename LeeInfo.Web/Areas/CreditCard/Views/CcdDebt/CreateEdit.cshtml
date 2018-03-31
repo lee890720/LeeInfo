@@ -1,0 +1,59 @@
+﻿@model CcdDebt
+@{
+    Layout = "_CreateEdit";
+    var actionName = ViewContext.RouteData.Values["action"].ToString();
+    var controllerName = ViewContext.RouteData.Values["controller"].ToString();
+    var areaName = ViewContext.RouteData.Values["area"].ToString();
+    ViewData["action"] = actionName;
+    ViewData["controller"] = controllerName;
+    ViewData["area"] = areaName;
+}
+
+<div class="col-md-12">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @if (ViewData["action"].ToString() == "Create")
+    { }
+    else
+    {
+        <input type="hidden" asp-for="DebtId" />
+    }
+    <div class="form-group">
+        <label asp-for="PersonId" class="control-label"></label>
+        <select asp-for="PersonId" class="form-control" asp-items="ViewBag.PersonId"></select>
+        <span asp-validation-for="PersonId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DebtTitle" class="control-label"></label>
+        <input asp-for="DebtTitle" class="form-control" />
+        <span asp-validation-for="DebtTitle" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="RepaymentDate" class="control-label"></label>
+        <input asp-for="RepaymentDate" type="date" class="form-control" />
+        <span asp-validation-for="RepaymentDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="BillAmount" class="control-label"></label>
+        <input asp-for="BillAmount" class="form-control" />
+        <span asp-validation-for="BillAmount" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DebtNote" class="control-label"></label>
+        <input asp-for="DebtNote" class="form-control" />
+        <span asp-validation-for="DebtNote" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CurrentAmount" class="control-label"></label>
+        <input asp-for="CurrentAmount" class="form-control" />
+        <span asp-validation-for="CurrentAmount" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="InterestRate" class="control-label"></label>
+        <input asp-for="InterestRate" class="form-control" />
+        <span asp-validation-for="InterestRate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-default" />
+    </div>
+</div>
+

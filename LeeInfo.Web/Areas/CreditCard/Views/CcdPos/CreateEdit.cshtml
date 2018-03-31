@@ -1,0 +1,37 @@
+﻿@model CcdPos
+@{
+    Layout = "_CreateEdit";
+    var actionName = ViewContext.RouteData.Values["action"].ToString();
+    var controllerName = ViewContext.RouteData.Values["controller"].ToString();
+    var areaName = ViewContext.RouteData.Values["area"].ToString();
+    ViewData["action"] = actionName;
+    ViewData["controller"] = controllerName;
+    ViewData["area"] = areaName;
+}
+<div class="col-md-12">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @if (ViewData["action"].ToString() == "Create")
+    { }
+    else
+    {
+        <input type="hidden" asp-for="PosId" />
+    }
+    <div class="form-group">
+        <label asp-for="PersonId" class="control-label"></label>
+        <select asp-for="PersonId" class="form-control" asp-items="ViewBag.PersonId"></select>
+        <span asp-validation-for="PersonId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PosName" class="control-label"></label>
+        <input asp-for="PosName" class="form-control" />
+        <span asp-validation-for="PosName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PosNote" class="control-label"></label>
+        <input asp-for="PosNote" class="form-control" />
+        <span asp-validation-for="PosNote" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-default" />
+    </div>
+</div>

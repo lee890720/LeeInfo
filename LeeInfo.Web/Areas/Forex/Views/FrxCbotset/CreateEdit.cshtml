@@ -1,0 +1,122 @@
+﻿@model FrxCbotset
+@{
+    Layout = "_CreateEdit";
+    var actionName = ViewContext.RouteData.Values["action"].ToString();
+    var controllerName = ViewContext.RouteData.Values["controller"].ToString();
+    var areaName = ViewContext.RouteData.Values["area"].ToString();
+    ViewData["action"] = actionName;
+    ViewData["controller"] = controllerName;
+    ViewData["area"] = areaName;
+}
+
+<link rel="stylesheet" href="~/lib/icheck/square/blue.css" />
+<script src="~/lib/icheck/icheck.min.js"></script>
+<script>
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' /* optional */
+        });
+    });
+</script>
+<div class="col-md-4">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @if (ViewData["action"].ToString() == "Create")
+    { }
+    else
+    {
+        <input type="hidden" asp-for="Id" />
+    }
+    <div class="form-group">
+        <label asp-for="Symbol" class="control-label"></label>
+        <input asp-for="Symbol" class="form-control" placeholder="Symbol" />
+        <span asp-validation-for="Symbol" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Initvolume" class="control-label"></label>
+        <input asp-for="Initvolume" class="form-control" placeholder="InitVolume" />
+        <span asp-validation-for="Initvolume" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Tmr" class="control-label"></label>
+        <input asp-for="Tmr" class="form-control" placeholder="Timer" />
+        <span asp-validation-for="Tmr" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Brk" class="control-label"></label>
+        <input asp-for="Brk" class="form-control" placeholder="Break" />
+        <span asp-validation-for="Brk" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Distance" class="control-label"></label>
+        <input asp-for="Distance" class="form-control" placeholder="Distance" />
+        <span asp-validation-for="Distance" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="control-label">
+            <span class="col-md-4">Trade</span>
+            <span class="col-md-4">Break</span>
+            <span class="col-md-4">First</span>
+        </label>
+        <div class="checkbox icheck">
+            <span class="col-md-4"><input type="checkbox" asp-for="Istrade" /></span>
+            <span class="col-md-4"><input type="checkbox" asp-for="Isbreak" /></span>
+            <span class="col-md-4"><input type="checkbox" asp-for="Isbrkfirst" /></span>
+        </div>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="form-group">
+        <label asp-for="Result" class="control-label"></label>
+        <input asp-for="Result" class="form-control" placeholder="ResultPeriods" />
+        <span asp-validation-for="Result" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Average" class="control-label"></label>
+        <input asp-for="Average" class="form-control" placeholder="AveragePeriods" />
+        <span asp-validation-for="Average" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Magnify" class="control-label"></label>
+        <input asp-for="Magnify" class="form-control" placeholder="Magnify" />
+        <span asp-validation-for="Magnify" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Sub" class="control-label"></label>
+        <input asp-for="Sub" class="form-control" placeholder="Sub" />
+        <span asp-validation-for="Sub" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Cr" class="control-label"></label>
+        <input asp-for="Cr" class="form-control" placeholder="Cr" />
+        <span asp-validation-for="Cr" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Ca" class="control-label"></label>
+        <input asp-for="Ca" class="form-control" placeholder="Ca" />
+        <span asp-validation-for="Ca" class="text-danger"></span>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="form-group">
+        <label asp-for="Sr" class="control-label"></label>
+        <input asp-for="Sr" class="form-control" placeholder="Sr" />
+        <span asp-validation-for="Sr" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Sa" class="control-label"></label>
+        <input asp-for="Sa" class="form-control" placeholder="Sa" />
+        <span asp-validation-for="Sa" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Signal" class="control-label"></label>
+        <input asp-for="Signal" class="form-control" placeholder="Signal" />
+        <span asp-validation-for="Signal" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Alike" class="control-label"></label>
+        <input asp-for="Alike" class="form-control" placeholder="Alike" />
+        <span asp-validation-for="Alike" class="text-danger"></span>
+    </div>
+</div>

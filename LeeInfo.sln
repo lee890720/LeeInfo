@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2011
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeeInfo.Web", "LeeInfo.Web\LeeInfo.Web.csproj", "{EC1DA001-4F97-4D58-9DA1-D4506BC74B01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeeInfo.Web", "LeeInfo.Web\LeeInfo.Web.csproj", "{EC1DA001-4F97-4D58-9DA1-D4506BC74B01}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeeInfo.Data", "LeeInfo.Data\LeeInfo.Data.csproj", "{79DF46B8-9689-4D0D-8B1D-E0D46432911D}"
 EndProject

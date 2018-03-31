@@ -1,11 +1,24 @@
-﻿// Configure bundling and minification for the project.
-// More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
     "outputFileName": "wwwroot/css/site.min.css",
-    // An array of relative input file paths. Globbing patterns supported
     "inputFiles": [
       "wwwroot/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/datatables.min.css",
+    "inputFiles": [
+      "wwwroot/lib/datatables.net-bs/css/dataTables.bootstrap.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/adminlte.min.css",
+    "inputFiles": [
+      "wwwroot/lib/bootstrap/dist/css/bootstrap.css",
+      "wwwroot/lib/font-awesome/css/font-awesome.min.css",
+      "wwwroot/lib/ionicons/css/ionicons.min.css",
+      "wwwroot/lib/adminlte/dist/css/AdminLTE.css",
+      "wwwroot/lib/adminlte/dist/css/skins/_all-skins.min.css"
     ]
   },
   {
@@ -13,12 +26,34 @@
     "inputFiles": [
       "wwwroot/js/site.js"
     ],
-    // Optionally specify minification options
     "minify": {
       "enabled": true,
       "renameLocals": true
-    },
-    // Optionally generate .map file
-    "sourceMap": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/datatables.min.js",
+    "inputFiles": [
+      "wwwroot/lib/datatables.net/js/jquery.dataTables.js",
+      "wwwroot/lib/datatables.net-bs/js/dataTables.bootstrap.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/adminlte.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery/dist/jquery.min.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
+      "wwwroot/lib/adminlte/dist/js/adminlte.min.js",
+      "wwwroot/lib/jquery-slimscroll/jquery.slimscroll.min.js",
+      "wwwroot/lib/fastclick/lib/fastclick.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
   }
 ]

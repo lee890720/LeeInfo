@@ -5,6 +5,39 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\CreditCard\**" />
+    <Compile Remove="Areas\Forex\Views\Shared\**" />
+    <Content Remove="Areas\CreditCard\**" />
+    <Content Remove="Areas\Forex\Views\Shared\**" />
+    <EmbeddedResource Remove="Areas\CreditCard\**" />
+    <EmbeddedResource Remove="Areas\Forex\Views\Shared\**" />
+    <None Remove="Areas\CreditCard\**" />
+    <None Remove="Areas\Forex\Views\Shared\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\js\datatables1.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Areas\CreditCard\Controllers\CcdDataController.cs" />
+    <Compile Include="Areas\CreditCard\Controllers\CcdDebtController.cs" />
+    <Compile Include="Areas\CreditCard\Controllers\CcdPersonController.cs" />
+    <Compile Include="Areas\CreditCard\Controllers\CcdPosController.cs" />
+    <Compile Include="Areas\CreditCard\Controllers\CcdRecordController.cs" />
+    <Compile Include="Areas\CreditCard\Models\RecordGroupViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Areas\CreditCard\Views\_ViewImports.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\CreditCard\Views\_ViewStart.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
   </ItemGroup>
@@ -18,10 +51,29 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\AppIdentity\Controllers\" />
-    <Folder Include="Areas\AppIdentity\Data\" />
-    <Folder Include="Areas\AppIdentity\Models\" />
-    <Folder Include="Areas\AppIdentity\Views\" />
+    <Folder Include="Areas\Forex\Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\CreditCard\Views\CcdData\AddBill.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdData\CreateEdit.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdData\Delete.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdData\Index.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdDebt\CreateEdit.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdDebt\Delete.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdDebt\Index.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdPerson\CreateEdit.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdPerson\Delete.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdPerson\Index.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdPos\CreateEdit.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdPos\Delete.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdPos\Index.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdRecord\Create.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdRecord\CreateEdit.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdRecord\Delete.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdRecord\Index.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdRecord\RecordList.cshtml" />
+    <None Include="Areas\CreditCard\Views\CcdRecord\_PartialCreate.cshtml" />
   </ItemGroup>
 
 </Project>

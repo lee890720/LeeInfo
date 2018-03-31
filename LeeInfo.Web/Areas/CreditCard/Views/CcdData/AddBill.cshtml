@@ -1,0 +1,56 @@
+﻿@model CcdBill
+
+<section class="content-header">
+    <h1>
+       新增
+        <small>信用卡账单</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 信用卡</a></li>
+        <li><a href="/CreditCard/CcdData"> 信用卡资料</a></li>
+        <li class="active">新增账单</li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form asp-action="AddBill" role="form">
+                    @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = "Add Bill" })
+                    <div class="box-body">
+                        <div class="col-md-12">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="CreditCardId" class="control-label"></label>
+                                <select asp-for="CreditCardId" class="form-control" asp-items="ViewBag.CreditCardId"></select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BillDate" class="control-label"></label>
+                                <input asp-for="BillDate" type="date" class="form-control" />
+                                <span asp-validation-for="BillDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BillAmount" class="control-label"></label>
+                                <input asp-for="BillAmount" class="form-control" />
+                                <span asp-validation-for="BillAmount" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer col-md-offset-8">
+                    </div>
+                    @await Html.PartialAsync("_ModalFooter", new ModalFooter { })
+                </form>
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+</section>
+<!-- /.content -->

@@ -4,17 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Services;
-using Microsoft.AspNetCore.Identity;
+
 
 namespace LeeInfo.Data.AppIdentity
 {
     public class AppIdentityDbContext : IdentityDbContext<AppIdentityUser>
     {
         public AppIdentityDbContext(DbContextOptions<AppIdentityDbContext> options)
-    : base(options)
-        {
-        }
+    : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
