@@ -11,14 +11,13 @@
 }
 
 <link rel="stylesheet" href="~/css/datatables.min.css" />
-<link rel="stylesheet" href="~/lib/icheck/square/blue.css" />
 <script src="~/js/datatables.min.js"></script>
-<script src="~/lib/icheck/icheck.min.js"></script>
 <script>
     $(function () {
         $('#example1').DataTable(
             {
-                'pageLength':15,
+                'order': [[4, "asc"]],
+                'pageLength':10,
                 initComplete: function () {
                     $("#mytool").append('<a id="createModal" data-toggle="modal" data-target="#modal-action" class="btn btn-primary" href="@path/Create"><i class="glyphicon glyphicon-plus"></i> Create</a>');
                 }
@@ -32,14 +31,6 @@
             'autoWidth': false
         })
     })
-
-    $(function () {
-        $('input').iCheck({
-            checkboxClass: 'icheckbox_square-blue',
-            radioClass: 'iradio_square-blue',
-            increaseArea: '20%' /* optional */
-        });
-    });
 </script>
 
 <!-- Content Header (Page header) -->

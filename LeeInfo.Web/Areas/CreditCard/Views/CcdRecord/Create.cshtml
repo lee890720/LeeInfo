@@ -12,14 +12,12 @@
 }
 
 <link rel="stylesheet" href="~/css/datatables.min.css" />
-<link rel="stylesheet" href="~/lib/icheck/square/blue.css" />
 <script src="~/js/datatables.min.js"></script>
-<script src="~/lib/icheck/icheck.min.js"></script>
 <script>
     $(function () {
         $('#example1').DataTable(
             {
-                'pageLength':15,
+                'pageLength':10,
                 initComplete: function () {
                     $("#mytool").append('<a  class="btn btn-primary" style="width:80px;margin-right:5px" href="@path/Index"><i class="glyphicon glyphicon-plus"></i> Index</a><a class="btn btn-primary" style="width:80px;margin-right:5px" href="@path/RecordList"><i class="glyphicon glyphicon-th-list"></i> Details</a><a  class="btn btn-primary" style="width:80px;color:yellow;font-weight:900">@ViewBag.SumTotal/@ViewBag.SumOut</a>');
                 }
@@ -33,14 +31,6 @@
             'autoWidth': false
         })
     })
-
-    $(function () {
-        $('input').iCheck({
-            checkboxClass: 'icheckbox_square-blue',
-            radioClass: 'iradio_square-blue',
-            increaseArea: '20%' /* optional */
-        });
-    });
 </script>
 
 <!-- Content Header (Page header) -->
@@ -65,10 +55,10 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         @Html.Partial("_PartialCreate", new CcdRecord { })
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                         <table id="example1" class="table table-bordered table-striped table-hover">
                             <thead>
                                 <tr>

@@ -1,6 +1,4 @@
-﻿@using LeeInfo.Web.Infrastructure
-@using LeeInfo.Data
-@inject AppMenu  _menu
+﻿@inject AppMenu  _menu
 @inject UserManager<AppIdentityUser> _userManager
 <!DOCTYPE html>
 <html>
@@ -10,15 +8,12 @@
     <title>@ViewData["Title"] | LeeInfo</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <environment>
-        <link rel="stylesheet" type="text/css" href="~/css/adminlte.min.css" />
-        <!-- Google Font -->
-        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-        <link rel="stylesheet" href="~/css/site.min.css" />
-        <style type="text/css" class="init">
-        </style>
-        <script src="~/js/adminlte.min.js"></script>
-    </environment>
+    <link rel="stylesheet" type="text/css" href="~/css/adminlte.min.css" />
+    <!-- Google Font -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet" href="~/css/site.min.css" />
+    <script src="~/js/adminlte.min.js"></script>
+    <script src="~/js/layout.js"></script>
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -40,12 +35,13 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
+
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
         <!-- Main Header -->
         <header class="main-header">
             <!-- Logo -->
-            <a asp-action="Index" class="logo">
+            <a asp-action="Index" asp-controller="Home" asp-area="" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b>L</b>IF</span>
                 <!-- logo for regular state and mobile devices -->
@@ -95,7 +91,6 @@ desired effect
                                 <li class="footer"><a href="#">See All Messages</a></li>
                             </ul>
                         </li>
-                        <!-- /.messages-menu -->
                         <!-- Notifications Menu -->
                         <li class="dropdown notifications-menu">
                             <!-- Menu toggle button -->
@@ -172,25 +167,31 @@ desired effect
                                 <li class="user-header">
                                     <img src="~/lib/adminlte/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                                     <p>
-                                        @_userManager.GetUserName(User) - LeeInfo
-                                        <small>Member since Nov. 2012</small>
+                                        @User.Identity.Name - LeeInfo
+                                        @{
+                                            AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
+                                            DateTime _dt = _user.RegisterDate;
+                                            //string str_dt = _dt.ToString("MMMM", new System.Globalization.CultureInfo("en-us")) + "." + _dt.Year;
+                                            string str_dt = _dt.ToString("MMM. yyyy", new System.Globalization.CultureInfo("en-us"));
+                                        }
+                                        <small>Member since @str_dt</small>
                                     </p>
                                 </li>
                                 <!-- Menu Body -->
-                                <li class="user-body">
-                                    <div class="row">
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Followers</a>
+                                @*<li class="user-body">
+                                        <div class="row">
+                                            <div class="col-xs-4 text-center">
+                                                <a href="#">Followers</a>
+                                            </div>
+                                            <div class="col-xs-4 text-center">
+                                                <a href="#">Sales</a>
+                                            </div>
+                                            <div class="col-xs-4 text-center">
+                                                <a href="#">Friends</a>
+                                            </div>
                                         </div>
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Sales</a>
-                                        </div>
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Friends</a>
-                                        </div>
-                                    </div>
-                                    <!-- /.row -->
-                                </li>
+                                        <!-- /.row -->
+                                    </li>*@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
@@ -222,26 +223,27 @@ desired effect
                     <div class="pull-left info">
                         <p>@_userManager.GetUserName(User) </p>
                         <!-- Status -->
-                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                        <a href="/AppIdentity/Account/Logout"><i class="fa fa-circle text-success"></i> Online</a>
                     </div>
                 </div>
                 <!-- search form (Optional) -->
-                <form action="#" method="get" class="sidebar-form">
-                    <div class="input-group">
-                        <input type="text" name="q" class="form-control" placeholder="Search...">
-                        <span class="input-group-btn">
-                            <button type="submit" name="search" id="search-btn" class="btn btn-flat">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </span>
-                    </div>
-                </form>
-                <!-- /.search form -->
+                @*<form action="#" method="get" class="sidebar-form">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Search...">
+                            <span class="input-group-btn">
+                                <button  type="submit" name="search" id="search-btn" class="btn btn-flat">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </form>*@
                 <!-- Sidebar Menu -->
                 @{
                     List<AppSidemenu> sidemenu = _menu.GetAll();
                     <ul class="sidebar-menu" data-widget="tree">
-                        <li class="header">Header</li>
+                        <li class="header">
+                            Best wishes for you.
+                        </li>
                         @foreach (var s1 in sidemenu.Where(s => s.Grade == 1).OrderBy(or => or.Sequence).ToList())
                         {
                             if (Context.Request.Path.ToString().IndexOf(s1.Area) != -1)
@@ -307,10 +309,10 @@ desired effect
         <footer class="main-footer">
             <!-- To the right -->
             <div class="pull-right hidden-xs">
-                Anything you want
+                You're everything to me.
             </div>
             <!-- Default to the left -->
-            <strong>Copyright &copy; 2016 <a href="#">Company</a>.</strong> All rights reserved.
+            <strong>Copyright &copy; 2018 <a href="/">LeeInfo</a>.</strong> All rights reserved.
         </footer>
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">
@@ -321,6 +323,7 @@ desired effect
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
+
                 <!-- Home tab content -->
                 <div class="tab-pane active" id="control-sidebar-home-tab">
                     <h3 class="control-sidebar-heading">Recent Activity</h3>
@@ -356,23 +359,197 @@ desired effect
                 </div>
                 <!-- /.tab-pane -->
                 <!-- Stats tab content -->
-                <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
+                @*<div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>*@
                 <!-- /.tab-pane -->
                 <!-- Settings tab content -->
-                <div class="tab-pane" id="control-sidebar-settings-tab">
-                    <form method="post">
-                        <h3 class="control-sidebar-heading">General Settings</h3>
+                <div id="control-sidebar-settings-tab" class="tab-pane">
+                    <div>
+                        <h4 class="control-sidebar-heading">Layout Options</h4>
                         <div class="form-group">
                             <label class="control-sidebar-subheading">
-                                Report panel usage
-                                <input type="checkbox" class="pull-right" checked>
+                                <input type="checkbox" data-layout="fixed" class="pull-right"> Fixed layout
                             </label>
-                            <p>
-                                Some information about this general settings option
-                            </p>
+                            <p>Activate the fixed layout. You can't use fixed and boxed layouts together</p>
                         </div>
-                        <!-- /.form-group -->
-                    </form>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                <input type="checkbox" data-layout="layout-boxed" class="pull-right"> Boxed Layout
+                            </label>
+                            <p>Activate the boxed layout</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                <input type="checkbox" data-layout="sidebar-collapse" class="pull-right"> Toggle Sidebar
+                            </label>
+                            <p>Toggle the left sidebar's state (open or collapse)</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                <input type="checkbox" data-enable="expandOnHover" class="pull-right"> Sidebar Expand on Hover
+                            </label>
+                            <p>Let the sidebar mini expand on hover</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                <input type="checkbox" data-controlsidebar="control-sidebar-open" class="pull-right"> Toggle Right Sidebar Slide
+                            </label>
+                            <p>Toggle between slide over content and push content effects</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-sidebar-subheading">
+                                <input type="checkbox" data-sidebarskin="toggle" class="pull-right"> Toggle Right Sidebar Skin
+                            </label>
+                            <p>Toggle between dark and light skins for the right sidebar</p>
+                        </div>
+                        <h4 class="control-sidebar-heading">Skins</h4>
+                        <ul class="list-unstyled clearfix">
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-blue" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9"></span>
+                                        <span class="bg-light-blue" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a>
+                                <p class="text-center no-margin">Blue</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-black" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div style="box-shadow: 0 0 2px rgba(0,0,0,0.1)" class="clearfix">
+                                        <span style="display:block; width: 20%; float: left; height: 7px; background: #fefefe"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 7px; background: #fefefe"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #222"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin">Black</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-purple" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px;" class="bg-purple-active"></span>
+                                        <span class="bg-purple" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin">Purple</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-green" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px;" class="bg-green-active"></span>
+                                        <span class="bg-green" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin">Green</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-red" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px;" class="bg-red-active"></span>
+                                        <span class="bg-red" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin">Red</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-yellow" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px;" class="bg-yellow-active"></span>
+                                        <span class="bg-yellow" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin">Yellow</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-blue-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9"></span>
+                                        <span class="bg-light-blue" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin" style="font-size: 12px">Blue Light</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-black-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div style="box-shadow: 0 0 2px rgba(0,0,0,0.1)" class="clearfix">
+                                        <span style="display:block; width: 20%; float: left; height: 7px; background: #fefefe"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 7px; background: #fefefe"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin" style="font-size: 12px">Black Light</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-purple-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px;" class="bg-purple-active"></span>
+                                        <span class="bg-purple" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin" style="font-size: 12px">Purple Light</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-green-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px;" class="bg-green-active"></span>
+                                        <span class="bg-green" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin" style="font-size: 12px">Green Light</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-red-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px;" class="bg-red-active"></span>
+                                        <span class="bg-red" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin" style="font-size: 12px">Red Light</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:void(0)" data-skin="skin-yellow-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 7px;" class="bg-yellow-active"></span>
+                                        <span class="bg-yellow" style="display:block; width: 80%; float: left; height: 7px;"></span>
+                                    </div>
+                                    <div>
+                                        <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc"></span>
+                                        <span style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7"></span>
+                                    </div>
+                                </a><p class="text-center no-margin" style="font-size: 12px">Yellow Light</p>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <!-- /.tab-pane -->
             </div>
@@ -385,6 +562,6 @@ desired effect
     <!-- ./wrapper -->
     @RenderSection("Scripts", required: false)
     @Html.Partial("_Modal", new BootstrapModel { ID = "modal-action", AreaLabeledId = "modal-action-label", Size = ModalSize.Medium })
-    <script src="~/js/modal-index.js" asp-append-version="true"></script>
+    <script src="~/js/modal.js" asp-append-version="true"></script>
 </body>
 </html>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -43,7 +44,8 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
                 AppIdentityUser user = new AppIdentityUser
                 {
                     UserName = model.Name,
-                    Email = model.Email
+                    Email = model.Email,
+                    RegisterDate = DateTime.Now
                 };
                 IdentityResult result
                     = await userManager.CreateAsync(user, model.Password);

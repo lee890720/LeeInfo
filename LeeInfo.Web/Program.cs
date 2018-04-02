@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using LeeInfo.Data.AppIdentity;
 using LeeInfo.Web;
+using Microsoft.AspNetCore.Http;
 
 namespace ContactManager
 {
@@ -36,7 +37,6 @@ namespace ContactManager
                     throw ex;
                 }
             }
-
             host.Run();
         }
 

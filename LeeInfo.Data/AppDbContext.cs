@@ -10,6 +10,7 @@ namespace LeeInfo.Data
     {
         public virtual DbSet<AppSidemenu> AppSidemenu { get; set; }
         public virtual DbSet<FrxCbotset> FrxCbotset { get; set; }
+        public virtual DbSet<FrxEcs> FrxEcs { get; set; }
         public virtual DbSet<CcdBill> CcdBill { get; set; }
         public virtual DbSet<CcdData> CcdData { get; set; }
         public virtual DbSet<CcdDebt> CcdDebt { get; set; }
@@ -112,6 +113,11 @@ namespace LeeInfo.Data
                     .IsUnicode(false);
 
                 entity.Property(e => e.Tmr).HasColumnName("tmr");
+            });
+            
+            modelBuilder.Entity<FrxEcs>(entity=>
+            {
+                entity.ToTable("Frx_Ecs");
             });
 
             modelBuilder.Entity<CcdBill>(entity =>

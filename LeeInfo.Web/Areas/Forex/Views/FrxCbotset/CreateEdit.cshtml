@@ -9,17 +9,6 @@
     ViewData["area"] = areaName;
 }
 
-<link rel="stylesheet" href="~/lib/icheck/square/blue.css" />
-<script src="~/lib/icheck/icheck.min.js"></script>
-<script>
-    $(function () {
-        $('input').iCheck({
-            checkboxClass: 'icheckbox_square-blue',
-            radioClass: 'iradio_square-blue',
-            increaseArea: '20%' /* optional */
-        });
-    });
-</script>
 <div class="col-md-4">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     @if (ViewData["action"].ToString() == "Create")

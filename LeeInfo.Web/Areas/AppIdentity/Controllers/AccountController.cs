@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http.Authentication;
 using LeeInfo.Data.AppIdentity;
 using LeeInfo.Web.Areas.AppIdentity.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace LeeInfo.Web.Areas.AppIdentity.Controllers
 {

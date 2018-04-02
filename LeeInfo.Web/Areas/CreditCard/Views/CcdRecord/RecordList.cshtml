@@ -11,15 +11,13 @@
 }
 
 <link rel="stylesheet" href="~/css/datatables.min.css" />
-<link rel="stylesheet" href="~/lib/icheck/square/blue.css" />
 <script src="~/js/datatables.min.js"></script>
-<script src="~/lib/icheck/icheck.min.js"></script>
 <script>
     $(function () {
         $('#example1').DataTable(
             {
                 'order': [[1, "desc"]],
-                'pageLength':[15],
+                'pageLength':[10],
                 initComplete: function () {
                     $("#mytool").append('<a  class="btn btn-primary" style="width:120px;margin-right:5px" href="@path/Index"><i class="glyphicon glyphicon-plus"></i> Index</a><button type="submit" class="btn btn-warning" style="width:120px;"><i class="glyphicon glyphicon-trash"></i> DelSelect</button>');
                 }
@@ -34,14 +32,6 @@
             'autoWidth': false
         })
     })
-
-    $(function () {
-        $('input').iCheck({
-            checkboxClass: 'icheckbox_square-blue',
-            radioClass: 'iradio_square-blue',
-            increaseArea: '20%' /* optional */
-        });
-    });
     //表头CheckBox操作全选或取消全选
     $("#checkall").click(function () {
         var ischecked = this.checked;
