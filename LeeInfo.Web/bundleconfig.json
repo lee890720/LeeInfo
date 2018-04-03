@@ -15,10 +15,10 @@
     "outputFileName": "wwwroot/css/adminlte.min.css",
     "inputFiles": [
       "wwwroot/lib/bootstrap/dist/css/bootstrap.css",
-      "wwwroot/lib/font-awesome/css/font-awesome.min.css",
-      "wwwroot/lib/ionicons/css/ionicons.min.css",
+      "wwwroot/lib/font-awesome/css/font-awesome.css",
+      "wwwroot/lib/ionicons/css/ionicons.css",
       "wwwroot/lib/adminlte/dist/css/AdminLTE.css",
-      "wwwroot/lib/adminlte/dist/css/skins/_all-skins.min.css"
+      "wwwroot/lib/adminlte/dist/css/skins/_all-skins.css"
     ]
   },
   {
@@ -45,11 +45,11 @@
   {
     "outputFileName": "wwwroot/js/adminlte.min.js",
     "inputFiles": [
-      "wwwroot/lib/jquery/dist/jquery.min.js",
-      "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
-      "wwwroot/lib/jquery-slimscroll/jquery.slimscroll.min.js",
+      "wwwroot/lib/jquery/dist/jquery.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
+      "wwwroot/lib/jquery-slimscroll/jquery.slimscroll.js",
       "wwwroot/lib/fastclick/lib/fastclick.js",
-      "wwwroot/lib/adminlte/dist/js/adminlte.min.js"
+      "wwwroot/lib/adminlte/dist/js/adminlte.js"
     ],
     "minify": {
       "enabled": true,

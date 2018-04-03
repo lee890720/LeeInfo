@@ -11,6 +11,9 @@ namespace LeeInfo.Data
         public virtual DbSet<AppSidemenu> AppSidemenu { get; set; }
         public virtual DbSet<FrxCbotset> FrxCbotset { get; set; }
         public virtual DbSet<FrxEcs> FrxEcs { get; set; }
+        public virtual DbSet<FrxAccount> FrxAccount { get; set; }
+        public virtual DbSet<FrxPosition> FrxPosition { get; set; }
+        public virtual DbSet<FrxHistory> FrxHistory { get; set; }
         public virtual DbSet<CcdBill> CcdBill { get; set; }
         public virtual DbSet<CcdData> CcdData { get; set; }
         public virtual DbSet<CcdDebt> CcdDebt { get; set; }
