@@ -1,4 +1,5 @@
-﻿@inject AppMenu  _menu
+﻿@using System.Linq
+@inject AppMenu  _menu
 @inject UserManager<AppIdentityUser> _userManager
 <!DOCTYPE html>
 <html>
@@ -8,12 +9,11 @@
     <title>@ViewData["Title"] | LeeInfo</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="stylesheet" type="text/css" href="~/css/adminlte.min.css" />
-    <!-- Google Font -->
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet" href="~/css/adminlte.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <link rel="stylesheet" href="~/css/site.min.css" />
-    <script src="~/js/adminlte.min.js"></script>
-    <script src="~/js/layout.js"></script>
+    <link rel="stylesheet" href="~/css/datatables.min.css" />
+    <link rel="stylesheet" href="~/lib/icheck/all.css" />
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -173,6 +173,13 @@ desired effect
                                             DateTime _dt = _user.RegisterDate;
                                             //string str_dt = _dt.ToString("MMMM", new System.Globalization.CultureInfo("en-us")) + "." + _dt.Year;
                                             string str_dt = _dt.ToString("MMM. yyyy", new System.Globalization.CultureInfo("en-us"));
+                                            //Get RoleName
+                                            var list_roles = await _userManager.GetRolesAsync(_user);
+                                            List<string> roles = new List<string>();
+                                            foreach(var l in list_roles)
+                                            {
+                                                roles.Add(l);
+                                            }
                                         }
                                         <small>Member since @str_dt</small>
                                     </p>
@@ -239,7 +246,7 @@ desired effect
                     </form>*@
                 <!-- Sidebar Menu -->
                 @{
-                    List<AppSidemenu> sidemenu = _menu.GetAll();
+                    List<AppSidemenu> sidemenu = _menu.GetAll(roles);
                     <ul class="sidebar-menu" data-widget="tree">
                         <li class="header">
                             Best wishes for you.
@@ -367,37 +374,37 @@ desired effect
                         <h4 class="control-sidebar-heading">Layout Options</h4>
                         <div class="form-group">
                             <label class="control-sidebar-subheading">
-                                <input type="checkbox" data-layout="fixed" class="pull-right"> Fixed layout
+                                <input type="checkbox" data-layout="fixed" class="layout-flat-blue"> Fixed layout
                             </label>
                             <p>Activate the fixed layout. You can't use fixed and boxed layouts together</p>
                         </div>
                         <div class="form-group">
                             <label class="control-sidebar-subheading">
-                                <input type="checkbox" data-layout="layout-boxed" class="pull-right"> Boxed Layout
+                                <input type="checkbox" data-layout="layout-boxed" class="layout-flat-blue"> Boxed Layout
                             </label>
                             <p>Activate the boxed layout</p>
                         </div>
                         <div class="form-group">
                             <label class="control-sidebar-subheading">
-                                <input type="checkbox" data-layout="sidebar-collapse" class="pull-right"> Toggle Sidebar
+                                <input type="checkbox" data-layout="sidebar-collapse" class="layout-flat-blue"> Toggle Sidebar
                             </label>
                             <p>Toggle the left sidebar's state (open or collapse)</p>
                         </div>
                         <div class="form-group">
                             <label class="control-sidebar-subheading">
-                                <input type="checkbox" data-enable="expandOnHover" class="pull-right"> Sidebar Expand on Hover
+                                <input type="checkbox" data-enable="expandOnHover" class="layout-flat-blue"> Sidebar Expand on Hover
                             </label>
                             <p>Let the sidebar mini expand on hover</p>
                         </div>
                         <div class="form-group">
                             <label class="control-sidebar-subheading">
-                                <input type="checkbox" data-controlsidebar="control-sidebar-open" class="pull-right"> Toggle Right Sidebar Slide
+                                <input type="checkbox" data-controlsidebar="control-sidebar-open" class="layout-flat-blue"> Toggle Right Sidebar Slide
                             </label>
                             <p>Toggle between slide over content and push content effects</p>
                         </div>
                         <div class="form-group">
                             <label class="control-sidebar-subheading">
-                                <input type="checkbox" data-sidebarskin="toggle" class="pull-right"> Toggle Right Sidebar Skin
+                                <input type="checkbox" data-sidebarskin="toggle" class="layout-flat-blue"> Toggle Right Sidebar Skin
                             </label>
                             <p>Toggle between dark and light skins for the right sidebar</p>
                         </div>
@@ -560,8 +567,29 @@ desired effect
         <div class="control-sidebar-bg"></div>
     </div>
     <!-- ./wrapper -->
-    @RenderSection("Scripts", required: false)
     @Html.Partial("_Modal", new BootstrapModel { ID = "modal-action", AreaLabeledId = "modal-action-label", Size = ModalSize.Medium })
+    <script src="~/js/adminlte.min.js"></script>
+
+    <script src="~/js/datatables.min.js"></script>
+    <script src="~/lib/icheck/icheck.min.js"></script>
+    <script src="~/js/layout.js"></script>
+    <script>
+        //iCheck for checkbox and radio inputs
+        $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+            checkboxClass: 'icheckbox_minimal-blue',
+            radioClass: 'iradio_minimal-blue'
+        })
+        //Flat blue color scheme for iCheck
+        $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+            checkboxClass: 'icheckbox_flat-blue',
+            radioClass: 'iradio_flat-blue'
+        })
+        $('input[type="checkbox"].layout-flat-blue, input[type="radio"].layout-flat-blue').iCheck({
+            checkboxClass: 'icheckbox_flat-blue pull-right',
+            radioClass: 'iradio_flat-blue pull-right'
+        })
+    </script>
     <script src="~/js/modal.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

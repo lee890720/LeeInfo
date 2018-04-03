@@ -47,9 +47,9 @@
     "inputFiles": [
       "wwwroot/lib/jquery/dist/jquery.min.js",
       "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
-      "wwwroot/lib/adminlte/dist/js/adminlte.min.js",
       "wwwroot/lib/jquery-slimscroll/jquery.slimscroll.min.js",
-      "wwwroot/lib/fastclick/lib/fastclick.js"
+      "wwwroot/lib/fastclick/lib/fastclick.js",
+      "wwwroot/lib/adminlte/dist/js/adminlte.min.js"
     ],
     "minify": {
       "enabled": true,

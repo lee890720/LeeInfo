@@ -1,6 +1,6 @@
 ﻿@model string
 @{
-    Layout = "_CreateEdit";
+    Layout = "_CreateEditLayout";
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
     var areaName = ViewContext.RouteData.Values["area"].ToString();
@@ -8,7 +8,6 @@
     ViewData["controller"] = controllerName;
     ViewData["area"] = areaName;
 }
-
 <div class="col-md-12">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">

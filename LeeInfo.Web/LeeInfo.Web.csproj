@@ -9,13 +9,9 @@
 
   <ItemGroup>
     <Compile Remove="Areas\Forex\Views\Shared\**" />
-    <Compile Remove="wwwroot\lib\icheck\**" />
     <Content Remove="Areas\Forex\Views\Shared\**" />
-    <Content Remove="wwwroot\lib\icheck\**" />
     <EmbeddedResource Remove="Areas\Forex\Views\Shared\**" />
-    <EmbeddedResource Remove="wwwroot\lib\icheck\**" />
     <None Remove="Areas\Forex\Views\Shared\**" />
-    <None Remove="wwwroot\lib\icheck\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +58,8 @@
     <None Include="Areas\CreditCard\Views\CcdRecord\_PartialCreate.cshtml" />
     <None Include="Areas\CreditCard\Views\_ViewImports.cshtml" />
     <None Include="Areas\CreditCard\Views\_ViewStart.cshtml" />
+    <None Include="wwwroot\lib\icheck\icheck.js" />
+    <None Include="wwwroot\lib\icheck\icheck.min.js" />
   </ItemGroup>
 
 </Project>

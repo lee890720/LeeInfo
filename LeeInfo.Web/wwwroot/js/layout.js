@@ -117,11 +117,11 @@ $(function () {
     })
 
     // Add the layout manager
-    $('[data-layout]').on('click', function () {
+    $('[data-layout]').on('ifClicked', function () {
         changeLayout($(this).data('layout'))
     })
 
-    $('[data-controlsidebar]').on('click', function () {
+    $('[data-controlsidebar]').on('ifClicked', function () {
         changeLayout($(this).data('controlsidebar'))
         var slide = !$controlSidebar.options.slide
 
@@ -130,7 +130,7 @@ $(function () {
             $('.control-sidebar').removeClass('control-sidebar-open')
     })
 
-    $('[data-sidebarskin="toggle"]').on('click', function () {
+    $('[data-sidebarskin="toggle"]').on('ifClicked', function () {
         var $sidebar = $('.control-sidebar')
         if ($sidebar.hasClass('control-sidebar-dark')) {
             $sidebar.removeClass('control-sidebar-dark')
@@ -141,22 +141,27 @@ $(function () {
         }
     })
 
-    $('[data-enable="expandOnHover"]').on('click', function () {
-        $(this).attr('disabled', true)
+    $('[data-enable="expandOnHover"]').on('ifClicked', function () {
+        //$(this).attr('disabled', true)
+        $(this).iCheck('disable')
         $pushMenu.expandOnHover()
-        if (!$('body').hasClass('sidebar-collapse'))
-            $('[data-layout="sidebar-collapse"]').click()
+        if (!$('body').hasClass('sidebar-collapse')) {
+            $('[data-layout="sidebar-collapse"]').iCheck('check')
+            changeLayout("sidebar-collapse")
+        }
     })
 
     //  Reset options
     if ($('body').hasClass('fixed')) {
-        $('[data-layout="fixed"]').attr('checked', 'checked')
+        $('[data-layout="fixed"]').iCheck('check')
+        changeLayout("fixed")
     }
     if ($('body').hasClass('layout-boxed')) {
-        $('[data-layout="layout-boxed"]').attr('checked', 'checked')
+        $('[data-layout="layout-boxed"]').iCheck('check')
+        changeLayout("layout-boxed")
     }
     if ($('body').hasClass('sidebar-collapse')) {
-        $('[data-layout="sidebar-collapse"]').attr('checked', 'checked')
-
+        $('[data-layout="sidebar-collapse"]').iCheck('check')
+        changeLayout("sidebar-collapse")
     }
 })

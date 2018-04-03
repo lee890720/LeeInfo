@@ -8,32 +8,8 @@
     ViewData["controller"] = controllerName;
     ViewData["area"] = areaName;
     ViewData["Title"] = controllerName;
-    string path = Context.Request.Path.ToString();
+    string path = "/" + areaName + "/" + controllerName;
 }
-
-<link rel="stylesheet" href="~/css/datatables.min.css" />
-<script src="~/js/datatables.min.js"></script>
-<script>
-    $(function () {
-        $('#example1').DataTable(
-            {
-                'pageLength':10,
-                initComplete: function () {
-                    $("#mytool").append('<a id="createModal" data-toggle="modal" data-target="#modal-action" class="btn btn-primary" href="@path/Create"><i class="glyphicon glyphicon-plus"></i> Create</a>');
-                }
-            })
-        $('#example2').DataTable({
-            'paging': true,
-            'lengthChange': false,
-            'searching': false,
-            'ordering': true,
-            'info': true,
-            'autoWidth': false
-        })
-    })
-</script>
-
-<!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
         @ViewData["action"]
@@ -44,8 +20,6 @@
         <li class="active"> @ViewData["controller"]</li>
     </ol>
 </section>
-
-<!-- Main content -->
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
@@ -104,4 +78,24 @@
     </div>
     <!-- /.row -->
 </section>
-<!-- /.content -->
+@section Scripts{
+    <script>
+    $(function () {
+        $('#example1').DataTable(
+            {
+                'pageLength':10,
+                initComplete: function () {
+                    $("#mytool").append('<a id="createModal" data-toggle="modal" data-target="#modal-action" class="btn btn-primary" href="@path/Create"><i class="glyphicon glyphicon-plus"></i> Create</a>');
+                }
+            })
+        $('#example2').DataTable({
+            'paging': true,
+            'lengthChange': false,
+            'searching': false,
+            'ordering': true,
+            'info': true,
+            'autoWidth': false
+        })
+    })
+    </script>
+}

@@ -18,9 +18,19 @@ namespace LeeInfo.Web.Infrastructure
             _sidemenu = context.Set<AppSidemenu>();
         }
    
-        public List<AppSidemenu> GetAll()
+        public List<AppSidemenu> GetAll(List<string> roles)
         {
-            return _sidemenu.AsQueryable().ToList();
+            var temp=_sidemenu.AsQueryable().ToList();
+            List<AppSidemenu> menu = new List<AppSidemenu>();
+            foreach(var t in temp)
+            {
+                foreach(var r in roles)
+                {
+                    if (t.Description.IndexOf(r) != -1)
+                        menu.Add(t);
+                }
+            }
+            return menu;
         }
     }
 }

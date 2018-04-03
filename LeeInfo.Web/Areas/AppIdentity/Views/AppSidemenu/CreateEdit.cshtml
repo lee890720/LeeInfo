@@ -1,0 +1,94 @@
+﻿@model AppSidemenu
+
+@{
+    Layout = "_CreateEditLayout";
+    var actionName = ViewContext.RouteData.Values["action"].ToString();
+    var controllerName = ViewContext.RouteData.Values["controller"].ToString();
+    var areaName = ViewContext.RouteData.Values["area"].ToString();
+    ViewData["action"] = actionName;
+    ViewData["controller"] = controllerName;
+    ViewData["area"] = areaName;
+}
+
+<div class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @if (ViewData["action"].ToString() == "Create")
+    { }
+    else
+    {
+        <input type="hidden" asp-for="Id" />
+    }
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Grade" class="control-label"></label>
+        <input asp-for="Grade" class="form-control" />
+        <span asp-validation-for="Grade" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Sequence" class="control-label"></label>
+        <input asp-for="Sequence" class="form-control" />
+        <span asp-validation-for="Sequence" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Follow" class="control-label"></label>
+        <input asp-for="Follow" class="form-control" />
+        <span asp-validation-for="Follow" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Ico" class="control-label"></label>
+        <input asp-for="Ico" class="form-control" />
+        <span asp-validation-for="Ico" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Url" class="control-label"></label>
+        <input asp-for="Url" class="form-control" />
+        <span asp-validation-for="Url" class="text-danger"></span>
+    </div>
+    </div>
+<div class="col-md-6">
+    <div class="form-group">
+        <label asp-for="Area" class="control-label"></label>
+        <input asp-for="Area" class="form-control" />
+        <span asp-validation-for="Area" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Controller" class="control-label"></label>
+        <input asp-for="Controller" class="form-control" />
+        <span asp-validation-for="Controller" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Action" class="control-label"></label>
+        <input asp-for="Action" class="form-control" />
+        <span asp-validation-for="Action" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="control-label">
+            @Html.DisplayNameFor(model => model.Valid)
+        </label>
+        <div class="checkbox">
+            <input asp-for="Valid" class="flat-blue" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="State" class="control-label"></label>
+        <input asp-for="State" class="form-control" />
+        <span asp-validation-for="State" class="text-danger"></span>
+    </div>
+</div>
+<script>
+    //Flat blue color scheme for iCheck
+    $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+        checkboxClass: 'icheckbox_flat-blue',
+        radioClass: 'iradio_flat-blue'
+    })
+</script>
+

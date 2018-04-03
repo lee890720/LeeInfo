@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LeeInfo.Web.Controllers
 {
-    [Authorize(Roles ="Admins")]
+    [Authorize]
     public class HomeController : Controller
     {
         public IActionResult Index()

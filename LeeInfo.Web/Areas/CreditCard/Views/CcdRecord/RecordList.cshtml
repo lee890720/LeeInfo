@@ -9,39 +9,6 @@
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
 }
-
-<link rel="stylesheet" href="~/css/datatables.min.css" />
-<script src="~/js/datatables.min.js"></script>
-<script>
-    $(function () {
-        $('#example1').DataTable(
-            {
-                'order': [[1, "desc"]],
-                'pageLength':[10],
-                initComplete: function () {
-                    $("#mytool").append('<a  class="btn btn-primary" style="width:120px;margin-right:5px" href="@path/Index"><i class="glyphicon glyphicon-plus"></i> Index</a><button type="submit" class="btn btn-warning" style="width:120px;"><i class="glyphicon glyphicon-trash"></i> DelSelect</button>');
-                }
-
-            })
-        $('#example2').DataTable({
-            'paging': true,
-            'lengthChange': false,
-            'searching': false,
-            'ordering': true,
-            'info': true,
-            'autoWidth': false
-        })
-    })
-    //表头CheckBox操作全选或取消全选
-    $("#checkall").click(function () {
-        var ischecked = this.checked;
-        $("input:checkbox[name='ids']").each(function () {
-            this.checked = ischecked;
-        });
-    });
-</script>
-
-<!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
         @ViewData["action"]
@@ -52,8 +19,6 @@
         <li class="active"> @ViewData["controller"]</li>
     </ol>
 </section>
-
-<!-- Main content -->
 <section class="content">
     @using (Html.BeginForm("RecordList", null, FormMethod.Post))
     {
@@ -100,7 +65,7 @@
                                 {
                                     <tr>
                                         <td>
-                                            <span><input type="checkbox" name="ids" value="@item.RecordId"></span>
+                                            <span><input type="checkbox" class="flat-blue" name="ids" value="@item.RecordId"></span>
                                             @Html.DisplayFor(modelItem => item.CreditCardId)
                                         </td>
                                         <td>
@@ -145,5 +110,27 @@
         </div>
         <!-- /.row -->
         }
-    </section>
-<!-- /.content -->
+</section>
+@section Scripts{
+    <script>
+    $(function () {
+       $('#example1').DataTable(
+            {
+                'order': [[1, "desc"]],
+                'pageLength':[10],
+                initComplete: function () {
+                    $("#mytool").append('<a  class="btn btn-primary" style="width:120px;margin-right:5px" href="@path/Index"><i class="glyphicon glyphicon-plus"></i> Index</a><button type="submit" class="btn btn-warning" style="width:120px;"><i class="glyphicon glyphicon-trash"></i> DelSelect</button>');
+                }
+
+            })
+        $('#example2').DataTable({
+            'paging': true,
+            'lengthChange': false,
+            'searching': false,
+            'ordering': true,
+            'info': true,
+            'autoWidth': false
+        })
+    })
+    </script>
+}

@@ -10,25 +10,11 @@
     <title>LeeInfo | Log in</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <environment>
-        <link rel="stylesheet" type="text/css" href="~/css/adminlte.min.css" />
-        <link rel="stylesheet" href="~/lib/icheck/square/blue.css" />
-        <!-- Google Font -->
-        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-        <style type="text/css" class="init">
-        </style>
-        <script src="~/js/adminlte.min.js"></script>
-        <script src="~/lib/icheck/icheck.min.js"></script>
-    </environment>
-    <script>
-        $(function () {
-            $('input').iCheck({
-                checkboxClass: 'icheckbox_square-blue',
-                radioClass: 'iradio_square-blue',
-                increaseArea: '20%' /* optional */
-            });
-        });
-    </script>
+    <link rel="stylesheet" href="~/css/adminlte.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet" href="~/css/site.min.css" />
+    <link rel="stylesheet" href="~/css/datatables.min.css" />
+    <link rel="stylesheet" href="~/lib/icheck/all.css" />
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
@@ -54,12 +40,10 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
-                        <div class="checkbox icheck">
-                            <label asp-for="RememberMe">
-                                <input type="checkbox" asp-for="RememberMe" />
-                                @Html.DisplayNameFor(m => m.RememberMe)
-                            </label>
-                        </div>
+                        <label asp-for="RememberMe">
+                            <input type="checkbox" asp-for="RememberMe" class="flat-blue" />
+                            @Html.DisplayNameFor(m => m.RememberMe)
+                        </label>
                     </div>
                     <!-- /.col -->
                     <div class="col-xs-4">
@@ -72,6 +56,14 @@
         </div>
         <!-- /.login-box-body -->
     </div>
-    <!-- /.login-box -->
+    <script src="~/js/adminlte.min.js"></script>
+    <script src="~/lib/icheck/icheck.min.js"></script>
+    <script>
+        //Flat blue color scheme for iCheck
+        $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+            checkboxClass: 'icheckbox_flat-blue',
+            radioClass: 'iradio_flat-blue'
+        })
+    </script>
 </body>
 </html>

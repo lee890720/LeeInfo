@@ -65,6 +65,48 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
             return PartialView("~/Areas/AppIdentity/Views/UserAdmin/Create.cshtml",model);
         }
 
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView("~/Areas/AppIdentity/Views/UserAdmin/Delete.cshtml", user.UserName);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id,IFormCollection form)
+        {
+            AppIdentityUser user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                IdentityResult result = await userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    AddErrorsFromResult(result);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "User Not Found");
+            }
+            return View("Index", userManager.Users);
+        }
+
+        [AllowAnonymous]
         public async Task<IActionResult> Edit(string id)
         {
             AppIdentityUser user = await userManager.FindByIdAsync(id);
@@ -130,46 +172,7 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
             return PartialView("~/Areas/AppIdentity/Views/UserAdmin/Edit.cshtml", user);
         }
 
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return PartialView("~/Areas/AppIdentity/Views/UserAdmin/Delete.cshtml", user.UserName);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string id,IFormCollection form)
-        {
-            AppIdentityUser user = await userManager.FindByIdAsync(id);
-            if (user != null)
-            {
-                IdentityResult result = await userManager.DeleteAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    AddErrorsFromResult(result);
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("", "User Not Found");
-            }
-            return View("Index", userManager.Users);
-        }
-
+        [AllowAnonymous]
         private void AddErrorsFromResult(IdentityResult result)
         {
             foreach (IdentityError error in result.Errors)

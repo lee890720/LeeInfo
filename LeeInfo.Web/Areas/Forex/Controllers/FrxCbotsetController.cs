@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {
     [Area("Forex")]
-    [Authorize(Roles = "Admins")]
+    [Authorize(Roles = "Admins,Forex")]
     public class FrxCbotsetController : Controller
     {
         private readonly AppDbContext _context;
