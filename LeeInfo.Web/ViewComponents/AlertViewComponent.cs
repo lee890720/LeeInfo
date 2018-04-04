@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LeeInfo.Web.ViewComponents
 {
-    public class Alert : ViewComponent
+    public class AlertViewComponent : ViewComponent
     {
         private readonly AppDbContext _context;
-        public Alert(AppDbContext context)
+        public AlertViewComponent(AppDbContext context)
         {
             _context = context;
         }

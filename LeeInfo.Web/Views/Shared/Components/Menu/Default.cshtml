@@ -1,0 +1,56 @@
+﻿@model IEnumerable<AppSidemenu>
+<ul class="sidebar-menu" data-widget="tree">
+    <li class="header">
+        Best wishes for you.
+    </li>
+        @foreach (var s1 in Model.Where(s => s.Grade == 1).OrderBy(or => or.Sequence).ToList())
+        {
+            if (Context.Request.Path.ToString().IndexOf(s1.Area) != -1)
+            {
+                <li class="active treeview">
+                    <a href="#">
+                        <i class="@s1.Ico"></i><span>@s1.Name</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @foreach (var s2 in Model.Where(s => s.Grade == 2 && s.Follow == s1.Sequence).OrderBy(or => or.Sequence).ToList())
+                        {
+                            if (Context.Request.Path.ToString().IndexOf(s2.Area) != -1 && Context.Request.Path.ToString().IndexOf(s2.Controller) != -1)
+                            {
+                                <li class="active">
+                                    <a asp-action=@s2.Action asp-controller=@s2.Controller asp-route-area=@s2.Area><i class="@s2.Ico"></i>@s2.Name</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a asp-action=@s2.Action asp-controller=@s2.Controller asp-route-area=@s2.Area><i class="@s2.Ico"></i>@s2.Name</a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </li>
+            }
+            else
+            {
+                <li class="treeview">
+                    <a href="#">
+                        <i class="@s1.Ico"></i><span>@s1.Name</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @foreach (var s2 in Model.Where(s => s.Grade == 2 && s.Follow == s1.Sequence).OrderBy(or => or.Sequence).ToList())
+                        {
+                            <li>
+                                <a asp-action=@s2.Action asp-controller=@s2.Controller asp-route-area=@s2.Area><i class="@s2.Ico"></i>@s2.Name</a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+            }
+        }
+</ul>

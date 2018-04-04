@@ -1,6 +1,4 @@
-﻿@using System.Linq
-@inject AppMenu  _menu
-@inject UserManager<AppIdentityUser> _userManager
+﻿@inject UserManager<AppIdentityUser> _userManager
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,81 +54,8 @@ desired effect
                 <!-- Navbar Right Menu -->
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
-                        <!-- Messages: style can be found in dropdown.less-->
-                        @*<li class="dropdown messages-menu">
-                                <!-- Menu toggle button -->
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-envelope-o"></i>
-                                    <span class="label label-success">4</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="header">You have 4 messages</li>
-                                    <li>
-                                        <!-- inner menu: contains the messages -->
-                                        <ul class="menu">
-                                            <li>
-                                                <!-- start message -->
-                                                <a href="#">
-                                                    <div class="pull-left">
-                                                        <!-- User Image -->
-                                                        <img src="~/lib/adminlte/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                                                    </div>
-                                                    <!-- Message title and timestamp -->
-                                                    <h4>
-                                                        Support Team
-                                                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                                                    </h4>
-                                                    <!-- The message -->
-                                                    <p>Why not buy a new awesome theme?</p>
-                                                </a>
-                                            </li>
-                                            <!-- end message -->
-                                        </ul>
-                                        <!-- /.menu -->
-                                    </li>
-                                    <li class="footer"><a href="#">See All Messages</a></li>
-                                </ul>
-                            </li>*@
                         <!-- Notifications Menu -->
                         @await Component.InvokeAsync("Alert")
-                        <!-- Tasks Menu -->
-                        @*<li class="dropdown tasks-menu">
-                                <!-- Menu Toggle Button -->
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-flag-o"></i>
-                                    <span class="label label-danger">9</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="header">You have 9 tasks</li>
-                                    <li>
-                                        <!-- Inner menu: contains the tasks -->
-                                        <ul class="menu">
-                                            <li>
-                                                <!-- Task item -->
-                                                <a href="#">
-                                                    <!-- Task title and progress text -->
-                                                    <h3>
-                                                        Design some buttons
-                                                        <small class="pull-right">20%</small>
-                                                    </h3>
-                                                    <!-- The progress bar -->
-                                                    <div class="progress xs">
-                                                        <!-- Change the css width attribute to simulate progress -->
-                                                        <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar"
-                                                             aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                            <span class="sr-only">20% Complete</span>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <!-- end task item -->
-                                        </ul>
-                                    </li>
-                                    <li class="footer">
-                                        <a href="#">View all tasks</a>
-                                    </li>
-                                </ul>
-                            </li>*@
                         <!-- User Account Menu -->
                         <li class="dropdown user user-menu">
                             <!-- Menu Toggle Button -->
@@ -153,11 +78,6 @@ desired effect
                                             string str_dt = _dt.ToString("MMM. yyyy", new System.Globalization.CultureInfo("en-us"));
                                             //Get RoleName
                                             var list_roles = await _userManager.GetRolesAsync(_user);
-                                            List<string> roles = new List<string>();
-                                            foreach (var l in list_roles)
-                                            {
-                                                roles.Add(l);
-                                            }
                                         }
                                         <small>Member since @str_dt</small>
                                     </p>
@@ -211,76 +131,8 @@ desired effect
                         <a href="/AppIdentity/Account/Logout"><i class="fa fa-circle text-success"></i> Online</a>
                     </div>
                 </div>
-                <!-- search form (Optional) -->
-                @*<form action="#" method="get" class="sidebar-form">
-                        <div class="input-group">
-                            <input type="text" name="q" class="form-control" placeholder="Search...">
-                            <span class="input-group-btn">
-                                <button  type="submit" name="search" id="search-btn" class="btn btn-flat">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </span>
-                        </div>
-                    </form>*@
                 <!-- Sidebar Menu -->
-                @{
-                    List<AppSidemenu> sidemenu = _menu.GetAll(roles);
-                    <ul class="sidebar-menu" data-widget="tree">
-                        <li class="header">
-                            Best wishes for you.
-                        </li>
-                        @foreach (var s1 in sidemenu.Where(s => s.Grade == 1).OrderBy(or => or.Sequence).ToList())
-                        {
-                            if (Context.Request.Path.ToString().IndexOf(s1.Area) != -1)
-                            {
-                                <li class="active treeview">
-                                    <a href="#">
-                                        <i class="@s1.Ico"></i><span>@s1.Name</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="treeview-menu">
-                                        @foreach (var s2 in sidemenu.Where(s => s.Grade == 2 && s.Follow == s1.Sequence).OrderBy(or => or.Sequence).ToList())
-                                        {
-                                            if (Context.Request.Path.ToString().IndexOf(s2.Area) != -1 && Context.Request.Path.ToString().IndexOf(s2.Controller) != -1)
-                                            {
-                                                <li class="active">
-                                                    <a asp-action=@s2.Action asp-controller=@s2.Controller asp-route-area=@s2.Area><i class="@s2.Ico"></i>@s2.Name</a>
-                                                </li>
-                                            }
-                                            else
-                                            {
-                                                <li>
-                                                    <a asp-action=@s2.Action asp-controller=@s2.Controller asp-route-area=@s2.Area><i class="@s2.Ico"></i>@s2.Name</a>
-                                                </li>
-                                            }
-                                        }
-                                    </ul>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="treeview">
-                                    <a href="#">
-                                        <i class="@s1.Ico"></i><span>@s1.Name</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="treeview-menu">
-                                        @foreach (var s2 in sidemenu.Where(s => s.Grade == 2 && s.Follow == s1.Sequence).OrderBy(or => or.Sequence).ToList())
-                                        {
-                                            <li>
-                                                <a asp-action=@s2.Action asp-controller=@s2.Controller asp-route-area=@s2.Area><i class="@s2.Ico"></i>@s2.Name</a>
-                                            </li>
-                                        }
-                                    </ul>
-                                </li>
-                            }
-                        }
-                    </ul>
-                }
+                @await Component.InvokeAsync("Menu",list_roles)
                 <!-- /.sidebar-menu -->
             </section>
             <!-- /.sidebar -->

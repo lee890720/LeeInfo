@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using LeeInfo.Data.AppIdentity;
 using LeeInfo.Data;
-using LeeInfo.Web.Infrastructure;
 
 namespace LeeInfo.Web
 {
@@ -74,8 +73,6 @@ namespace LeeInfo.Web
 
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddTransient<AppMenu>();
 
             services.AddMvc();
         }
