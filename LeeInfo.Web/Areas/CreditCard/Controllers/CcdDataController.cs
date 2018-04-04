@@ -27,26 +27,20 @@ namespace LeeInfo.Web.Areas.CreditCard.Controllers
         // GET: CreditCard/CcdData
         public async Task<IActionResult> Index()
         {
-            #region Update the bills
+            #region ccdtemp1 Update the bills
             var ccdtemp1 = _context.CcdData.Include(c => c.CcdBill);
-            foreach(var c in ccdtemp1)
+            foreach (var c in ccdtemp1)
             {
-                bool IsChanged = false;
-                foreach(var b in c.CcdBill)
+                double bill = 0;
+                foreach (var b in c.CcdBill)
                 {
-                    if(c.CreditCardId==b.CreditCardId)
-                        if(c.AccountBill<b.BillDate&&c.RepaymentDate>b.BillDate)
-                        {
-                            c.BillAmount = b.BillAmount;
-                            _context.Entry(c).State = EntityState.Modified;
-                            IsChanged = true;
-                        }
+                    if (c.AccountBill < b.BillDate && c.RepaymentDate > b.BillDate)
+                    {
+                        bill += b.BillAmount;
+                    }
                 }
-                if(!IsChanged)
-                {
-                    c.BillAmount = 0;
-                    _context.Entry(c).State = EntityState.Modified;
-                }
+                c.BillAmount = bill;
+                _context.Entry(c).State = EntityState.Modified;
             }
             await _context.SaveChangesAsync();
             #endregion
