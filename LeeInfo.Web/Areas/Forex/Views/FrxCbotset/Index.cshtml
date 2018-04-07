@@ -35,7 +35,7 @@
                                     @Html.DisplayNameFor(model => model.Symbol)
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Initvolume)
+                                    @Html.DisplayNameFor(model => model.InitVolume)
                                 </th>
                                 <th>
                                     @Html.DisplayNameFor(model => model.Brk)
@@ -44,13 +44,13 @@
                                     @Html.DisplayNameFor(model => model.Distance)
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Istrade)
+                                    @Html.DisplayNameFor(model => model.IsTrade)
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Isbreak)
+                                    @Html.DisplayNameFor(model => model.IsBreak)
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Isbrkfirst)
+                                    @Html.DisplayNameFor(model => model.IsBrkFirst)
                                 </th>
                                 <th>
                                     @Html.DisplayNameFor(model => model.Result)
@@ -109,7 +109,7 @@
                                         @Html.DisplayFor(modelItem => item.Symbol)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Initvolume)
+                                        @Html.DisplayFor(modelItem => item.InitVolume)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Brk)
@@ -118,13 +118,13 @@
                                         @Html.DisplayFor(modelItem => item.Distance)
                                     </td>
                                     <td>
-                                        <input type="checkbox" checked="@item.Istrade" class="flat-blue" />
+                                        <input type="checkbox" checked="@item.IsTrade" class="flat-blue" />
                                     </td>
                                     <td>
-                                        <input type="checkbox" checked="@item.Isbreak" class="flat-blue" />
+                                        <input type="checkbox" checked="@item.IsBreak" class="flat-blue" />
                                     </td>
                                     <td>
-                                        <input type="checkbox" checked="@item.Isbrkfirst" class="flat-blue" />
+                                        <input type="checkbox" checked="@item.IsBrkFirst" class="flat-blue" />
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Result)

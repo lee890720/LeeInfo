@@ -5,11 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LeeInfo.Data.CreditCard
 {
+    [Table("Ccd_Bill")]
     public partial class CcdBill
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        [Display(Name = "Bill_ID")]
+        [Display(Name = "账单ID")]
         public int BillId { get; set; }
         [Required]
         [Display(Name = "信用卡ID")]

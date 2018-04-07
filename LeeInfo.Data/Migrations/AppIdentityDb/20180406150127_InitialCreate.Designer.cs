@@ -11,8 +11,8 @@ using System;
 namespace LeeInfo.Data.Migrations.AppIdentityDb
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    [Migration("20180402120954_AddColumn")]
-    partial class AddColumn
+    [Migration("20180406150127_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LeeInfo.Data.CreditCard
 {
+    [Table("Ccd_Data")]
     public partial class CcdData
     {
         public CcdData()

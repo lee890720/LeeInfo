@@ -15,7 +15,7 @@ namespace LeeInfo.Data.Forex
         }
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int AccountId { get; set; }
         public string AccountNumber { get; set; }
         public string AccountPassword { get; set; }
         public string Platform { get; set; }

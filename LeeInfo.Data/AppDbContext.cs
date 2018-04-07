@@ -8,18 +8,18 @@ namespace LeeInfo.Data
 {
     public partial class AppDbContext : DbContext
     {
-        public virtual DbSet<AppSidemenu> AppSidemenu { get; set; }
-        public virtual DbSet<FrxCbotset> FrxCbotset { get; set; }
-        public virtual DbSet<FrxEcs> FrxEcs { get; set; }
-        public virtual DbSet<FrxAccount> FrxAccount { get; set; }
-        public virtual DbSet<FrxPosition> FrxPosition { get; set; }
-        public virtual DbSet<FrxHistory> FrxHistory { get; set; }
+        public virtual DbSet<AppMenu> AppMenu { get; set; }
         public virtual DbSet<CcdBill> CcdBill { get; set; }
         public virtual DbSet<CcdData> CcdData { get; set; }
         public virtual DbSet<CcdDebt> CcdDebt { get; set; }
         public virtual DbSet<CcdPerson> CcdPerson { get; set; }
         public virtual DbSet<CcdPos> CcdPos { get; set; }
         public virtual DbSet<CcdRecord> CcdRecord { get; set; }
+        public virtual DbSet<FrxAccount> FrxAccount { get; set; }
+        public virtual DbSet<FrxCbotset> FrxCbotset { get; set; }
+        public virtual DbSet<FrxEcs> FrxEcs { get; set; }
+        public virtual DbSet<FrxHistory> FrxHistory { get; set; }
+        public virtual DbSet<FrxPosition> FrxPosition { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -27,9 +27,9 @@ namespace LeeInfo.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AppSidemenu>(entity =>
+            modelBuilder.Entity<AppMenu>(entity =>
             {
-                entity.ToTable("App_Sidemenu");
+                entity.ToTable("App_Menu");
 
                 entity.Property(e => e.Action)
                     .HasMaxLength(50)
@@ -63,64 +63,6 @@ namespace LeeInfo.Data
                 entity.Property(e => e.Url)
                     .HasMaxLength(50)
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<FrxCbotset>(entity =>
-            {
-                entity.ToTable("Frx_Cbotset");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Alike)
-                    .HasColumnName("alike")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Average).HasColumnName("average");
-
-                entity.Property(e => e.Brk).HasColumnName("brk");
-
-                entity.Property(e => e.Ca).HasColumnName("ca");
-
-                entity.Property(e => e.Cr).HasColumnName("cr");
-
-                entity.Property(e => e.Distance).HasColumnName("distance");
-
-                entity.Property(e => e.Initvolume).HasColumnName("initvolume");
-
-                entity.Property(e => e.Isbreak).HasColumnName("isbreak");
-
-                entity.Property(e => e.Isbrkfirst).HasColumnName("isbrkfirst");
-
-                entity.Property(e => e.Istrade).HasColumnName("istrade");
-
-                entity.Property(e => e.Magnify).HasColumnName("magnify");
-
-                entity.Property(e => e.Result).HasColumnName("result");
-
-                entity.Property(e => e.Sa).HasColumnName("sa");
-
-                entity.Property(e => e.Signal)
-                    .HasColumnName("signal")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Sr).HasColumnName("sr");
-
-                entity.Property(e => e.Sub).HasColumnName("sub");
-
-                entity.Property(e => e.Symbol)
-                    .IsRequired()
-                    .HasColumnName("symbol")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Tmr).HasColumnName("tmr");
-            });
-            
-            modelBuilder.Entity<FrxEcs>(entity=>
-            {
-                entity.ToTable("Frx_Ecs");
             });
 
             modelBuilder.Entity<CcdBill>(entity =>
@@ -263,6 +205,51 @@ namespace LeeInfo.Data
                     .WithMany(p => p.CcdRecord)
                     .HasForeignKey(d => d.PosId)
                     .HasConstraintName("FK_dbo.Ccd_Record_dbo.Ccd_Pos_PosId");
+            });
+
+            modelBuilder.Entity<FrxAccount>(entity =>
+            {
+                entity.HasKey(e => e.AccountId);
+
+                entity.ToTable("Frx_Account");
+            });
+
+            modelBuilder.Entity<FrxCbotset>(entity =>
+            {
+                entity.ToTable("Frx_Cbotset");
+            });
+
+            modelBuilder.Entity<FrxEcs>(entity =>
+            {
+                entity.ToTable("Frx_Ecs");
+            });
+
+            modelBuilder.Entity<FrxHistory>(entity =>
+            {
+                entity.HasKey(e => e.ClosingDealId);
+
+                entity.ToTable("Frx_History");
+
+                entity.HasIndex(e => e.AccountId);
+
+                entity.Property(e => e.ClosingDealId).ValueGeneratedNever();
+
+                entity.HasOne(d => d.FrxAccount)
+                    .WithMany(p => p.FrxHistory)
+                    .HasForeignKey(d => d.AccountId);
+            });
+
+            modelBuilder.Entity<FrxPosition>(entity =>
+            {
+                entity.ToTable("Frx_Position");
+
+                entity.HasIndex(e => e.AccountId);
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.HasOne(d => d.FrxAccount)
+                    .WithMany(p => p.FrxPosition)
+                    .HasForeignKey(d => d.AccountId);
             });
         }
     }

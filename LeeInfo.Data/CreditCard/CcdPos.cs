@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LeeInfo.Data.CreditCard
 {
+    [Table("Ccd_Pos")]
     public partial class CcdPos
     {
         public CcdPos()
@@ -14,7 +15,7 @@ namespace LeeInfo.Data.CreditCard
 
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        [Display(Name = "POS_ID")]
+        [Display(Name = "POSID")]
         public int PosId { get; set; }
         [Required]
         [Display(Name = "成员ID")]

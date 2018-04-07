@@ -13,11 +13,11 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
 {
     [Area("AppIdentity")]
     [Authorize(Roles = "Admins")]
-    public class AppSidemenuController : Controller
+    public class AppMenuController : Controller
     {
         private readonly AppDbContext _context;
 
-        public AppSidemenuController(AppDbContext context)
+        public AppMenuController(AppDbContext context)
         {
             _context = context;
         }
@@ -25,13 +25,13 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
         // GET: AppIdentity/AppSidemenu
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AppSidemenu.ToListAsync());
+            return View(await _context.AppMenu.ToListAsync());
         }
 
         // GET: AppIdentity/AppSidemenu/Create
         public IActionResult Create()
         {
-            return PartialView("~/Areas/AppIdentity/Views/AppSidemenu/CreateEdit.cshtml");
+            return PartialView("~/Areas/AppIdentity/Views/AppMenu/CreateEdit.cshtml");
         }
 
         // POST: AppIdentity/AppSidemenu/Create
@@ -39,15 +39,15 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Grade,Sequence,Follow,Ico,Url,Area,Controller,Action,Valid,Description,State")] AppSidemenu appSidemenu)
+        public async Task<IActionResult> Create([Bind("Id,Name,Grade,Sequence,Follow,Ico,Url,Area,Controller,Action,Valid,Description,State")] AppMenu appMenu)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(appSidemenu);
+                _context.Add(appMenu);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return PartialView("~/Areas/AppIdentity/Views/AppSidemenu/CreateEdit.cshtml",appSidemenu);
+            return PartialView("~/Areas/AppIdentity/Views/AppMenu/CreateEdit.cshtml",appMenu);
         }
 
         // GET: AppIdentity/AppSidemenu/Edit/5
@@ -58,12 +58,12 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
                 return NotFound();
             }
 
-            var appSidemenu = await _context.AppSidemenu.SingleOrDefaultAsync(m => m.Id == id);
-            if (appSidemenu == null)
+            var appMenu = await _context.AppMenu.SingleOrDefaultAsync(m => m.Id == id);
+            if (appMenu == null)
             {
                 return NotFound();
             }
-            return PartialView("~/Areas/AppIdentity/Views/AppSidemenu/CreateEdit.cshtml",appSidemenu);
+            return PartialView("~/Areas/AppIdentity/Views/AppMenu/CreateEdit.cshtml",appMenu);
         }
 
         // POST: AppIdentity/AppSidemenu/Edit/5
@@ -71,9 +71,9 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Grade,Sequence,Follow,Ico,Url,Area,Controller,Action,Valid,Description,State")] AppSidemenu appSidemenu)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Grade,Sequence,Follow,Ico,Url,Area,Controller,Action,Valid,Description,State")] AppMenu appMenu)
         {
-            if (id != appSidemenu.Id)
+            if (id != appMenu.Id)
             {
                 return NotFound();
             }
@@ -82,12 +82,12 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
             {
                 try
                 {
-                    _context.Update(appSidemenu);
+                    _context.Update(appMenu);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AppSidemenuExists(appSidemenu.Id))
+                    if (!AppMenuExists(appMenu.Id))
                     {
                         return NotFound();
                     }
@@ -98,7 +98,7 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return PartialView("~/Areas/AppIdentity/Views/AppSidemenu/CreateEdit.cshtml",appSidemenu);
+            return PartialView("~/Areas/AppIdentity/Views/AppMenu/CreateEdit.cshtml",appMenu);
         }
 
         // GET: AppIdentity/AppSidemenu/Delete/5
@@ -109,29 +109,29 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
                 return NotFound();
             }
 
-            var appSidemenu = await _context.AppSidemenu
+            var appMenu = await _context.AppMenu
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (appSidemenu == null)
+            if (appMenu == null)
             {
                 return NotFound();
             }
 
-            return PartialView("~/Areas/AppIdentity/Views/AppSidemenu/Delete.cshtml",appSidemenu.Name);
+            return PartialView("~/Areas/AppIdentity/Views/AppMenu/Delete.cshtml",appMenu.Name);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id,IFormCollection form)
         {
-            var appSidemenu = await _context.AppSidemenu.SingleOrDefaultAsync(m => m.Id == id);
-            _context.AppSidemenu.Remove(appSidemenu);
+            var appMenu = await _context.AppMenu.SingleOrDefaultAsync(m => m.Id == id);
+            _context.AppMenu.Remove(appMenu);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AppSidemenuExists(int id)
+        private bool AppMenuExists(int id)
         {
-            return _context.AppSidemenu.Any(e => e.Id == id);
+            return _context.AppMenu.Any(e => e.Id == id);
         }
     }
 }

@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LeeInfo.Data.Forex
 {
+    [Table("Frx_Cbotset")]
     public partial class FrxCbotset
     {
         public int Id { get; set; }
         public string Symbol { get; set; }
-        public int Initvolume { get; set; }
+        public int InitVolume { get; set; }
         public int Tmr { get; set; }
         public double Brk { get; set; }
         public double Distance { get; set; }
-        public bool Istrade { get; set; }
-        public bool Isbreak { get; set; }
-        public bool Isbrkfirst { get; set; }
+        public bool IsTrade { get; set; }
+        public bool IsBreak { get; set; }
+        public bool IsBrkFirst { get; set; }
         public int Result { get; set; }
         public int Average { get; set; }
         public double Magnify { get; set; }

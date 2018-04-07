@@ -22,7 +22,7 @@ namespace LeeInfo.Data.Migrations
                 .HasAnnotation("ProductVersion", "2.0.2-rtm-10011")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("LeeInfo.Data.AppSidemenu", b =>
+            modelBuilder.Entity("LeeInfo.Data.AppMenu", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -70,7 +70,7 @@ namespace LeeInfo.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("App_Sidemenu");
+                    b.ToTable("App_Menu");
                 });
 
             modelBuilder.Entity("LeeInfo.Data.CreditCard.CcdBill", b =>
@@ -266,7 +266,7 @@ namespace LeeInfo.Data.Migrations
 
             modelBuilder.Entity("LeeInfo.Data.Forex.FrxAccount", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("AccountId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AccountNumber");
@@ -277,7 +277,7 @@ namespace LeeInfo.Data.Migrations
 
                     b.Property<string>("UserName");
 
-                    b.HasKey("Id");
+                    b.HasKey("AccountId");
 
                     b.ToTable("Frx_Account");
                 });
@@ -285,69 +285,43 @@ namespace LeeInfo.Data.Migrations
             modelBuilder.Entity("LeeInfo.Data.Forex.FrxCbotset", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id");
+                        .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Alike")
-                        .HasColumnName("alike")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Alike");
 
-                    b.Property<int>("Average")
-                        .HasColumnName("average");
+                    b.Property<int>("Average");
 
-                    b.Property<double>("Brk")
-                        .HasColumnName("brk");
+                    b.Property<double>("Brk");
 
-                    b.Property<double?>("Ca")
-                        .HasColumnName("ca");
+                    b.Property<double?>("Ca");
 
-                    b.Property<double?>("Cr")
-                        .HasColumnName("cr");
+                    b.Property<double?>("Cr");
 
-                    b.Property<double>("Distance")
-                        .HasColumnName("distance");
+                    b.Property<double>("Distance");
 
-                    b.Property<int>("Initvolume")
-                        .HasColumnName("initvolume");
+                    b.Property<int>("InitVolume");
 
-                    b.Property<bool>("Isbreak")
-                        .HasColumnName("isbreak");
+                    b.Property<bool>("IsBreak");
 
-                    b.Property<bool>("Isbrkfirst")
-                        .HasColumnName("isbrkfirst");
+                    b.Property<bool>("IsBrkFirst");
 
-                    b.Property<bool>("Istrade")
-                        .HasColumnName("istrade");
+                    b.Property<bool>("IsTrade");
 
-                    b.Property<double>("Magnify")
-                        .HasColumnName("magnify");
+                    b.Property<double>("Magnify");
 
-                    b.Property<int>("Result")
-                        .HasColumnName("result");
+                    b.Property<int>("Result");
 
-                    b.Property<double?>("Sa")
-                        .HasColumnName("sa");
+                    b.Property<double?>("Sa");
 
-                    b.Property<string>("Signal")
-                        .HasColumnName("signal")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Signal");
 
-                    b.Property<double?>("Sr")
-                        .HasColumnName("sr");
+                    b.Property<double?>("Sr");
 
-                    b.Property<double>("Sub")
-                        .HasColumnName("sub");
+                    b.Property<double>("Sub");
 
-                    b.Property<string>("Symbol")
-                        .IsRequired()
-                        .HasColumnName("symbol")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Symbol");
 
-                    b.Property<int>("Tmr")
-                        .HasColumnName("tmr");
+                    b.Property<int>("Tmr");
 
                     b.HasKey("Id");
 
@@ -372,6 +346,8 @@ namespace LeeInfo.Data.Migrations
                 {
                     b.Property<int>("ClosingDealId");
 
+                    b.Property<int>("AccountId");
+
                     b.Property<double>("Balance");
 
                     b.Property<double>("ClosingPrice");
@@ -385,8 +361,6 @@ namespace LeeInfo.Data.Migrations
                     b.Property<double>("EntryPrice");
 
                     b.Property<DateTime>("EntryTime");
-
-                    b.Property<int?>("FrxAccountId");
 
                     b.Property<double>("GrossProfit");
 
@@ -410,7 +384,7 @@ namespace LeeInfo.Data.Migrations
 
                     b.HasKey("ClosingDealId");
 
-                    b.HasIndex("FrxAccountId");
+                    b.HasIndex("AccountId");
 
                     b.ToTable("Frx_History");
                 });
@@ -419,6 +393,8 @@ namespace LeeInfo.Data.Migrations
                 {
                     b.Property<int>("Id");
 
+                    b.Property<int>("AccountId");
+
                     b.Property<string>("Comment");
 
                     b.Property<double>("Commissions");
@@ -426,8 +402,6 @@ namespace LeeInfo.Data.Migrations
                     b.Property<double>("EntryPrice");
 
                     b.Property<DateTime>("EntryTime");
-
-                    b.Property<int?>("FrxAccountId");
 
                     b.Property<double>("GrossProfit");
 
@@ -453,7 +427,7 @@ namespace LeeInfo.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FrxAccountId");
+                    b.HasIndex("AccountId");
 
                     b.ToTable("Frx_Position");
                 });
@@ -512,14 +486,16 @@ namespace LeeInfo.Data.Migrations
                 {
                     b.HasOne("LeeInfo.Data.Forex.FrxAccount", "FrxAccount")
                         .WithMany("FrxHistory")
-                        .HasForeignKey("FrxAccountId");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("LeeInfo.Data.Forex.FrxPosition", b =>
                 {
                     b.HasOne("LeeInfo.Data.Forex.FrxAccount", "FrxAccount")
                         .WithMany("FrxPosition")
-                        .HasForeignKey("FrxAccountId");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

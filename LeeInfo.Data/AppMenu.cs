@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LeeInfo.Data
 {
-    public partial class AppSidemenu
+    [Table("App_Menu")]
+    public partial class AppMenu
     {
         public int Id { get; set; }
         public string Name { get; set; }

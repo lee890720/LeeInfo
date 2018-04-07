@@ -18,8 +18,8 @@ namespace LeeInfo.Web.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync(IList<string> list_str)
         {
-            var temp_menu = await _context.AppSidemenu.ToListAsync();
-            List<AppSidemenu> menu = new List<AppSidemenu>();
+            var temp_menu = await _context.AppMenu.ToListAsync();
+            List<AppMenu> menu = new List<AppMenu>();
             foreach (var t in temp_menu)
             {
                 foreach (var r in list_str)
