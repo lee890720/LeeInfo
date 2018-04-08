@@ -14,11 +14,16 @@ namespace LeeInfo.Data.Forex
             FrxHistory = new HashSet<FrxHistory>();
         }
         [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int AccountId { get; set; }
-        public string AccountNumber { get; set; }
-        public string AccountPassword { get; set; }
-        public string Platform { get; set; }
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.None)]
+        public int AccountNumber { get; set; }
+        public string Password { get; set; }
+        public string BrokerName { get; set; }
+        public string Currency { get; set; }
+        public bool IsLive { get; set; }
+        public double Balance { get; set; }
+        public double Equity { get; set; }
+        public double PreciseLeverage { get; set; }
+        public double UnrealizedNetProfit { get; set; }
         public string UserName { get; set; }
         public ICollection<FrxPosition> FrxPosition { get; set; }
         public ICollection<FrxHistory> FrxHistory { get; set; }

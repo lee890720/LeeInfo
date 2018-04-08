@@ -46,9 +46,9 @@ var DataTable = $.fn.dataTable;
 /* Set the defaults for DataTables initialisation */
 $.extend( true, DataTable.defaults, {
 	dom:
-		"<'row'<'$mytool.col-sm-6'><'col-sm-6'f>>" +
-		"<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+		"<'row'<'$mytool.col-sm-6 col-xs-6'><'col-sm-6 col-xs-6'f>>" +
+		"<'row'<'col-sm-12 col-xs-12'tr>>" +
+        "<'row'<'col-sm-5 col-xs-12'i><'col-sm-7 col-xs-12'p>>",
     buttons: [
         'new', 'edit', 'del'
     ],

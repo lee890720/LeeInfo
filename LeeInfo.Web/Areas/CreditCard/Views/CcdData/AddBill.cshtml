@@ -33,7 +33,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="BillDate" class="control-label"></label>
-                                <input asp-for="BillDate" type="date" class="form-control" />
+                                <input asp-for="BillDate" type="date" id="createStartTime" class="form-control" />
                                 <span asp-validation-for="BillDate" class="text-danger"></span>
                             </div>
                             <div class="form-group">
@@ -54,3 +54,15 @@
     </div>
 </section>
 <!-- /.content -->
+<script>
+    var now = new Date();
+    //alert(now.getDate() + '-' + now.getMonth());
+    //格式化日，如果小于9，前面补0  
+    var day = ("0" + now.getDate()).slice(-2);
+    //格式化月，如果小于9，前面补0  
+    var month = ("0" + (now.getMonth() + 1)).slice(-2);
+    //拼装完整日期格式  
+    var today = now.getFullYear() + "-" + (month) + "-" + (day);
+    //完成赋值  
+    $('#createStartTime').val(today); 
+</script>

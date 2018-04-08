@@ -12,7 +12,7 @@ namespace LeeInfo.Data.Forex
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.None)]
         public int ClosingDealId { get; set; }
-        public int AccountId { get; set; }
+        public int AccountNumber { get; set; }
         public string SymbolCode { get; set; }
         public TradeType TradeType { get; set; }
         public long Volume { get; set; }

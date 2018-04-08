@@ -304,14 +304,6 @@ namespace LeeInfo.Web.Areas.CreditCard.Controllers
                 Total = (double)g.Sum(y => y.Deposit) - (double)g.Sum(y => y.Expend)
             }).OrderBy(xx => xx.CreditCardId).ToListAsync();
             #endregion
-            #region ccdtemp4 
-            var ccdtemp4 = _context.CcdData.Select(x => new
-            {
-                CreditCardId = x.CreditCardId,
-                CreditCardNumber = x.CreditCardNumber,
-                IdNum = x.CreditCardId + "-" + x.CreditCardNumber
-            }).OrderBy(o => o.IdNum).ToList();
-            #endregion
             for (int dt = ccdtemp3.Count() - 1; dt >= 0; dt--)
             {
                 bool IsAlive = false;
@@ -358,7 +350,12 @@ namespace LeeInfo.Web.Areas.CreditCard.Controllers
             var appDbContext = ccdtemp2.OrderBy(d => d.RepaymentDate).ToList();
             ViewBag.SumTotal = appDbContext.Sum(d => d.Total);
             ViewBag.SumOut = appDbContext.Where(d => d.OutstandingAmount > 0).Sum(d => d.OutstandingAmount);
-            ViewData["CreditCardId"] = new SelectList(ccdtemp4, "CreditCardId", "IdNum");
+            var list_select = _context.CcdData.Include(x => x.CcdPerson).Select(s => new
+            {
+                CreditCardId = s.CreditCardId,
+                CcdItem = s.CreditCardId.ToString() + "-" + s.CcdPerson.PersonName + "-" + s.IssuingBank.ToString()
+            }).ToList();
+            ViewData["CreditCardId"] = new SelectList(list_select, "CreditCardId", "CcdItem");
             ViewData["PosId"] = new SelectList(_context.CcdPos, "PosId", "PosName");
             return View(appDbContext);
         }

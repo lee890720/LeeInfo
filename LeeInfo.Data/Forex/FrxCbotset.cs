@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LeeInfo.Data.Forex
@@ -7,6 +8,8 @@ namespace LeeInfo.Data.Forex
     [Table("Frx_Cbotset")]
     public partial class FrxCbotset
     {
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Symbol { get; set; }
         public int InitVolume { get; set; }

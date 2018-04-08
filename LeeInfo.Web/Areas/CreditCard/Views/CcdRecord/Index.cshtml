@@ -109,6 +109,7 @@
     $(function () {
         $('#example1').DataTable(
             {
+                'order': [[5, "asc"]],
                 'pageLength':10,
                 initComplete: function () {
                     $("#mytool").append('<a  class="btn btn-primary" style="width:80px;margin-right:5px" href="@path/Create"><i class="glyphicon glyphicon-plus"></i> Create</a><a class="btn btn-primary" style="width:80px;margin-right:5px" href="@path/RecordList"><i class="glyphicon glyphicon-th-list"></i> Details</a>');

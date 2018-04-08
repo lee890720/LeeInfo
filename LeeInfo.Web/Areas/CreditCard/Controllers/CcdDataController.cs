@@ -215,9 +215,14 @@ namespace LeeInfo.Web.Areas.CreditCard.Controllers
         }
 
 
-        public IActionResult AddBill(int? d)
+        public IActionResult AddBill(int? id)
         {
-            ViewData["CreditCardId"] = new SelectList(_context.CcdData, "CreditCardId", "CreditCardNumber");
+            var list_select = _context.CcdData.Include(x => x.CcdPerson).Select(s => new
+            {
+                CreditCardId = s.CreditCardId,
+                CcdItem = s.CreditCardId.ToString()+"-"+s.CcdPerson.PersonName +"-"+ s.IssuingBank.ToString()
+            }).ToList();
+            ViewData["CreditCardId"] = new SelectList(list_select, "CreditCardId", "CcdItem",id);
             return PartialView("~/Areas/CreditCard/Views/CcdData/AddBill.cshtml");
         }
         [HttpPost]

@@ -15,17 +15,17 @@ namespace LeeInfo.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Action = table.Column<string>(unicode: false, maxLength: 50, nullable: true),
-                    Area = table.Column<string>(unicode: false, maxLength: 50, nullable: true),
-                    Controller = table.Column<string>(unicode: false, maxLength: 50, nullable: true),
-                    Description = table.Column<string>(unicode: false, maxLength: 50, nullable: true),
+                    Action = table.Column<string>(nullable: true),
+                    Area = table.Column<string>(nullable: true),
+                    Controller = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     Follow = table.Column<int>(nullable: false),
                     Grade = table.Column<int>(nullable: false),
-                    Ico = table.Column<string>(unicode: false, maxLength: 50, nullable: true),
-                    Name = table.Column<string>(unicode: false, maxLength: 50, nullable: false),
+                    Ico = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
                     Sequence = table.Column<int>(nullable: false),
-                    State = table.Column<string>(unicode: false, maxLength: 50, nullable: true),
-                    Url = table.Column<string>(unicode: false, maxLength: 50, nullable: true),
+                    State = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true),
                     Valid = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -56,16 +56,20 @@ namespace LeeInfo.Data.Migrations
                 name: "Frx_Account",
                 columns: table => new
                 {
-                    AccountId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    AccountNumber = table.Column<string>(nullable: true),
-                    AccountPassword = table.Column<string>(nullable: true),
-                    Platform = table.Column<string>(nullable: true),
+                    AccountNumber = table.Column<int>(nullable: false),
+                    Balance = table.Column<double>(nullable: false),
+                    BrokerName = table.Column<string>(nullable: true),
+                    Currency = table.Column<string>(nullable: true),
+                    Equity = table.Column<double>(nullable: false),
+                    IsLive = table.Column<bool>(nullable: false),
+                    Password = table.Column<string>(nullable: true),
+                    PreciseLeverage = table.Column<double>(nullable: false),
+                    UnrealizedNetProfit = table.Column<double>(nullable: false),
                     UserName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Frx_Account", x => x.AccountId);
+                    table.PrimaryKey("PK_Frx_Account", x => x.AccountNumber);
                 });
 
             migrationBuilder.CreateTable(
@@ -99,17 +103,18 @@ namespace LeeInfo.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Frx_Ecs",
+                name: "Frx_Server",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    EcsName = table.Column<string>(nullable: true),
-                    EcsTime = table.Column<DateTime>(nullable: false)
+                    AccountNumber = table.Column<int>(nullable: false),
+                    ServerName = table.Column<string>(nullable: true),
+                    ServerTime = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Frx_Ecs", x => x.Id);
+                    table.PrimaryKey("PK_Frx_Server", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -193,11 +198,32 @@ namespace LeeInfo.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Frx_AccountData",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    AccountNumber = table.Column<int>(nullable: false),
+                    Balance = table.Column<string>(nullable: true),
+                    Enquey = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Frx_AccountData", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Frx_AccountData_Frx_Account_AccountNumber",
+                        column: x => x.AccountNumber,
+                        principalTable: "Frx_Account",
+                        principalColumn: "AccountNumber",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Frx_History",
                 columns: table => new
                 {
                     ClosingDealId = table.Column<int>(nullable: false),
-                    AccountId = table.Column<int>(nullable: false),
+                    AccountNumber = table.Column<int>(nullable: false),
                     Balance = table.Column<double>(nullable: false),
                     ClosingPrice = table.Column<double>(nullable: false),
                     ClosingTime = table.Column<DateTime>(nullable: false),
@@ -220,10 +246,10 @@ namespace LeeInfo.Data.Migrations
                 {
                     table.PrimaryKey("PK_Frx_History", x => x.ClosingDealId);
                     table.ForeignKey(
-                        name: "FK_Frx_History_Frx_Account_AccountId",
-                        column: x => x.AccountId,
+                        name: "FK_Frx_History_Frx_Account_AccountNumber",
+                        column: x => x.AccountNumber,
                         principalTable: "Frx_Account",
-                        principalColumn: "AccountId",
+                        principalColumn: "AccountNumber",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -232,7 +258,7 @@ namespace LeeInfo.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false),
-                    AccountId = table.Column<int>(nullable: false),
+                    AccountNumber = table.Column<int>(nullable: false),
                     Comment = table.Column<string>(nullable: true),
                     Commissions = table.Column<double>(nullable: false),
                     EntryPrice = table.Column<double>(nullable: false),
@@ -253,10 +279,10 @@ namespace LeeInfo.Data.Migrations
                 {
                     table.PrimaryKey("PK_Frx_Position", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Frx_Position_Frx_Account_AccountId",
-                        column: x => x.AccountId,
+                        name: "FK_Frx_Position_Frx_Account_AccountNumber",
+                        column: x => x.AccountNumber,
                         principalTable: "Frx_Account",
-                        principalColumn: "AccountId",
+                        principalColumn: "AccountNumber",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -341,14 +367,19 @@ namespace LeeInfo.Data.Migrations
                 column: "PosId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Frx_History_AccountId",
-                table: "Frx_History",
-                column: "AccountId");
+                name: "IX_Frx_AccountData_AccountNumber",
+                table: "Frx_AccountData",
+                column: "AccountNumber");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Frx_Position_AccountId",
+                name: "IX_Frx_History_AccountNumber",
+                table: "Frx_History",
+                column: "AccountNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Frx_Position_AccountNumber",
                 table: "Frx_Position",
-                column: "AccountId");
+                column: "AccountNumber");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -366,16 +397,19 @@ namespace LeeInfo.Data.Migrations
                 name: "Ccd_Record");
 
             migrationBuilder.DropTable(
-                name: "Frx_Cbotset");
+                name: "Frx_AccountData");
 
             migrationBuilder.DropTable(
-                name: "Frx_Ecs");
+                name: "Frx_Cbotset");
 
             migrationBuilder.DropTable(
                 name: "Frx_History");
 
             migrationBuilder.DropTable(
                 name: "Frx_Position");
+
+            migrationBuilder.DropTable(
+                name: "Frx_Server");
 
             migrationBuilder.DropTable(
                 name: "Ccd_Data");

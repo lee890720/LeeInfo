@@ -17,9 +17,9 @@ namespace LeeInfo.Data
         public virtual DbSet<CcdRecord> CcdRecord { get; set; }
         public virtual DbSet<FrxAccount> FrxAccount { get; set; }
         public virtual DbSet<FrxCbotset> FrxCbotset { get; set; }
-        public virtual DbSet<FrxEcs> FrxEcs { get; set; }
         public virtual DbSet<FrxHistory> FrxHistory { get; set; }
         public virtual DbSet<FrxPosition> FrxPosition { get; set; }
+        public virtual DbSet<FrxServer> FrxServer { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -30,39 +30,6 @@ namespace LeeInfo.Data
             modelBuilder.Entity<AppMenu>(entity =>
             {
                 entity.ToTable("App_Menu");
-
-                entity.Property(e => e.Action)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Area)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Controller)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Description)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Ico)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.State)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Url)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<CcdBill>(entity =>
@@ -209,19 +176,16 @@ namespace LeeInfo.Data
 
             modelBuilder.Entity<FrxAccount>(entity =>
             {
-                entity.HasKey(e => e.AccountId);
+                entity.HasKey(e => e.AccountNumber);
 
                 entity.ToTable("Frx_Account");
             });
 
             modelBuilder.Entity<FrxCbotset>(entity =>
             {
-                entity.ToTable("Frx_Cbotset");
-            });
+                entity.HasKey(e => e.Id);
 
-            modelBuilder.Entity<FrxEcs>(entity =>
-            {
-                entity.ToTable("Frx_Ecs");
+                entity.ToTable("Frx_Cbotset");
             });
 
             modelBuilder.Entity<FrxHistory>(entity =>
@@ -230,26 +194,35 @@ namespace LeeInfo.Data
 
                 entity.ToTable("Frx_History");
 
-                entity.HasIndex(e => e.AccountId);
+                entity.HasIndex(e => e.AccountNumber);
 
                 entity.Property(e => e.ClosingDealId).ValueGeneratedNever();
 
                 entity.HasOne(d => d.FrxAccount)
                     .WithMany(p => p.FrxHistory)
-                    .HasForeignKey(d => d.AccountId);
+                    .HasForeignKey(d => d.AccountNumber);
             });
 
             modelBuilder.Entity<FrxPosition>(entity =>
             {
+                entity.HasKey(e => e.Id);
+
                 entity.ToTable("Frx_Position");
 
-                entity.HasIndex(e => e.AccountId);
+                entity.HasIndex(e => e.AccountNumber);
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.HasOne(d => d.FrxAccount)
                     .WithMany(p => p.FrxPosition)
-                    .HasForeignKey(d => d.AccountId);
+                    .HasForeignKey(d => d.AccountNumber);
+            });
+
+            modelBuilder.Entity<FrxServer>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.ToTable("Frx_Server");
             });
         }
     }

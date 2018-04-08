@@ -27,44 +27,27 @@ namespace LeeInfo.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Action")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Action");
 
-                    b.Property<string>("Area")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Area");
 
-                    b.Property<string>("Controller")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Controller");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Description");
 
                     b.Property<int>("Follow");
 
                     b.Property<int>("Grade");
 
-                    b.Property<string>("Ico")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Ico");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Name");
 
                     b.Property<int>("Sequence");
 
-                    b.Property<string>("State")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("State");
 
-                    b.Property<string>("Url")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
+                    b.Property<string>("Url");
 
                     b.Property<bool>("Valid");
 
@@ -266,18 +249,27 @@ namespace LeeInfo.Data.Migrations
 
             modelBuilder.Entity("LeeInfo.Data.Forex.FrxAccount", b =>
                 {
-                    b.Property<int>("AccountId")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("AccountNumber");
 
-                    b.Property<string>("AccountNumber");
+                    b.Property<double>("Balance");
 
-                    b.Property<string>("AccountPassword");
+                    b.Property<string>("BrokerName");
 
-                    b.Property<string>("Platform");
+                    b.Property<string>("Currency");
+
+                    b.Property<double>("Equity");
+
+                    b.Property<bool>("IsLive");
+
+                    b.Property<string>("Password");
+
+                    b.Property<double>("PreciseLeverage");
+
+                    b.Property<double>("UnrealizedNetProfit");
 
                     b.Property<string>("UserName");
 
-                    b.HasKey("AccountId");
+                    b.HasKey("AccountNumber");
 
                     b.ToTable("Frx_Account");
                 });
@@ -328,25 +320,11 @@ namespace LeeInfo.Data.Migrations
                     b.ToTable("Frx_Cbotset");
                 });
 
-            modelBuilder.Entity("LeeInfo.Data.Forex.FrxEcs", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("EcsName");
-
-                    b.Property<DateTime>("EcsTime");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Frx_Ecs");
-                });
-
             modelBuilder.Entity("LeeInfo.Data.Forex.FrxHistory", b =>
                 {
                     b.Property<int>("ClosingDealId");
 
-                    b.Property<int>("AccountId");
+                    b.Property<int>("AccountNumber");
 
                     b.Property<double>("Balance");
 
@@ -384,7 +362,7 @@ namespace LeeInfo.Data.Migrations
 
                     b.HasKey("ClosingDealId");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountNumber");
 
                     b.ToTable("Frx_History");
                 });
@@ -393,7 +371,7 @@ namespace LeeInfo.Data.Migrations
                 {
                     b.Property<int>("Id");
 
-                    b.Property<int>("AccountId");
+                    b.Property<int>("AccountNumber");
 
                     b.Property<string>("Comment");
 
@@ -427,9 +405,25 @@ namespace LeeInfo.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountNumber");
 
                     b.ToTable("Frx_Position");
+                });
+
+            modelBuilder.Entity("LeeInfo.Data.Forex.FrxServer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AccountNumber");
+
+                    b.Property<string>("ServerName");
+
+                    b.Property<DateTime>("ServerTime");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Frx_Server");
                 });
 
             modelBuilder.Entity("LeeInfo.Data.CreditCard.CcdBill", b =>
@@ -486,7 +480,7 @@ namespace LeeInfo.Data.Migrations
                 {
                     b.HasOne("LeeInfo.Data.Forex.FrxAccount", "FrxAccount")
                         .WithMany("FrxHistory")
-                        .HasForeignKey("AccountId")
+                        .HasForeignKey("AccountNumber")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -494,7 +488,7 @@ namespace LeeInfo.Data.Migrations
                 {
                     b.HasOne("LeeInfo.Data.Forex.FrxAccount", "FrxAccount")
                         .WithMany("FrxPosition")
-                        .HasForeignKey("AccountId")
+                        .HasForeignKey("AccountNumber")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

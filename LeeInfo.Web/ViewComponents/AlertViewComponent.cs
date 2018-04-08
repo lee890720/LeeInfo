@@ -30,8 +30,8 @@ namespace LeeInfo.Web.ViewComponents
             {
                 list_alert.Add(new AlertViewModel { Info = "Debt Bills", Count = ccdDebt.Count, Ico = "fa fa-yen text-yellow", Url = "/CreditCard/CcdDebt" });
             }
-            var frxEcs = await _context.FrxEcs.SingleOrDefaultAsync(f => f.EcsName == "LeeInfo");
-            if (frxEcs.EcsTime.AddMinutes(1) < DateTime.UtcNow)
+            var frxEcs = await _context.FrxServer.SingleOrDefaultAsync(f => f.ServerName == "LeeInfo");
+            if (frxEcs.ServerTime.AddMinutes(1) < DateTime.UtcNow)
             {
                 list_alert.Add(new AlertViewModel { Info = "The ECS has a mistake", Ico = "fa fa-database text-red", Url = "/" });
             }
