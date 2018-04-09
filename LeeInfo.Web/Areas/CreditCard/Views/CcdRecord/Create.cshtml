@@ -81,10 +81,10 @@
                                         <td>
                                             @Html.DisplayFor(modelItem => item.BillAmount)
                                         </td>
-                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
+                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                                             @Html.DisplayFor(modelItem => item.OutstandingAmount)
                                         </td>
-                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
+                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
                                             @Html.DisplayFor(modelItem => item.RepaymentDate)
                                         </td>
                                         <td>
@@ -93,7 +93,7 @@
                                         <td>
                                             @Html.DisplayFor(modelItem => item.ExpendSum)
                                         </td>
-                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
+                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:fuchsia">
                                             @Html.DisplayFor(modelItem => item.Total)
                                         </td>
                                     </tr>
@@ -118,7 +118,7 @@
                 'order': [[5, "asc"]],
                 'pageLength':10,
                 initComplete: function () {
-                    $("#mytool").append('<a  class="btn btn-primary" style="width:80px;margin-right:5px" href="@path/Index"><i class="glyphicon glyphicon-plus"></i> Index</a><a class="btn btn-primary" style="width:80px;margin-right:5px" href="@path/RecordList"><i class="glyphicon glyphicon-th-list"></i> Details</a><a  class="btn btn-primary" style="width:160px;color:yellow;font-weight:900">@ViewBag.SumTotal/@ViewBag.SumOut</a>');
+                    $("#mytool").append('<a  class="btn btn-primary" style="width:80px;border-radius:0;" href="@path/Index"><i class="glyphicon glyphicon-plus"></i> Index</a><a class="btn btn-primary" style="width:80px;border-radius:0;" href="@path/RecordList"><i class="glyphicon glyphicon-th-list"></i> Details</a><a  class="btn btn-primary" style="width:80px;border-radius:0;">@ViewBag.SumOut</a><a  class="btn btn-primary" style="width:80px;border-radius:0;">@ViewBag.SumTotal</a>');
                 }
             })
         $('#example2').DataTable({

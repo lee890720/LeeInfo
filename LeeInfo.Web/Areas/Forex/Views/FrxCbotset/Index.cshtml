@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<FrxCbotset>
-@{
+    @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
     var areaName = ViewContext.RouteData.Values["area"].ToString();
@@ -8,101 +8,101 @@
     ViewData["area"] = areaName;
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
-}
-<section class="content-header">
-    <h1>
-        @ViewData["action"]
-        <small>@ViewData["controller"]</small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> @ViewData["area"]</a></li>
-        <li class="active"> @ViewData["controller"]</li>
-    </ol>
-</section>
-<section class="content">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header">
-                    @*<h3 class="box-title">Data Table With Full Features</h3>*@
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body table-responsive">
-                    <table id="example1" class="table  table-bordered table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Symbol)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.InitVolume)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Brk)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Distance)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.IsTrade)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.IsBreak)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.IsBrkFirst)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Result)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Average)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Magnify)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Sub)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Cr)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Ca)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Sr)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Sa)
-                                </th>
-                                <th>
-                                    Ra
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Signal)
-                                </th>
-                                <th>
-                                    Sbrk
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Alike)
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
+    }
+    <section class="content-header">
+        <h1>
+            @ViewData["action"]
+            <small>@ViewData["controller"]</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> @ViewData["area"]</a></li>
+            <li class="active"> @ViewData["controller"]</li>
+        </ol>
+    </section>
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        @*<h3 class="box-title">Data Table With Full Features</h3>*@
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body table-responsive">
+                        <table id="example1" class="table  table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Symbol)
+                                    </th>
+                                    <th>
+                                        @*@Html.DisplayNameFor(model => model.InitVolume)*@Volume
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Brk)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Distance)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.IsTrade)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.IsBreak)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.IsBrkFirst)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Result)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Average)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Magnify)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Sub)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Cr)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Ca)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Sr)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Sa)
+                                    </th>
+                                    <th>
+                                        Ra
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Signal)
+                                    </th>
+                                    <th>
+                                        Sbrk
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Alike)
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
                                 double srsa = 0;
                                 if (item.Sr.HasValue && item.Sa.HasValue)
                                 {
-                                    srsa = Math.Abs((double)(item.Sr - item.Sa));
+                                srsa = Math.Abs((double)(item.Sr - item.Sa));
                                 }
                                 string isbrk = null;
                                 if (Math.Abs((double)item.Sr) > item.Brk)
                                 {
-                                    isbrk = "break";
+                                isbrk = "break";
                                 }
                                 <tr>
                                     <td>
@@ -171,19 +171,19 @@
                                         </a>
                                     </td>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
                 </div>
-                <!-- /.box-body -->
+                <!-- /.box -->
             </div>
-            <!-- /.box -->
+            <!-- /.col -->
         </div>
-        <!-- /.col -->
-    </div>
-    <!-- /.row -->
-</section>
-@section Scripts{
+        <!-- /.row -->
+    </section>
+    @section Scripts{
     <script>
     $(function () {
         $('#example1').DataTable(
@@ -203,5 +203,9 @@
             'autoWidth': false
         })
     })
+    function myrefresh(){
+        window.location.reload();
+        }
+    setTimeout('myrefresh()',60000); //指定1秒刷新一次
     </script>
-}
+    }

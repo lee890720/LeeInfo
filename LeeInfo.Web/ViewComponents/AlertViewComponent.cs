@@ -30,10 +30,13 @@ namespace LeeInfo.Web.ViewComponents
             {
                 list_alert.Add(new AlertViewModel { Info = "Debt Bills", Count = ccdDebt.Count, Ico = "fa fa-yen text-yellow", Url = "/CreditCard/CcdDebt" });
             }
-            var frxEcs = await _context.FrxServer.SingleOrDefaultAsync(f => f.ServerName == "LeeInfo");
-            if (frxEcs.ServerTime.AddMinutes(1) < DateTime.UtcNow)
+            var frxServer = await _context.FrxServer.ToListAsync() ;
+            foreach (var f in frxServer)
             {
-                list_alert.Add(new AlertViewModel { Info = "The ECS has a mistake", Ico = "fa fa-database text-red", Url = "/" });
+                if (f.ServerTime.AddMinutes(1) < DateTime.UtcNow)
+                {
+                    list_alert.Add(new AlertViewModel { Info = f.ServerName+" has a mistaks.", Ico = "fa fa-database text-red", Url = "/" });
+                }
             }
             return View(list_alert);
         }
