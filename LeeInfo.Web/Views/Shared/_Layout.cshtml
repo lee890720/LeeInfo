@@ -55,6 +55,7 @@ desired effect
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
                         <!-- Notifications Menu -->
+                        @await  Component.InvokeAsync("Forex")
                         @await Component.InvokeAsync("Alert")
                         @await Component.InvokeAsync("Task")
                         <!-- User Account Menu -->

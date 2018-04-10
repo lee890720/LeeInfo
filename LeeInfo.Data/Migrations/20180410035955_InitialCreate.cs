@@ -198,27 +198,6 @@ namespace LeeInfo.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Frx_AccountData",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    AccountNumber = table.Column<int>(nullable: false),
-                    Balance = table.Column<string>(nullable: true),
-                    Enquey = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Frx_AccountData", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Frx_AccountData_Frx_Account_AccountNumber",
-                        column: x => x.AccountNumber,
-                        principalTable: "Frx_Account",
-                        principalColumn: "AccountNumber",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Frx_History",
                 columns: table => new
                 {
@@ -367,11 +346,6 @@ namespace LeeInfo.Data.Migrations
                 column: "PosId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Frx_AccountData_AccountNumber",
-                table: "Frx_AccountData",
-                column: "AccountNumber");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Frx_History_AccountNumber",
                 table: "Frx_History",
                 column: "AccountNumber");
@@ -395,9 +369,6 @@ namespace LeeInfo.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Ccd_Record");
-
-            migrationBuilder.DropTable(
-                name: "Frx_AccountData");
 
             migrationBuilder.DropTable(
                 name: "Frx_Cbotset");

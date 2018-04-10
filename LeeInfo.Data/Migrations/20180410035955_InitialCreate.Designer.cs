@@ -13,7 +13,7 @@ using System;
 namespace LeeInfo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20180408110042_InitialCreate")]
+    [Migration("20180410035955_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -275,24 +275,6 @@ namespace LeeInfo.Data.Migrations
                     b.ToTable("Frx_Account");
                 });
 
-            modelBuilder.Entity("LeeInfo.Data.Forex.FrxAccountData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("AccountNumber");
-
-                    b.Property<string>("Balance");
-
-                    b.Property<string>("Enquey");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountNumber");
-
-                    b.ToTable("Frx_AccountData");
-                });
-
             modelBuilder.Entity("LeeInfo.Data.Forex.FrxCbotset", b =>
                 {
                     b.Property<int>("Id")
@@ -493,14 +475,6 @@ namespace LeeInfo.Data.Migrations
                         .WithMany("CcdRecord")
                         .HasForeignKey("PosId")
                         .HasConstraintName("FK_dbo.Ccd_Record_dbo.Ccd_Pos_PosId");
-                });
-
-            modelBuilder.Entity("LeeInfo.Data.Forex.FrxAccountData", b =>
-                {
-                    b.HasOne("LeeInfo.Data.Forex.FrxAccount", "FrxAccount")
-                        .WithMany("FrxAccountData")
-                        .HasForeignKey("AccountNumber")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("LeeInfo.Data.Forex.FrxHistory", b =>
