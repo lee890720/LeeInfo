@@ -1,5 +1,5 @@
 ﻿@using LeeInfo.Library;
-@model List<Connect_API.Accounts.Position>
+@model List<Connect_API.Accounts.Deal>
 
 @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
@@ -37,31 +37,31 @@
                                     ID(Label/Comment)
                                 </th>
                                 <th>
-                                    EntryTime
-                                </th>
-                                <th>
                                     Symbol
                                 </th>
                                 <th>
-                                    Volume
+                                    Direction
                                 </th>
                                 <th>
-                                    TradeType
+                                    OpeningTime
+                                </th>
+                                <th>
+                                    ClosingTime
                                 </th>
                                 <th>
                                     EntryPrice
                                 </th>
                                 <th>
-                                    CurrentPrice
+                                    ClosingPrice
                                 </th>
                                 <th>
-                                    Swap
+                                    Volume
                                 </th>
                                 <th>
                                     Commission
                                 </th>
                                 <th>
-                                    Channel
+                                    Swap
                                 </th>
                                 <th>
                                     Pips
@@ -74,49 +74,51 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                <tr>
-                                    <td>
-                                        <span title="@item.Label / @item.Comment">@item.PositionID</span>
-                                    </td>
-                                    <td>
-                                        @ConvertJson.StampToDateTime(item.EntryTimestamp)
-                                    </td>
-                                    <td>
-                                        @item.SymbolName
-                                    </td>
-                                    <td>
-                                        @item.Volume
-                                    </td>
-                                    <td>
-                                        @item.TradeSide
-                                    </td>
-                                    <td>
-                                        @item.EntryPrice
-                                    </td>
-                                    <td>
-                                        @item.CurrentPrice
-                                    </td>
-                                    <td>
-                                        @item.Swap
-                                    </td>
-                                    <td>
-                                        @item.Commission
-                                    </td>
-                                    <td>
-                                        @item.Channel
-                                    </td>
-                                    <td>
-                                        @item.ProfitInPips
-                                    </td>
-                                    <td>
-                                        @{
-                                            var net = Convert.ToDouble(item.Profit);
-                                            net += Convert.ToDouble(item.Swap);
-                                            net += Convert.ToDouble(item.Commission);
-                                        }
-                                        @net
-                                    </td>
-                                </tr>
+                                {
+                                    <tr>
+                                        <td>
+                                            <span title="@item.Label / @item.Comment">@item.DealID</span>
+                                        </td>
+                                        <td>
+                                            @item.SymbolName
+                                        </td>
+                                        <td>
+                                            @item.TradeSide
+                                        </td>
+                                        <td>
+                                            @ConvertJson.StampToDateTime(item.CreateTimestamp)
+                                        </td>
+                                        <td>
+                                            @ConvertJson.StampToDateTime(item.ExecutionTimestamp)
+                                        </td>
+                                        <td>
+                                            @item.PositionCloseDetails.EntryPrice
+                                        </td>
+                                        <td>
+                                            @item.ExecutionPrice
+                                        </td>
+                                        <td>
+                                            @item.PositionCloseDetails.ClosedVolume
+                                        </td>
+                                        <td>
+                                            @item.PositionCloseDetails.Commission
+                                        </td>
+                                        <td>
+                                            @item.PositionCloseDetails.Swap
+                                        </td>
+                                        <td>
+                                            @item.PositionCloseDetails.ProfitInPips
+                                        </td>
+                                        <td>
+                                            @{
+                                                var net = Convert.ToDouble(item.PositionCloseDetails.Profit);
+                                                net += Convert.ToDouble(item.PositionCloseDetails.Swap);
+                                                net += Convert.ToDouble(item.PositionCloseDetails.Commission);
+                                            }
+                                            @net
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>

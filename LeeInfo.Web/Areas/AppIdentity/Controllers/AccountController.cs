@@ -34,8 +34,7 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model,
-                string returnUrl)
+        public async Task<IActionResult> Login(string returnUrl,LoginModel model)
         {
             if (ModelState.IsValid)
             {

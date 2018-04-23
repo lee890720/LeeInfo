@@ -12,7 +12,7 @@ namespace LeeInfo.Data.Forex
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        public int AccountNumber { get; set; }
+        public int AccountId { get; set; }
         public string SymbolCode { get; set; }
         public TradeType TradeType { get; set; }
         public long Volume { get; set; }
@@ -20,6 +20,7 @@ namespace LeeInfo.Data.Forex
         public string Label { get; set; }
         public string Comment { get; set; }
         public double EntryPrice { get; set; }
+        public double CurrentPrice { get; set; }
         public DateTime EntryTime { get; set; }
         public double? TakeProfit { get; set; }
         public double? StopLoss { get; set; }
@@ -28,6 +29,8 @@ namespace LeeInfo.Data.Forex
         public double GrossProfit { get; set; }
         public double NetProfit { get; set; }
         public double Pips { get; set; }
+        public string Channel { get; set; }
+        public double MarginRate { get; set; }
 
         public FrxAccount FrxAccount { get; set; }
     }

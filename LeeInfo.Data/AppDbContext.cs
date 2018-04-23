@@ -18,7 +18,7 @@ namespace LeeInfo.Data
         public virtual DbSet<FrxAccount> FrxAccount { get; set; }
         public virtual DbSet<FrxCbotset> FrxCbotset { get; set; }
         public virtual DbSet<FrxHistory> FrxHistory { get; set; }
-        public virtual DbSet<FrxPosition> FrxPosition { get; set; }
+       public virtual DbSet<FrxPosition> FrxPosition { get; set; }
         public virtual DbSet<FrxServer> FrxServer { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -176,7 +176,7 @@ namespace LeeInfo.Data
 
             modelBuilder.Entity<FrxAccount>(entity =>
             {
-                entity.HasKey(e => e.AccountNumber);
+                entity.HasKey(e => e.AccountId);
 
                 entity.ToTable("Frx_Account");
             });
@@ -194,13 +194,13 @@ namespace LeeInfo.Data
 
                 entity.ToTable("Frx_History");
 
-                entity.HasIndex(e => e.AccountNumber);
+                entity.HasIndex(e => e.AccountId);
 
                 entity.Property(e => e.ClosingDealId).ValueGeneratedNever();
 
                 entity.HasOne(d => d.FrxAccount)
                     .WithMany(p => p.FrxHistory)
-                    .HasForeignKey(d => d.AccountNumber);
+                    .HasForeignKey(d => d.AccountId);
             });
 
             modelBuilder.Entity<FrxPosition>(entity =>
@@ -209,13 +209,13 @@ namespace LeeInfo.Data
 
                 entity.ToTable("Frx_Position");
 
-                entity.HasIndex(e => e.AccountNumber);
+                entity.HasIndex(e => e.AccountId);
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.HasOne(d => d.FrxAccount)
                     .WithMany(p => p.FrxPosition)
-                    .HasForeignKey(d => d.AccountNumber);
+                    .HasForeignKey(d => d.AccountId);
             });
 
             modelBuilder.Entity<FrxServer>(entity =>

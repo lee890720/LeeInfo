@@ -15,10 +15,12 @@ namespace LeeInfo.Data.Forex
         }
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.None)]
+        public int AccountId { get; set; }
         public int AccountNumber { get; set; }
         public string Password { get; set; }
         public string BrokerName { get; set; }
         public string Currency { get; set; }
+        public DateTime TraderRegistrationTime { get; set; }
         public bool IsLive { get; set; }
         public double Balance { get; set; }
         public double Equity { get; set; }

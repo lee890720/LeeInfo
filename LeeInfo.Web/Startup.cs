@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using LeeInfo.Data.AppIdentity;
 using LeeInfo.Data;
+using Microsoft.AspNetCore.Http;
+using LeeInfo.Web.Infrastructure;
 
 namespace LeeInfo.Web
 {

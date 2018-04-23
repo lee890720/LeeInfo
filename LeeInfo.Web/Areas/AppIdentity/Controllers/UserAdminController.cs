@@ -45,7 +45,8 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
                 {
                     UserName = model.Name,
                     Email = model.Email,
-                    RegisterDate = DateTime.Now
+                    RegisterDate = DateTime.Now,
+                    UserImage="~/lib/adminlte/img/photo2.png"
                 };
                 IdentityResult result
                     = await userManager.CreateAsync(user, model.Password);
@@ -123,12 +124,18 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Edit(string id, string email,
-                string password)
+                string password,SexType sex,string userImage,string clientId,string clientSecret,string accessToken,string refreshToken)
         {
             AppIdentityUser user = await userManager.FindByIdAsync(id);
             if (user != null)
             {
                 user.Email = email;
+                user.Sex = sex;
+                user.UserImage = userImage;
+                user.ClientId = clientId;
+                user.ClientSecret = clientSecret;
+                user.AccessToken = accessToken;
+                user.RefreshToken = refreshToken;
                 IdentityResult validEmail
                     = await userValidator.ValidateAsync(userManager, user);
                 if (!validEmail.Succeeded)

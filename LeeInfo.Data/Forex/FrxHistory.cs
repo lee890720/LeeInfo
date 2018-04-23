@@ -12,7 +12,7 @@ namespace LeeInfo.Data.Forex
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.None)]
         public int ClosingDealId { get; set; }
-        public int AccountNumber { get; set; }
+        public int AccountId { get; set; }
         public string SymbolCode { get; set; }
         public TradeType TradeType { get; set; }
         public long Volume { get; set; }
@@ -30,6 +30,14 @@ namespace LeeInfo.Data.Forex
         public double Pips { get; set; }
         public double Balance { get; set; }
         public int PositionId { get; set; }
+        public double BaseToUSDConversionRate { get; set; }
+        public double MarginRate { get; set; }
+        public int BalanceVersion { get; set; }
+        public double? QuoteToDepositConversionRate { get; set; }
+        public double? ClosedToDepoitConversionRate { get; set; }
+        public double Equity { get; set; }
+        public double Roi { get; set; }
+        public double EquityBaseRoi { get; set; }
 
         public FrxAccount FrxAccount { get; set; }
     }
