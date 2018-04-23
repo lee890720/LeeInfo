@@ -8,10 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Forex\Views\Default\**" />
     <Compile Remove="Areas\Forex\Views\Shared\**" />
+    <Content Remove="Areas\Forex\Views\Default\**" />
     <Content Remove="Areas\Forex\Views\Shared\**" />
+    <EmbeddedResource Remove="Areas\Forex\Views\Default\**" />
     <EmbeddedResource Remove="Areas\Forex\Views\Shared\**" />
+    <None Remove="Areas\Forex\Views\Default\**" />
     <None Remove="Areas\Forex\Views\Shared\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Areas\Forex\Controllers\DefaultController.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,6 +73,7 @@
     <None Include="Areas\CreditCard\Views\CcdRecord\_PartialCreate.cshtml" />
     <None Include="Areas\CreditCard\Views\_ViewImports.cshtml" />
     <None Include="Areas\CreditCard\Views\_ViewStart.cshtml" />
+    <None Include="Areas\Forex\Views\FrxHistory\Index.cshtml" />
     <None Include="wwwroot\lib\icheck\icheck.js" />
     <None Include="wwwroot\lib\icheck\icheck.min.js" />
   </ItemGroup>

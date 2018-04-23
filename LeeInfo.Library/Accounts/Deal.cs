@@ -17,7 +17,7 @@ namespace Connect_API.Accounts
         /// The deal identifier.
         /// </value>
         [JsonProperty("dealId")]
-        public string DealID { get; set; }
+        public int DealID { get; set; }
 
         /// <summary>
         /// Gets or sets the position identifier.
@@ -26,7 +26,7 @@ namespace Connect_API.Accounts
         /// The position identifier.
         /// </value>
         [JsonProperty("positionId")]
-        public string PositionID { get; set; }
+        public int PositionID { get; set; }
 
         /// <summary>
         /// Gets or sets the order identifier.
@@ -35,7 +35,7 @@ namespace Connect_API.Accounts
         /// The order identifier.
         /// </value>
         [JsonProperty("orderId")]
-        public string OrderID { get; set; }
+        public int OrderID { get; set; }
 
         /// <summary>
         /// Gets or sets the trade side.
@@ -53,7 +53,7 @@ namespace Connect_API.Accounts
         /// The volume.
         /// </value>
         [JsonProperty("volume")]
-        public string Volume { get; set; }
+        public long Volume { get; set; }
 
         /// <summary>
         /// Gets or sets the filled volume.
@@ -62,7 +62,7 @@ namespace Connect_API.Accounts
         /// The filled volume.
         /// </value>
         [JsonProperty("filledVolume")]
-        public string FilledVolume { get; set; }
+        public long FilledVolume { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the symbol.
@@ -80,7 +80,7 @@ namespace Connect_API.Accounts
         /// The commision.
         /// </value>
         [JsonProperty("commision")]
-        public string Commision { get; set; }
+        public double Commision { get; set; }
 
         /// <summary>
         /// Gets or sets the execution price.
@@ -89,7 +89,7 @@ namespace Connect_API.Accounts
         /// The execution price.
         /// </value>
         [JsonProperty("executionPrice")]
-        public string ExecutionPrice { get; set; }
+        public double ExecutionPrice { get; set; }
 
         /// <summary>
         /// Gets or sets the base to usd conversion rate.
@@ -98,7 +98,7 @@ namespace Connect_API.Accounts
         /// The base to usd conversion rate.
         /// </value>
         [JsonProperty("baseToUsdConversionRate")]
-        public string BaseToUSDConversionRate { get; set; }
+        public double BaseToUSDConversionRate { get; set; }
 
         /// <summary>
         /// Gets or sets the margin rate.
@@ -107,7 +107,7 @@ namespace Connect_API.Accounts
         /// The margin rate.
         /// </value>
         [JsonProperty("marginRate")]
-        public string MarginRate { get; set; }
+        public double MarginRate { get; set; }
 
         /// <summary>
         /// Gets or sets the test partner.

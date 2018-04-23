@@ -1,5 +1,5 @@
 ﻿@using LeeInfo.Library;
-@model List<Connect_API.Accounts.Position>
+@model IEnumerable<FrxPosition>
 
 @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
@@ -76,19 +76,19 @@
                             {
                                 <tr>
                                     <td>
-                                        <span title="@item.Label / @item.Comment">@item.PositionID</span>
+                                        <span title="@item.Label / @item.Comment">@item.Id</span>
                                     </td>
                                     <td>
-                                        @ConvertJson.StampToDateTime(item.EntryTimestamp)
+                                        @item.EntryTime
                                     </td>
                                     <td>
-                                        @item.SymbolName
+                                        @item.SymbolCode
                                     </td>
                                     <td>
                                         @item.Volume
                                     </td>
                                     <td>
-                                        @item.TradeSide
+                                        @item.TradeType
                                     </td>
                                     <td>
                                         @item.EntryPrice
@@ -100,21 +100,16 @@
                                         @item.Swap
                                     </td>
                                     <td>
-                                        @item.Commission
+                                        @item.Commissions
                                     </td>
                                     <td>
                                         @item.Channel
                                     </td>
                                     <td>
-                                        @item.ProfitInPips
+                                        @item.Pips
                                     </td>
                                     <td>
-                                        @{
-                                            var net = Convert.ToDouble(item.Profit);
-                                            net += Convert.ToDouble(item.Swap);
-                                            net += Convert.ToDouble(item.Commission);
-                                        }
-                                        @net
+                                     @item.NetProfit
                                     </td>
                                 </tr>
                             }

@@ -77,7 +77,7 @@ namespace Connect_API.Accounts
         /// The leverage.
         /// </value>
         [JsonProperty("leverage")]
-        public string Leverage { get; set; }
+        public double Leverage { get; set; }
         /// <summary>
         /// Gets or sets the balance.
         /// </summary>
@@ -85,7 +85,7 @@ namespace Connect_API.Accounts
         /// The balance.
         /// </value>
         [JsonProperty("balance")]
-        public string Balance { get; set; }
+        public double Balance { get; set; }
         /// <summary>
         /// Gets or sets the deleted.
         /// </summary>

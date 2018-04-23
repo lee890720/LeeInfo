@@ -17,7 +17,7 @@ namespace Connect_API.Accounts
         /// The position identifier.
         /// </value>
         [JsonProperty("positionID")]
-        public string PositionID { get; set; }
+        public int PositionID { get; set; }
 
         /// <summary>
         /// Gets or sets the entry timestamp.
@@ -62,7 +62,7 @@ namespace Connect_API.Accounts
         /// The entry price.
         /// </value>
         [JsonProperty("entryPrice")]
-        public string EntryPrice { get; set; }
+        public double EntryPrice { get; set; }
 
         /// <summary>
         /// Gets or sets the volume.
@@ -71,7 +71,7 @@ namespace Connect_API.Accounts
         /// The volume.
         /// </value>
         [JsonProperty("volume")]
-        public string Volume { get; set; }
+        public long Volume { get; set; }
 
         /// <summary>
         /// Gets or sets the stop loss.
@@ -80,7 +80,7 @@ namespace Connect_API.Accounts
         /// The stop loss.
         /// </value>
         [JsonProperty("stopLoss")]
-        public string StopLoss { get; set; }
+        public double? StopLoss { get; set; }
 
         /// <summary>
         /// Gets or sets the take profit.
@@ -89,7 +89,7 @@ namespace Connect_API.Accounts
         /// The take profit.
         /// </value>
         [JsonProperty("takeProfit")]
-        public string TakeProfit { get; set; }
+        public double? TakeProfit { get; set; }
 
         /// <summary>
         /// Gets or sets the profit.
@@ -98,7 +98,7 @@ namespace Connect_API.Accounts
         /// The profit.
         /// </value>
         [JsonProperty("profit")]
-        public string Profit { get; set; }
+        public double Profit { get; set; }
 
         /// <summary>
         /// Gets or sets the profit in pips.
@@ -107,7 +107,7 @@ namespace Connect_API.Accounts
         /// The profit in pips.
         /// </value>
         [JsonProperty("profitInPips")]
-        public string ProfitInPips { get; set; }
+        public double ProfitInPips { get; set; }
 
         /// <summary>
         /// Gets or sets the commission.
@@ -116,7 +116,7 @@ namespace Connect_API.Accounts
         /// The commission.
         /// </value>
         [JsonProperty("commission")]
-        public string Commission { get; set; }
+        public double Commission { get; set; }
 
         /// <summary>
         /// Gets or sets the swap.
@@ -125,7 +125,7 @@ namespace Connect_API.Accounts
         /// The swap.
         /// </value>
         [JsonProperty("swap")]
-        public string Swap { get; set; }
+        public double Swap { get; set; }
 
         /// <summary>
         /// Gets or sets the current price.
@@ -134,7 +134,7 @@ namespace Connect_API.Accounts
         /// The current price.
         /// </value>
         [JsonProperty("currentPrice")]
-        public string CurrentPrice { get; set; }
+        public double CurrentPrice { get; set; }
 
         /// <summary>
         /// Gets or sets the comment.
@@ -172,7 +172,7 @@ namespace Connect_API.Accounts
         [JsonProperty("label")]
         public string Label { get; set; }
         [JsonProperty("marginRate")]
-        public string MarginRate { get; set; }
+        public double MarginRate { get; set; }
         /// <summary>
         /// Gets the positions.
         /// </summary>

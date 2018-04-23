@@ -1,5 +1,5 @@
 ﻿@using LeeInfo.Library;
-@model List<Connect_API.Accounts.Deal>
+@model IEnumerable<FrxHistory>
 
 @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
@@ -77,45 +77,40 @@
                                 {
                                     <tr>
                                         <td>
-                                            <span title="@item.Label / @item.Comment">@item.DealID</span>
+                                            <span title="@item.Label / @item.Comment">@item.ClosingDealId</span>
                                         </td>
                                         <td>
-                                            @item.SymbolName
+                                            @item.SymbolCode
                                         </td>
                                         <td>
-                                            @item.TradeSide
+                                            @item.TradeType
                                         </td>
                                         <td>
-                                            @ConvertJson.StampToDateTime(item.CreateTimestamp)
+                                            @item.EntryTime
                                         </td>
                                         <td>
-                                            @ConvertJson.StampToDateTime(item.ExecutionTimestamp)
+                                            @item.ClosingTime
                                         </td>
                                         <td>
-                                            @item.PositionCloseDetails.EntryPrice
+                                            @item.EntryPrice
                                         </td>
                                         <td>
-                                            @item.ExecutionPrice
+                                            @item.ClosingPrice
                                         </td>
                                         <td>
-                                            @item.PositionCloseDetails.ClosedVolume
+                                            @item.Volume
                                         </td>
                                         <td>
-                                            @item.PositionCloseDetails.Commission
+                                            @item.Commissions
                                         </td>
                                         <td>
-                                            @item.PositionCloseDetails.Swap
+                                            @item.Swap
                                         </td>
                                         <td>
-                                            @item.PositionCloseDetails.ProfitInPips
+                                            @item.Pips
                                         </td>
                                         <td>
-                                            @{
-                                                var net = Convert.ToDouble(item.PositionCloseDetails.Profit);
-                                                net += Convert.ToDouble(item.PositionCloseDetails.Swap);
-                                                net += Convert.ToDouble(item.PositionCloseDetails.Commission);
-                                            }
-                                            @net
+                                            @item.NetProfit
                                         </td>
                                     </tr>
                                 }

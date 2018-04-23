@@ -14,7 +14,7 @@ namespace Connect_API.Accounts
         /// The entry price.
         /// </value>
         [JsonProperty("entryPrice")]
-        public string EntryPrice { get; set; }
+        public double EntryPrice { get; set; }
 
         /// <summary>
         /// Gets or sets the profit.
@@ -23,7 +23,7 @@ namespace Connect_API.Accounts
         /// The profit.
         /// </value>
         [JsonProperty("profit")]
-        public string Profit { get; set; }
+        public double Profit { get; set; }
 
         /// <summary>
         /// Gets or sets the swap.
@@ -32,7 +32,7 @@ namespace Connect_API.Accounts
         /// The swap.
         /// </value>
         [JsonProperty("swap")]
-        public string Swap { get; set; }
+        public double Swap { get; set; }
 
         /// <summary>
         /// Gets or sets the commission.
@@ -41,7 +41,7 @@ namespace Connect_API.Accounts
         /// The commission.
         /// </value>
         [JsonProperty("commission")]
-        public string Commission { get; set; }
+        public double Commission { get; set; }
 
         /// <summary>
         /// Gets or sets the balance.
@@ -50,10 +50,10 @@ namespace Connect_API.Accounts
         /// The balance.
         /// </value>
         [JsonProperty("balance")]
-        public string Balance { get; set; }
+        public double Balance { get; set; }
 
         [JsonProperty("balanceVersion")]
-        public string BalanceVersion { get; set; }
+        public int BalanceVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the comment.
@@ -65,7 +65,7 @@ namespace Connect_API.Accounts
         public string Comment { get; set; }
 
         [JsonProperty("stopLossPrice")]
-        public string StopLossPrice { get; set; }
+        public double? StopLossPrice { get; set; }
 
         /// <summary>
         /// Gets or sets the take profit price.
@@ -74,7 +74,7 @@ namespace Connect_API.Accounts
         /// The take profit price.
         /// </value>
         [JsonProperty("takeProfitPrice")]
-        public string TakeProfitPrice { get; set; }
+        public double? TakeProfitPrice { get; set; }
 
         /// <summary>
         /// Gets or sets the quote to deposit conversion rate.
@@ -83,7 +83,7 @@ namespace Connect_API.Accounts
         /// The quote to deposit conversion rate.
         /// </value>
         [JsonProperty("quoteToDepositConversionRate ")]
-        public string QuoteToDepositConversionRate { get; set; }
+        public double? QuoteToDepositConversionRate { get; set; }
 
         /// <summary>
         /// Gets or sets the closed to deposit conversion rate.
@@ -92,7 +92,7 @@ namespace Connect_API.Accounts
         /// The closed to deposit conversion rate.
         /// </value>
         [JsonProperty("closedToDepositConversionRate")]
-        public string ClosedToDepositConversionRate { get; set; }
+        public double? ClosedToDepositConversionRate { get; set; }
 
         /// <summary>
         /// Gets or sets the closed volume.
@@ -101,7 +101,7 @@ namespace Connect_API.Accounts
         /// The closed volume.
         /// </value>
         [JsonProperty("closedVolume")]
-        public string ClosedVolume { get; set; }
+        public long ClosedVolume { get; set; }
 
         /// <summary>
         /// Gets or sets the profit in pips.
@@ -110,12 +110,12 @@ namespace Connect_API.Accounts
         /// The profit in pips.
         /// </value>
         [JsonProperty("profitInPips")]
-        public string ProfitInPips { get; set; }
+        public double ProfitInPips { get; set; }
         [JsonProperty("equity")]
-        public string Equity { get; set; }
+        public double Equity { get; set; }
         [JsonProperty("roi")]
-        public string Roi { get; set; }
+        public double Roi { get; set; }
         [JsonProperty("equityBasedRoi")]
-        public string EquityBasedRoi { get; set; }
+        public double EquityBasedRoi { get; set; }
     }
 }
