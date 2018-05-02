@@ -26,7 +26,6 @@
                 <div class="box-header">
                     @*<h3 class="box-title">Data Table With Full Features</h3>*@
                 </div>
-                <!-- /.box-header -->
                 <div class="box-body table-responsive">
                     <table id="example1" class="table table-bordered table-striped table-hover">
                         <thead>
@@ -57,49 +56,45 @@
                         </thead>
                         <tbody>
                             @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.PersonName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Sex)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.DateOfBirth)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.IdcardNumber)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Mobile)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Email)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.PersonNote)
-                        </td>
-                        <td style="min-width:150px">
-                            <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.PersonId" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">
-                                <i class="glyphicon glyphicon-pencil"></i> Edit
-                            </a>
-                            <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.PersonId" data-target="#modal-action" class="btn-sm btn-warning" style="width:70px;margin-right:5px; min-width:50px;">
-                                <i class="glyphicon glyphicon-trash"></i> Delete
-                            </a>
-                        </td>
-                    </tr>
-    }
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PersonName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Sex)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DateOfBirth)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.IdcardNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Mobile)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Email)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PersonNote)
+                                    </td>
+                                    <td style="min-width:150px">
+                                        <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.PersonId" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">
+                                            <i class="glyphicon glyphicon-pencil"></i> Edit
+                                        </a>
+                                        <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.PersonId" data-target="#modal-action" class="btn-sm btn-warning" style="width:70px;margin-right:5px; min-width:50px;">
+                                            <i class="glyphicon glyphicon-trash"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
-                <!-- /.box-body -->
             </div>
-            <!-- /.box -->
         </div>
-        <!-- /.col -->
     </div>
-    <!-- /.row -->
 </section>
 @section Scripts{
     <script>

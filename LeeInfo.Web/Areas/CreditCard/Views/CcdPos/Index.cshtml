@@ -27,7 +27,6 @@
                 <div class="box-header">
                     @*<h3 class="box-title">Data Table With Full Features</h3>*@
                 </div>
-                <!-- /.box-header -->
                 <div class="box-body table-responsive">
                     <table id="example1" class="table table-bordered table-striped table-hover">
                         <thead>
@@ -46,37 +45,33 @@
                         </thead>
                         <tbody>
                             @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.PosName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.PosNote)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.CcdPerson.PersonName)
-                        </td>
-                        <td>
-                            <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.PosId" data-target="#modal-action" class="btn-sm btn-primary" style="margin-right:5px">
-                                <i class="glyphicon glyphicon-pencil"></i> Edit
-                            </a>
-                            <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.PosId" data-target="#modal-action" class="btn-sm btn-warning">
-                                <i class="glyphicon glyphicon-trash"></i> Delete
-                            </a>
-                        </td>
-                    </tr>
-    }
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PosName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PosNote)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CcdPerson.PersonName)
+                                    </td>
+                                    <td>
+                                        <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.PosId" data-target="#modal-action" class="btn-sm btn-primary" style="margin-right:5px">
+                                            <i class="glyphicon glyphicon-pencil"></i> Edit
+                                        </a>
+                                        <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.PosId" data-target="#modal-action" class="btn-sm btn-warning">
+                                            <i class="glyphicon glyphicon-trash"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
-                <!-- /.box-body -->
             </div>
-            <!-- /.box -->
         </div>
-        <!-- /.col -->
     </div>
-    <!-- /.row -->
 </section>
 @section Scripts{
     <script>

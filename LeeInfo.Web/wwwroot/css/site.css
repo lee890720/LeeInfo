@@ -1,8 +1,10 @@
 ﻿.dataTable th {
     white-space: nowrap !important;
+    text-align:center;
 }
 .dataTable td{
     white-space:nowrap!important;
+    text-align:center!important;
 }
 
 /*BootStrap:#f5f5f5*/

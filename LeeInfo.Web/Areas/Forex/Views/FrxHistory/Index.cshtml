@@ -1,7 +1,4 @@
-﻿@using LeeInfo.Library;
-@model IEnumerable<FrxHistory>
-
-@{
+﻿@{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
     var areaName = ViewContext.RouteData.Values["area"].ToString();
@@ -28,9 +25,32 @@
                 <div class="box-header">
                     @*<h3 class="box-title">Data Table With Full Features</h3>*@
                 </div>
-                <!-- /.box-header -->
                 <div class="box-body table-responsive">
-                    <table id="example1" class="table  table-bordered table-striped table-hover">
+                    <div class="form-group col-lg-12">
+                        <div class="col-lg-3">
+                            <input type="text" placeholder="Search" id="search_his" class="form-control">
+                        </div>
+                        <div class="col-lg-3">
+                            <select id="date_select_his" class="form-control select2" style="width: 100%;">
+                                <option value="0">最后一天</option>
+                                <option value="1">最后一周</option>
+                                <option value="2">最后一月</option>
+                                <option value="3">最后三个月</option>
+                                <option value="4">最后一年</option>
+                                <option value="5" selected="selected">全部</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2">
+                            <input type="text" placeholder="StartDate" id="date_beg_his" class="form-control">
+                        </div>
+                        <div class="col-lg-2">
+                            <input type="text" placeholder="EndDate" id="date_end_his" class="form-control">
+                        </div>
+                        <div class="col-lg-2">
+                            <button id="hehe_his" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
+                        </div>
+                    </div>
+                    <table id="example_his" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
                                 <th>
@@ -71,77 +91,204 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                {
-                                    <tr>
-                                        <td>
-                                            <span title="@item.Label / @item.Comment">@item.ClosingDealId</span>
-                                        </td>
-                                        <td>
-                                            @item.SymbolCode
-                                        </td>
-                                        <td>
-                                            @item.TradeType
-                                        </td>
-                                        <td>
-                                            @item.EntryTime
-                                        </td>
-                                        <td>
-                                            @item.ClosingTime
-                                        </td>
-                                        <td>
-                                            @item.EntryPrice
-                                        </td>
-                                        <td>
-                                            @item.ClosingPrice
-                                        </td>
-                                        <td>
-                                            @item.Volume
-                                        </td>
-                                        <td>
-                                            @item.Commissions
-                                        </td>
-                                        <td>
-                                            @item.Swap
-                                        </td>
-                                        <td>
-                                            @item.Pips
-                                        </td>
-                                        <td>
-                                            @item.NetProfit
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="11" style="text-align:right">Total:</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
-                <!-- /.box-body -->
             </div>
-            <!-- /.box -->
         </div>
-        <!-- /.col -->
     </div>
-    <!-- /.row -->
 </section>
 @section Scripts{
+    <script src="~/js/range_dates_history.js"></script>
     <script>
         $(function () {
-            $('#example1').DataTable(
+            var table_his = $('#example_his').dataTable(
                 {
-                    'order': [[0, "asc"]],
-                    'pageLength': 10
-                })
-            $('#example2').DataTable({
-                'paging': true,
-                'lengthChange': false,
-                'searching': false,
-                'ordering': true,
-                'info': true,
-                'autoWidth': false
-            })
-        })
+                    'dom':
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    'processing': true,
+                    'ajax': {
+                        'type': "POST",
+                        'contentType': "application/json; charset=utf-8",
+                        'url': "/Forex/FrxHistory/GetHistory"
+                    },
+                    'columns': [
+                        { "data": "closingDealId" },
+                        { "data": "symbolCode" },
+                        { "data": "tradeType" },
+                        { "data": "entryTime" },
+                        { "data": "closingTime" },
+                        { "data": "entryPrice" },
+                        { "data": "closingPrice" },
+                        { "data": "volume" },
+                        { "data": "commissions" },
+                        { "data": "swap" },
+                        { "data": "pips" },
+                        { "data": "netProfit" }
+                    ],
+                    "columnDefs": [
+                        {
+                            "targets": 0,
+                            render: function (data, type, row, meta) {
+                                return '<span title="' + row.label + '/' + row.comment + '">' + data + '</span>';
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            render: function (data, type, row, meta) {
+                                var tradetype = data;
+                                if (tradetype == 0)
+                                    return "BUY";
+                                if (tradetype == 1)
+                                    return "SELL";
+                            }
+                        },
+                        {
+                            "targets": [3, 4],
+                            render: function (data, type, row, meta) {
+                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
+                                return result;
+                            }
+                        },
+                        {
+                            "targets": [5, 6],
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                if (result > 50)
+                                    return result.toFixed(2);
+                                else
+                                    return result.toFixed(5);
+                            }
+                        },
+                        {
+                            "targets": -2,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                return Math.round(result);
+                            }
+                        },
+                        {
+                            "targets": -1,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                return result.toFixed(2);
+                            }
+                        }
+                    ],
+                    "footerCallback": function (tfoot, data, start, end, display) {
+                        var api = this.api(),data;
+
+                        // Remove the formatting to get integer data for summation                
+                        var intVal = function (i) { return parseFloat(i) };
+
+                        // Total over all pages
+                        total = api.column(11).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        },0);
+
+                        // Total over this page
+                        pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        },0);
+
+                        // Update footer
+                        $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
+                    }
+                });
+
+            $("#hehe_his").click(function () {
+                $("#date_beg_his").keyup(function () { table_his.draw(); });
+                $("#date_end_his").keyup(function () { table_his.draw(); });
+                table_his.api().search($("#search_his").val()).draw();
+            });
+        });
+
+        var now = new Date();
+        var nowDayOfWeek = now.getDay();
+        var nowDay = now.getDate();
+        var nowMonth = now.getMonth();
+        var nowYear = now.getYear();
+        nowYear += (nowYear < 2000) ? 1900 : 0;
+        var getCurrentDate = new Date(nowYear, nowMonth, nowDay + 1);
+        var getCurrentDate = formatDate(getCurrentDate)
+        var getYesterdayDate = new Date(nowYear, nowMonth, nowDay);
+        var getYesterdayDate = formatDate(getYesterdayDate);
+
+        var getMonthStartDate = new Date(nowYear, nowMonth, 1);
+        var getMonthStartDate = formatDate(getMonthStartDate);
+
+        var getWeekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek);
+        var getWeekStartDate = formatDate(getWeekStartDate);
+
+        var getWeekEndDate = new Date(nowYear, nowMonth, nowDay + (6 - nowDayOfWeek));
+        var getWeekEndDate = formatDate(getWeekEndDate);
+
+        var getFirMonthStartDate = new Date(nowYear, nowMonth - 1, nowDay);
+        var getFirMonthStartDate = formatDate(getFirMonthStartDate);
+
+        var getTreeMonthStartDate = new Date(nowYear, nowMonth - 3, nowDay);
+        var getTreeMonthStartDate = formatDate(getTreeMonthStartDate);
+
+        var getYearStartDate = new Date(nowYear, nowMonth - 12, nowDay);
+        var getYearStartDate = formatDate(getYearStartDate);
+
+        function formatDate(date) {
+            var myyear = date.getFullYear();
+            var mymonth = date.getMonth() + 1;
+            var myweekday = date.getDate();
+
+            if (mymonth < 10) {
+                mymonth = "0" + mymonth;
+            }
+            if (myweekday < 10) {
+                myweekday = "0" + myweekday;
+            }
+            return (myyear + "-" + mymonth + "-" + myweekday);
+        }
+
+        $("#date_select_his").change(function () {
+            var flag = parseInt($("#date_select_his").val());
+            switch (flag) {
+                // 当天
+                case 0:
+                    $('#date_beg_his').val(getYesterdayDate);
+                    $('#date_end_his').val(getCurrentDate);
+                    break;
+                // 本周
+                case 1:
+                    $('#date_beg_his').val(getWeekStartDate);
+                    $('#date_end_his').val(getWeekEndDate);
+                    break;
+                // 最近一月
+                case 2:
+                    $('#date_beg_his').val(getFirMonthStartDate);
+                    $('#date_end_his').val(getCurrentDate);
+                    break;
+                // 最近三月
+                case 3:
+                    $('#date_beg_his').val(getTreeMonthStartDate);
+                    $('#date_end_his').val(getCurrentDate);
+                    break;
+                // 最近一年
+                case 4:
+                    $('#date_beg_his').val(getYearStartDate);
+                    $('#date_end_his').val(getCurrentDate);
+                    break;
+                default:
+                    $('#date_beg_his').val("");
+                    $('#date_end_his').val("");
+                    break;
+            }
+        });
+
+        $('.select2').select2()
     </script>
 }

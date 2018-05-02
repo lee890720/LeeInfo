@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<AlertViewModel>
 <li class="dropdown notifications-menu">
-    <!-- Menu toggle button -->
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
         <i class="fa fa-bell-o"></i>
         <span class="label label-warning">@Model.Count()</span>
@@ -8,19 +7,15 @@
     <ul class="dropdown-menu">
         <li class="header">You have @Model.Count() notifications</li>
         <li>
-            <!-- Inner Menu: contains the notifications -->
             <ul class="menu">
                 @foreach (var item in Model)
                 {
                     <li>
-                        <!-- start notification -->
                         <a href="@item.Url">
                             <i class="@item.Ico"></i><span style="color:black">@item.Count @item.Info</span>
                         </a>
                     </li>
                 }
-
-                <!-- end notification -->
             </ul>
         </li>
         <li class="footer"><a href="#">View all</a></li>

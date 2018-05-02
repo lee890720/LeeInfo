@@ -13,7 +13,7 @@ using LeeInfo.Data;
 using LeeInfo.Data.AppIdentity;
 using Microsoft.AspNetCore.Identity;
 using ChartJSCore.Models;
-using LeeInfo.Library;
+using LeeInfo.Lib;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using LeeInfo.Data.Forex;
 
@@ -23,12 +23,6 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
     [Authorize(Roles = "Admins,Forex")]
     public class FrxHistoryController : Controller
     {
-        private string _clientId = "";
-        private string _clientSecret = "";
-        private string _accessToken = "";
-        private string _refreshToken = "";
-        private string _apiUrl = "https://api.spotware.com/";
-        private TcpClient _tcpClient = new TcpClient();
         private readonly AppDbContext _identitycontext;
         UserManager<AppIdentityUser> _userManager;
         private readonly AppDbContext _context;
@@ -41,6 +35,12 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            string _clientId = "";
+            string _clientSecret = "";
+            string _accessToken = "";
+            string _refreshToken = "";
+            string _apiUrl = "https://api.spotware.com/";
+            TcpClient _tcpClient = new TcpClient();
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
             _clientId = _user.ClientId;
             _clientSecret = _user.ClientSecret;
@@ -50,15 +50,15 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             var temp = _context.FrxAccount.Where(x => x.UserName == User.Identity.Name);
             _context.RemoveRange(temp);
             await _context.SaveChangesAsync();
-            foreach(var a in accounts)
+            foreach (var a in accounts)
             {
                 var sql_accounts = _context.FrxAccount.Where(x => x.AccountId == Convert.ToInt32(a.AccountId));
-                if(sql_accounts.Count()==0)
+                if (sql_accounts.Count() == 0)
                 {
                     FrxAccount fa = new FrxAccount();
                     fa.AccountId = a.AccountId;
                     fa.AccountNumber = a.AccountNumber;
-                    fa.Balance = a.Balance/100;
+                    fa.Balance = a.Balance / 100;
                     fa.BrokerName = a.BrokerTitle;
                     fa.Currency = a.DepositCurrency;
                     fa.IsLive = a.Live;
@@ -69,7 +69,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     await _context.SaveChangesAsync();
                 }
             }
-            var frxaccount = _context.FrxAccount.FirstOrDefault(x=>x.IsLive==true);
+            var frxaccount = _context.FrxAccount.FirstOrDefault(x => x.IsLive == true);
 
             DateTime utcnow = DateTime.UtcNow;
             string fromtimestamp = ConvertJson.DateTimeToStamp(frxaccount.TraderRegistrationTime);
@@ -81,19 +81,19 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 if (d.PositionCloseDetails != null)
                     deal_history.Add(d);
             }
-            foreach(var h in deal_history)
+            foreach (var h in deal_history)
             {
                 FrxHistory fh = new FrxHistory();
                 fh.ClosingDealId = h.DealID;
                 fh.AccountId = frxaccount.AccountId;
-                fh.Balance = h.PositionCloseDetails.Balance/100;
+                fh.Balance = h.PositionCloseDetails.Balance / 100;
                 fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
                 fh.BaseToUSDConversionRate = h.BaseToUSDConversionRate;
                 fh.ClosedToDepoitConversionRate = h.PositionCloseDetails.ClosedToDepositConversionRate;
                 fh.ClosingTime = ConvertJson.StampToDateTime(h.ExecutionTimestamp);
                 fh.ClosingPrice = h.ExecutionPrice;
                 fh.Comment = h.Comment;
-                fh.Commissions = h.PositionCloseDetails.Commission/100;
+                fh.Commissions = h.PositionCloseDetails.Commission / 100;
                 fh.EntryPrice = h.PositionCloseDetails.EntryPrice;
                 long tempstamp = System.Convert.ToInt64(h.ExecutionTimestamp);
                 foreach (var d in deal)
@@ -105,39 +105,45 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     }
                 }
                 fh.EntryTime = ConvertJson.StampToDateTime(tempstamp.ToString());
-                fh.Equity = h.PositionCloseDetails.Equity/100;
-                fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi/100;
-                fh.GrossProfit = h.PositionCloseDetails.Profit/100;
+                fh.Equity = h.PositionCloseDetails.Equity / 100;
+                fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi / 100;
+                fh.GrossProfit = h.PositionCloseDetails.Profit / 100;
                 fh.Label = h.Label;
                 fh.MarginRate = h.MarginRate;
-                fh.Swap = h.PositionCloseDetails.Swap/100;
+                fh.Swap = h.PositionCloseDetails.Swap / 100;
                 fh.NetProfit = fh.GrossProfit + fh.Swap + fh.Commissions;
                 fh.Pips = h.PositionCloseDetails.ProfitInPips;
                 fh.PositionId = h.PositionID;
                 fh.SymbolCode = h.SymbolName;
-                fh.Volume = h.PositionCloseDetails.ClosedVolume/100;
+                fh.Volume = h.PositionCloseDetails.ClosedVolume / 100;
 
-                    var tempvolume = Convert.ToDouble(fh.Volume);
-                    double tempsub = 100000;
-                    if (fh.SymbolCode == "XBRUSD" || fh.SymbolCode == "XTIUSD")
-                        tempsub = 100;
-                    if (fh.SymbolCode == "XAGUSD" || fh.SymbolCode == "XAGEUR")
-                        tempsub = 1000;
-                    if (fh.SymbolCode == "XAUUSD" || fh.SymbolCode == "XAUEUR")
-                        tempsub = 100;
-                fh.Quantity = tempvolume/tempsub;
+                var tempvolume = Convert.ToDouble(fh.Volume);
+                double tempsub = 100000;
+                if (fh.SymbolCode == "XBRUSD" || fh.SymbolCode == "XTIUSD")
+                    tempsub = 100;
+                if (fh.SymbolCode == "XAGUSD" || fh.SymbolCode == "XAGEUR")
+                    tempsub = 1000;
+                if (fh.SymbolCode == "XAUUSD" || fh.SymbolCode == "XAUEUR")
+                    tempsub = 100;
+                fh.Quantity = tempvolume / tempsub;
                 fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
                 fh.Roi = h.PositionCloseDetails.Roi;
                 fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
                 var result = _context.FrxHistory.Find(fh.ClosingDealId);
-                if (result==null)
+                if (result == null)
                 {
                     _context.Add(fh);
                     await _context.SaveChangesAsync();
                 }
             }
             var frxhistories = _context.FrxHistory.Where(x => x.AccountId == frxaccount.AccountId);
-            return View(frxhistories.ToList());
+            return View();
+        }
+
+        public JsonResult GetHistory()
+        {
+            var data = _context.FrxHistory.ToList();
+            return Json(new { data, data.Count });
         }
     }
 }

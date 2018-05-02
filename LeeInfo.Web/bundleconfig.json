@@ -8,7 +8,7 @@
   {
     "outputFileName": "wwwroot/css/datatables.min.css",
     "inputFiles": [
-      "wwwroot/lib/datatables.net-bs/css/dataTables.bootstrap.css"
+      "wwwroot/lib/datatables/css/dataTables.bootstrap.css"
     ]
   },
   {
@@ -17,6 +17,7 @@
       "wwwroot/lib/bootstrap/dist/css/bootstrap.css",
       "wwwroot/lib/font-awesome/css/font-awesome.css",
       "wwwroot/lib/ionicons/css/ionicons.css",
+      "wwwroot/lib/select/css/select2.css",
       "wwwroot/lib/adminlte/dist/css/AdminLTE.css",
       "wwwroot/lib/adminlte/dist/css/skins/_all-skins.css"
     ]
@@ -34,8 +35,8 @@
   {
     "outputFileName": "wwwroot/js/datatables.min.js",
     "inputFiles": [
-      "wwwroot/lib/datatables.net/js/jquery.dataTables.js",
-      "wwwroot/lib/datatables.net-bs/js/dataTables.bootstrap.js"
+      "wwwroot/lib/datatables/js/jquery.dataTables.js",
+      "wwwroot/lib/datatables/js/dataTables.bootstrap.js"
     ],
     "minify": {
       "enabled": true,
@@ -50,6 +51,8 @@
       "wwwroot/lib/chart.js/Chart.js",
       "wwwroot/lib/jquery-slimscroll/jquery.slimscroll.js",
       "wwwroot/lib/fastclick/lib/fastclick.js",
+      "wwwroot/lib/select/js/select2.full.js",
+      "wwwroot/lib/moment/moment.js",
       "wwwroot/lib/adminlte/dist/js/adminlte.js"
     ],
     "minify": {

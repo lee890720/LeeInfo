@@ -1,0 +1,693 @@
+﻿@using Connect_API.Accounts
+@using Connect_API.Trading
+@model LeeInfo.Web.Areas.Forex.Controllers.FrxData
+@{
+    var actionName = ViewContext.RouteData.Values["action"].ToString();
+    var controllerName = ViewContext.RouteData.Values["controller"].ToString();
+    var areaName = ViewContext.RouteData.Values["area"].ToString();
+    ViewData["action"] = actionName;
+    ViewData["controller"] = controllerName;
+    ViewData["area"] = areaName;
+    ViewData["Title"] = controllerName;
+    string path = "/" + areaName + "/" + controllerName;
+}
+<section class="content-header">
+    <h1>
+        @ViewData["action"]
+        <small>@ViewData["controller"]</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> @ViewData["area"]</a></li>
+        <li class="active"> @ViewData["controller"]</li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Monthly Recap Report</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-wrench"></i>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p class="text-center">
+                                <strong>Sales: 1 Jan, 2014 - 30 Jul, 2014</strong>
+                            </p>
+                            <div class="chart">
+                                <!-- Sales Chart Canvas -->
+                                <canvas id="lineChart" style="height: 283px; width: 856px;" width="856" height="283"></canvas>
+                            </div>
+                            <!-- /.chart-responsive -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-md-4">
+                            <p class="text-center">
+                                <strong>Goal Completion</strong>
+                            </p>
+                            <div class="progress-group">
+                                <span class="progress-text">Add Products to Cart</span>
+                                <span class="progress-number"><b>160</b>/200</span>
+                                <div class="progress sm">
+                                    <div class="progress-bar progress-bar-aqua" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            <!-- /.progress-group -->
+                            <div class="progress-group">
+                                <span class="progress-text">Complete Purchase</span>
+                                <span class="progress-number"><b>310</b>/400</span>
+                                <div class="progress sm">
+                                    <div class="progress-bar progress-bar-red" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            <!-- /.progress-group -->
+                            <div class="progress-group">
+                                <span class="progress-text">Visit Premium Page</span>
+                                <span class="progress-number"><b>480</b>/800</span>
+                                <div class="progress sm">
+                                    <div class="progress-bar progress-bar-green" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            <!-- /.progress-group -->
+                            <div class="progress-group">
+                                <span class="progress-text">Send Inquiries</span>
+                                <span class="progress-number"><b>250</b>/500</span>
+                                <div class="progress sm">
+                                    <div class="progress-bar progress-bar-yellow" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            <!-- /.progress-group -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- ./box-body -->
+                <div class="box-footer">
+                    <div class="row">
+                        @{
+                            double equity = 0;
+                            double unrnet = 0;
+                            double balance = Model.Account.Balance;
+                            double margin = 0;
+                            double freemargin = 0;
+                            double level = Model.Account.PreciseLeverage;
+                            foreach (var p in Model.Positions)
+                            {
+                                unrnet += p.GrossProfit;
+                                unrnet += p.Swap;
+                                unrnet += p.Commissions;
+                                margin += p.Volume * p.MarginRate / level;
+                            }
+                            unrnet = Math.Round(unrnet, 2);
+                            margin = Math.Round(margin, 2);
+                            equity = Math.Round(balance + unrnet, 2);
+                            freemargin = Math.Round(equity - margin, 2);
+                            var marginlevel = Math.Round(equity / margin * 100, 2);
+                        }
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@balance</h5>
+                                <span class="description-text">BALANCE</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@equity</h5>
+                                <span class="description-text">EQUITY</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@unrnet</h5>
+                                <span class="description-text">UNR.NET</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@margin</h5>
+                                <span class="description-text">MARGIN USED</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@freemargin</h5>
+                                <span class="description-text">FREE MARGIN</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block">
+                                <h5 class="description-header">@marginlevel %</h5>
+                                <span class="description-text">MARGIN LEVEL</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.box-footer -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <div class="row">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">Positions</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+            <div class="box-body no-padding">
+                <div class="form-group col-lg-12">
+                    <div class="col-lg-3">
+                        <input type="text" placeholder="Search" id="search" name="search" class="form-control">
+                    </div>
+                    <div class="col-lg-3">
+                        <select id="date_select" name="date_select" class="form-control select2" style="width: 100%;">
+                            <option value="0">最后一天</option>
+                            <option value="1">最后一周</option>
+                            <option value="2">最后一月</option>
+                            <option value="3">最后三个月</option>
+                            <option value="4">最后一年</option>
+                            <option value="5" selected="selected">全部</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <input type="text" placeholder="StartDate" id="date_beg" name="date_beg" class="form-control">
+                    </div>
+                    <div class="col-lg-2">
+                        <input type="text" placeholder="EndDate" id="date_end" name="date_end" class="form-control">
+                    </div>
+                    <div class="col-lg-2">
+                        <button id="hehe" name="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
+                    </div>
+                </div>
+                <table id="example_pos" class="table  table-bordered table-striped table-hover" width="100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                ID(Label/Comment)
+                            </th>
+                            <th>
+                                Symbol
+                            </th>
+                            <th>
+                                Volume
+                            </th>
+                            <th>
+                                TradeType
+                            </th>
+                            <th>
+                                EntryTime
+                            </th>
+                            <th>
+                                EntryPrice
+                            </th>
+                            <th>
+                                CurrentPrice
+                            </th>
+                            <th>
+                                Swap
+                            </th>
+                            <th>
+                                Commission
+                            </th>
+                            <th>
+                                Channel
+                            </th>
+                            <th>
+                                Pips
+                            </th>
+                            <th>
+                                NetProfit
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="11" style="text-align:right">Total:</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">Positions</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+            <div class="box-body no-padding">
+                <div class="form-group col-lg-12">
+                    <div class="col-lg-3">
+                        <input type="text" placeholder="Search" id="search" name="search" class="form-control">
+                    </div>
+                    <div class="col-lg-3">
+                        <select id="date_select" name="date_select" class="form-control select2" style="width: 100%;">
+                            <option value="0">最后一天</option>
+                            <option value="1">最后一周</option>
+                            <option value="2">最后一月</option>
+                            <option value="3">最后三个月</option>
+                            <option value="4">最后一年</option>
+                            <option value="5" selected="selected">全部</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <input type="text" placeholder="StartDate" id="date_beg" name="date_beg" class="form-control">
+                    </div>
+                    <div class="col-lg-2">
+                        <input type="text" placeholder="EndDate" id="date_end" name="date_end" class="form-control">
+                    </div>
+                    <div class="col-lg-2">
+                        <button id="hehe" name="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
+                    </div>
+                </div>
+                <table id="example_his" class="table  table-bordered table-striped table-hover" width="100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                ID(Label/Comment)
+                            </th>
+                            <th>
+                                Symbol
+                            </th>
+                            <th>
+                                Direction
+                            </th>
+                            <th>
+                                OpeningTime
+                            </th>
+                            <th>
+                                ClosingTime
+                            </th>
+                            <th>
+                                EntryPrice
+                            </th>
+                            <th>
+                                ClosingPrice
+                            </th>
+                            <th>
+                                Volume
+                            </th>
+                            <th>
+                                Commission
+                            </th>
+                            <th>
+                                Swap
+                            </th>
+                            <th>
+                                Pips
+                            </th>
+                            <th>
+                                NetProfit
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="11" style="text-align:right">Total:</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+                <!-- Tabs within a box -->
+                <ul class="nav nav-tabs pull-right">
+                    <li class="active"><a href="#position" data-toggle="tab">Position</a></li>
+                    <li><a href="#history" data-toggle="tab">Histroy</a></li>
+                    <li class="pull-left header"><i class="fa fa-inbox"></i> @Model.Account.AccountNumber</li>
+                </ul>
+                <div class="tab-content">
+                    <div class="chart tab-pane active table-responsive" id="position" style="position: relative;height:600px">
+                    </div>
+                    <div class="chart tab-pane table-responsive" id="history" style="position: relative;height:600px">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts{
+    <script>
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var iFini = document.getElementByName('date_beg').value;
+                var iFfin = document.getElementByName('date_end').value;
+                var iStartDateCol = 3;
+                var iEndDateCol = 4;
+
+                iFini = iFini.substring(0, 4) + iFini.substring(5, 7) + iFini.substring(8, 10);
+                iFfin = iFfin.substring(0, 4) + iFfin.substring(5, 7) + iFfin.substring(8, 10);
+
+                var datofini = data[iStartDateCol].substring(0, 4) + data[iStartDateCol].substring(5, 7) + data[iStartDateCol].substring(8, 10);
+                var datoffin = data[iEndDateCol].substring(0, 4) + data[iEndDateCol].substring(5, 7) + data[iEndDateCol].substring(8, 10);
+
+                if (iFini === "" && iFfin === "") {
+                    return true;
+                }
+                else if (iFini <= datoffin && iFfin === "") {
+                    return true;
+                }
+                else if (iFfin >= datoffin && iFini === "") {
+                    return true;
+                }
+                else if (iFini <= datoffin && iFfin >= datoffin) {
+                    return true;
+                }
+                return false;
+            }
+        );
+
+        $(document).ready(function () {
+            var table_pos = $('#example_pos').dataTable(
+                {
+                    'dom':
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    'processing': true,
+                    'ajax': {
+                        'type': "POST",
+                        'contentType': "application/json; charset=utf-8",
+                        'url': "/Forex/FrxPosition/GetPosition"
+                    },
+                    'columns': [
+                        { "data": "id" },
+                        { "data": "symbolCode" },
+                        { "data": "volume" },
+                        { "data": "tradeType" },
+                        { "data": "entryTime" },
+                        { "data": "entryPrice" },
+                        { "data": "currentPrice" },
+                        { "data": "swap" },
+                        { "data": "commissions" },
+                        { "data": "channel" },
+                        { "data": "pips" },
+                        { "data": "netProfit" }
+                    ],
+                    "columnDefs": [
+                        {
+                            "targets": 0,
+                            render: function (data, type, row, meta) {
+                                return '<span title="' + row.label + '/' + row.comment + '">' + data + '</span>';
+                            }
+                        },
+                        {
+                            "targets": 1,
+                            render: function (data, type, row, meta) {
+                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
+                                return result;
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            render: function (data, type, row, meta) {
+                                var tradetype = data;
+                                if (tradetype == 0)
+                                    return "BUY";
+                                if (tradetype == 1)
+                                    return "SELL";
+                            }
+                        },
+                        {
+                            "targets": [5, 6],
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                if (result > 50)
+                                    return result.toFixed(2);
+                                else
+                                    return result.toFixed(5);
+                            }
+                        },
+                        {
+                            "targets": -2,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                return Math.round(result);
+                            }
+                        },
+                        {
+                            "targets": -1,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                return result.toFixed(2);
+                            }
+                        }
+                    ],
+                    "footerCallback": function (tfoot, data, start, end, display) {
+                        var api = this.api(), data;
+
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
+
+                        // Total over all pages
+                        total = api.column(11).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                        // Total over this page
+                        pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                        // Update footer
+                        $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
+                    }
+                });
+
+            var table_his = $('#example_his').dataTable(
+                {
+                    'dom':
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    'processing': true,
+                    'ajax': {
+                        'type': "POST",
+                        'contentType': "application/json; charset=utf-8",
+                        'url': "/Forex/FrxHistory/GetHistory"
+                    },
+                    'columns': [
+                        { "data": "closingDealId" },
+                        { "data": "symbolCode" },
+                        { "data": "tradeType" },
+                        { "data": "entryTime" },
+                        { "data": "closingTime" },
+                        { "data": "entryPrice" },
+                        { "data": "closingPrice" },
+                        { "data": "volume" },
+                        { "data": "commissions" },
+                        { "data": "swap" },
+                        { "data": "pips" },
+                        { "data": "netProfit" }
+                    ],
+                    "columnDefs": [
+                        {
+                            "targets": 0,
+                            render: function (data, type, row, meta) {
+                                return '<span title="' + row.label + '/' + row.comment + '">' + data + '</span>';
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            render: function (data, type, row, meta) {
+                                var tradetype = data;
+                                if (tradetype == 0)
+                                    return "BUY";
+                                if (tradetype == 1)
+                                    return "SELL";
+                            }
+                        },
+                        {
+                            "targets": [3, 4],
+                            render: function (data, type, row, meta) {
+                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
+                                return result;
+                            }
+                        },
+                        {
+                            "targets": [5, 6],
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                if (result > 50)
+                                    return result.toFixed(2);
+                                else
+                                    return result.toFixed(5);
+                            }
+                        },
+                        {
+                            "targets": -2,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                return Math.round(result);
+                            }
+                        },
+                        {
+                            "targets": -1,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                return result.toFixed(2);
+                            }
+                        }
+                    ],
+                    "footerCallback": function (tfoot, data, start, end, display) {
+                        var api = this.api(), data;
+
+                        // Remove the formatting to get integer data for summation                
+                        var intVal = function (i) { return parseFloat(i) };
+
+                        // Total over all pages
+                        total = api.column(11).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                        // Total over this page
+                        pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                        // Update footer
+                        $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
+                    }
+                });
+
+            document.getElementsByName("hehe").click(function () {
+                document.getElementsByName("date_beg").keyup(function () { table_pos.api().draw(); table_his.api().draw(); });
+                document.getElementsByName("date_end").keyup(function () { table_pos.api().draw(); table_his.api().draw(); });
+                table_pos.api().search(document.getElementsByName("search").value).draw();
+                table_his.api().search(document.getElementsByName("search").value).draw();
+            });
+
+
+        });
+
+        var now = new Date();
+        var nowDayOfWeek = now.getDay();
+        var nowDay = now.getDate();
+        var nowMonth = now.getMonth();
+        var nowYear = now.getYear();
+        nowYear += (nowYear < 2000) ? 1900 : 0;
+        var getCurrentDate = new Date(nowYear, nowMonth, nowDay + 1);
+        var getCurrentDate = formatDate(getCurrentDate)
+        var getYesterdayDate = new Date(nowYear, nowMonth, nowDay);
+        var getYesterdayDate = formatDate(getYesterdayDate);
+
+        var getMonthStartDate = new Date(nowYear, nowMonth, 1);
+        var getMonthStartDate = formatDate(getMonthStartDate);
+
+        var getWeekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek);
+        var getWeekStartDate = formatDate(getWeekStartDate);
+
+        var getWeekEndDate = new Date(nowYear, nowMonth, nowDay + (6 - nowDayOfWeek));
+        var getWeekEndDate = formatDate(getWeekEndDate);
+
+        var getFirMonthStartDate = new Date(nowYear, nowMonth - 1, nowDay);
+        var getFirMonthStartDate = formatDate(getFirMonthStartDate);
+
+        var getTreeMonthStartDate = new Date(nowYear, nowMonth - 3, nowDay);
+        var getTreeMonthStartDate = formatDate(getTreeMonthStartDate);
+
+        var getYearStartDate = new Date(nowYear, nowMonth - 12, nowDay);
+        var getYearStartDate = formatDate(getYearStartDate);
+
+        function formatDate(date) {
+            var myyear = date.getFullYear();
+            var mymonth = date.getMonth() + 1;
+            var myweekday = date.getDate();
+
+            if (mymonth < 10) {
+                mymonth = "0" + mymonth;
+            }
+            if (myweekday < 10) {
+                myweekday = "0" + myweekday;
+            }
+            return (myyear + "-" + mymonth + "-" + myweekday);
+        }
+
+        document.getElementsByName("date_select").change(function () {
+            var flag = parseInt($document.getElementsByName("date_select").value);
+            switch (flag) {
+                // 当天
+                case 0:
+                    document.getElementsByName("date_beg").val(getYesterdayDate);
+                    document.getElementsByName("date_end").val(getCurrentDate);
+                    break;
+                // 本周
+                case 1:
+                    document.getElementsByName("date_beg").val(getWeekStartDate);
+                    document.getElementsByName("date_end").val(getWeekEndDate);
+                    break;
+                // 最近一月
+                case 2:
+                    document.getElementsByName("date_beg").val(getFirMonthStartDate);
+                    document.getElementsByName("date_end").val(getCurrentDate);
+                    break;
+                // 最近三月
+                case 3:
+                    document.getElementsByName("date_beg").val(getTreeMonthStartDate);
+                    document.getElementsByName("date_end").val(getCurrentDate);
+                    break;
+                // 最近一年
+                case 4:
+                    document.getElementsByName("date_beg").val(getYearStartDate);
+                    document.getElementsByName("date_end").val(getCurrentDate);
+                    break;
+                default:
+                    document.getElementsByName("date_beg").val("");
+                    document.getElementsByName("date_end").val("");
+                    break;
+            }
+        });
+
+        $('.select2').select2()
+    </script>
+}

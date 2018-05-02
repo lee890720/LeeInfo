@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeeInfo.Web", "LeeInfo.Web\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeeInfo.Data", "LeeInfo.Data\LeeInfo.Data.csproj", "{79DF46B8-9689-4D0D-8B1D-E0D46432911D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeeInfo.Library", "LeeInfo.Library\LeeInfo.Library.csproj", "{0A8BB0AE-5EDB-40FE-AC20-36BE7A2E9AC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeeInfo.Lib", "LeeInfo.Lib\LeeInfo.Lib.csproj", "{0A8BB0AE-5EDB-40FE-AC20-36BE7A2E9AC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

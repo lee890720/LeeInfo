@@ -13,7 +13,7 @@ using LeeInfo.Data;
 using LeeInfo.Data.AppIdentity;
 using Microsoft.AspNetCore.Identity;
 using ChartJSCore.Models;
-using LeeInfo.Library;
+using LeeInfo.Lib;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using LeeInfo.Data.Forex;
 
@@ -23,12 +23,6 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
     [Authorize(Roles = "Admins,Forex")]
     public class FrxPositionController : Controller
     {
-        private string _clientId = "";
-        private string _clientSecret = "";
-        private string _accessToken = "";
-        private string _refreshToken = "";
-        private string _apiUrl = "https://api.spotware.com/";
-        private TcpClient _tcpClient = new TcpClient();
         private readonly AppDbContext _identitycontext;
         UserManager<AppIdentityUser> _userManager;
         private readonly AppDbContext _context;
@@ -41,6 +35,12 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            string _clientId = "";
+            string _clientSecret = "";
+            string _accessToken = "";
+            string _refreshToken = "";
+            string _apiUrl = "https://api.spotware.com/";
+            TcpClient _tcpClient = new TcpClient();
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
             _clientId = _user.ClientId;
             _clientSecret = _user.ClientSecret;
@@ -50,15 +50,15 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             var temp = _context.FrxAccount.Where(x => x.UserName == User.Identity.Name);
             _context.RemoveRange(temp);
             await _context.SaveChangesAsync();
-            foreach(var a in accounts)
+            foreach (var a in accounts)
             {
                 var sql_accounts = _context.FrxAccount.Where(x => x.AccountId == Convert.ToInt32(a.AccountId));
-                if(sql_accounts.Count()==0)
+                if (sql_accounts.Count() == 0)
                 {
                     FrxAccount fa = new FrxAccount();
                     fa.AccountId = a.AccountId;
                     fa.AccountNumber = a.AccountNumber;
-                    fa.Balance = a.Balance/100;
+                    fa.Balance = a.Balance / 100;
                     fa.BrokerName = a.BrokerTitle;
                     fa.Currency = a.DepositCurrency;
                     fa.IsLive = a.Live;
@@ -69,7 +69,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     await _context.SaveChangesAsync();
                 }
             }
-            var frxaccount = _context.FrxAccount.FirstOrDefault(x=>x.IsLive==true);
+            var frxaccount = _context.FrxAccount.FirstOrDefault(x => x.IsLive == true);
 
             var temppositions = _context.FrxPosition.Where(x => x.AccountId == frxaccount.AccountId);
             _context.RemoveRange(temppositions);
@@ -82,17 +82,17 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fp.AccountId = frxaccount.AccountId;
                 fp.Channel = p.Channel;
                 fp.Comment = p.Comment;
-                fp.Commissions = p.Commission*2/100;
+                fp.Commissions = p.Commission * 2 / 100;
                 fp.CurrentPrice = p.CurrentPrice;
                 fp.EntryPrice = p.EntryPrice;
                 fp.EntryTime = ConvertJson.StampToDateTime(p.EntryTimestamp);
-                fp.GrossProfit = p.Profit/100;
+                fp.GrossProfit = p.Profit / 100;
                 fp.Label = p.Label;
                 fp.MarginRate = p.MarginRate;
                 fp.Swap = p.Swap / 100;
                 fp.NetProfit = fp.GrossProfit + fp.Swap + fp.Commissions;
                 fp.Pips = p.ProfitInPips;
-                fp.Volume = p.Volume/100;
+                fp.Volume = p.Volume / 100;
 
                 var tempvolume = Convert.ToDouble(fp.Volume);
                 double tempsub = 100000;
@@ -106,12 +106,18 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fp.StopLoss = p.StopLoss;
                 fp.TakeProfit = p.TakeProfit;
                 fp.SymbolCode = p.SymbolName;
-                fp.TradeType = p.TradeSide=="BUY"?TradeType.Buy:TradeType.Sell;
+                fp.TradeType = p.TradeSide == "BUY" ? TradeType.Buy : TradeType.Sell;
                 _context.Add(fp);
                 await _context.SaveChangesAsync();
             }
             var frxpositions = _context.FrxPosition.Where(x => x.AccountId == frxaccount.AccountId);
-            return View(frxpositions.ToList());
+            return View();
+        }
+
+        public JsonResult GetPosition()
+        {
+            var data = _context.FrxPosition.ToList();
+            return Json(new { data, data.Count });
         }
     }
 }
