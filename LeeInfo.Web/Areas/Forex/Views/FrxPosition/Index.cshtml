@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Tuple<FrxAccount, List<PosGroup>, List<FrxAccount>>
+@{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
     var areaName = ViewContext.RouteData.Values["area"].ToString();
@@ -8,6 +9,15 @@
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
 }
+<style>
+    .table th {
+        text-align: center !important;
+    }
+
+    .table td {
+        text-align: center !important;
+    }
+</style>
 <section class="content-header">
     <h1>
         @ViewData["action"]
@@ -20,9 +30,139 @@
 </section>
 <section class="content">
     <div class="row">
+        <div class="col-md-12">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Info</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-wrench"></i>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var f in Model.Item3)
+                                {
+                                    <li><a href="@Url.Action("Index","FrxPosition",new { acNum=f.AccountNumber.ToString() })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body" style="margin:30px">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="table-responsive">
+                                <table class="table table-hover" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Symbol</th>
+                                            <th>TradeType</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Swap</th>
+                                            <th>Pips</th>
+                                            <th>Net</th>
+                                            <th>Gain</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var p in Model.Item2)
+                                        {
+                                            <tr>
+                                                <td>@p.SymbolCode</td>
+                                                <td>@p.TradeType</td>
+                                                <td>@Math.Round(p.EntryPrice, 5)</td>
+                                                <td>@p.Quantity</td>
+                                                <td>@p.Swap</td>
+                                                <td>@Math.Round(p.Pips)</td>
+                                                <td>@p.NetProfit</td>
+                                                <td>@Math.Round(p.Gain * 100, 2) %</td>
+                                            </tr>
+
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="chart-responsive">
+                                    <canvas id="pieChart"></canvas>
+                                    @{ChartJSCore.Models.Chart chart = (ChartJSCore.Models.Chart)ViewData["chart"]; }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@Model.Item1.Balance</h5>
+                                <span class="description-text">BALANCE</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@Model.Item1.Equity</h5>
+                                <span class="description-text">EQUITY</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@Model.Item1.UnrealizedNetProfit</h5>
+                                <span class="description-text">UNR.NET</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@Model.Item1.MarginUsed</h5>
+                                <span class="description-text">MARGIN USED</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 class="description-header">$@Model.Item1.FreeMargin</h5>
+                                <span class="description-text">FREE MARGIN</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block">
+                                <h5 class="description-header">@Model.Item1.MarginLevel %</h5>
+                                <span class="description-text">MARGIN LEVEL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Positions</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-wrench"></i>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var f in Model.Item3)
+                                {
+                                    <li><a href="@Url.Action("Index","FrxPosition",new { acNum=f.AccountNumber.ToString() })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
                 </div>
                 <div class="box-body table-responsive">
                     <div class="form-group col-lg-12">
@@ -56,9 +196,6 @@
                                     ID(Label/Comment)
                                 </th>
                                 <th>
-                                    EntryTime
-                                </th>
-                                <th>
                                     Symbol
                                 </th>
                                 <th>
@@ -66,6 +203,9 @@
                                 </th>
                                 <th>
                                     TradeType
+                                </th>
+                                <th>
+                                    EntryTime
                                 </th>
                                 <th>
                                     EntryPrice
@@ -93,7 +233,7 @@
                         <tbody></tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="11" style="text-align:right">Total:</th>
+                                <th colspan="11" style="text-align:right !important">Total:</th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -104,197 +244,203 @@
     </div>
 </section>
 @section Scripts{
+    //For Chart
+    <script src="~/lib/chart.js/Chart.js"></script>
+    <script>
+        @Html.Raw(chart.CreateChartCode("pieChart"));
+    </script>
+
     //For DataTables
-<script src="~/js/range_dates.js"></script>
-<script>
-    $(document).ready(function () {
-        var table_pos = $('#example_pos').dataTable(
-            {
-                'dom':
-                    "<'row'<'col-sm-6'><'col-sm-6'>>" +
-                    "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                'processing': true,
-                'ajax': {
-                    'type': "POST",
-                    'contentType': "application/json; charset=utf-8",
-                    'url': "/Forex/FrxPosition/GetPosition"
-                },
-                'columns': [
-                    { "data": "id" },
-                    { "data": "entryTime" },
-                    { "data": "symbolCode" },
-                    { "data": "volume" },
-                    { "data": "tradeType" },
-                    { "data": "entryPrice" },
-                    { "data": "currentPrice" },
-                    { "data": "swap" },
-                    { "data": "commissions" },
-                    { "data": "channel" },
-                    { "data": "pips" },
-                    { "data": "netProfit" }
-                ],
-                "columnDefs": [
-                    {
-                        "targets": 0,
-                        render: function (data, type, row, meta) {
-                            return '<span title="' + row.label + '/' + row.comment + '">' + data + '</span>';
-                        }
+    <script src="~/js/range_dates.js"></script>
+    <script>
+        $(document).ready(function () {
+            var table_pos = $('#example_pos').dataTable(
+                {
+                    'dom':
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    'processing': true,
+                    'ajax': {
+                        'type': "POST",
+                        'contentType': "application/json; charset=utf-8",
+                        'url': "/Forex/FrxPosition/GetPosition"
                     },
-                    {
-                        "targets": 1,
-                        render: function (data, type, row, meta) {
-                            result = moment(data).format('YYYY-MM-DD hh:mm:ss');
-                            return result;
-                        }
-                    },
-                    {
-                        "targets": 4,
-                        render: function (data, type, row, meta) {
-                            var tradetype = data;
-                            if (tradetype == 0)
-                                return "BUY";
-                            if (tradetype == 1)
-                                return "SELL";
-                        }
-                    },
-                    {
-                        "targets": [5, 6],
-                        render: function (data, type, row, meta) {
-                            var result = parseFloat(data);
-                            if (result > 50)
+                    'columns': [
+                        { "data": "id" },
+                        { "data": "symbolCode" },
+                        { "data": "volume" },
+                        { "data": "tradeType" },
+                        { "data": "entryTime" },
+                        { "data": "entryPrice" },
+                        { "data": "currentPrice" },
+                        { "data": "swap" },
+                        { "data": "commissions" },
+                        { "data": "channel" },
+                        { "data": "pips" },
+                        { "data": "netProfit" }
+                    ],
+                    "columnDefs": [
+                        {
+                            "targets": 0,
+                            render: function (data, type, row, meta) {
+                                return '<span title="' + row.label + '/' + row.comment + '">' + data + '</span>';
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            render: function (data, type, row, meta) {
+                                var tradetype = data;
+                                if (tradetype == 0)
+                                    return "BUY";
+                                if (tradetype == 1)
+                                    return "SELL";
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            render: function (data, type, row, meta) {
+                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
+                                return result;
+                            }
+                        },
+                        {
+                            "targets": [5, 6],
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                if (result > 50)
+                                    return result.toFixed(2);
+                                else
+                                    return result.toFixed(5);
+                            }
+                        },
+                        {
+                            "targets": -2,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                return Math.round(result);
+                            }
+                        },
+                        {
+                            "targets": -1,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
                                 return result.toFixed(2);
-                            else
-                                return result.toFixed(5);
+                            }
                         }
-                    },
-                    {
-                        "targets": -2,
-                        render: function (data, type, row, meta) {
-                            var result = parseFloat(data);
-                            return Math.round(result);
-                        }
-                    },
-                    {
-                        "targets": -1,
-                        render: function (data, type, row, meta) {
-                            var result = parseFloat(data);
-                            return result.toFixed(2);
-                        }
+                    ],
+                    "footerCallback": function (tfoot, data, start, end, display) {
+                        var api = this.api(), data;
+
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
+
+                        // Total over all pages
+                        total = api.column(11).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                        // Total over this page
+                        pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                        // Update footer
+                        $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
                     }
-                ],
-                "footerCallback": function (tfoot, data, start, end, display) {
-                    var api = this.api(), data;
-
-                    // Remove the formatting to get integer data for summation
-                    var intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
-
-                    // Total over all pages
-                    total = api.column(11).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                    // Total over this page
-                    pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
-                    // Update footer
-                    $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
-                }
+                });
+            $("#hehe").click(function () {
+                $("#date_beg,#date_end").keyup(function () { table_pos.api().draw(); });
+                table_pos.api().search($("#search").val()).draw();
             });
-        $("#hehe").click(function () {
-            $("#date_beg,#date_end").keyup(function () { table_pos.api().draw(); });
-            table_pos.api().search($("#search").val()).draw();
         });
-    });
-</script>
+    </script>
 
     //Get Date
-<script>
-    $(document).ready(function () {
-        var now = new Date();
-        var nowDayOfWeek = now.getDay();
-        var nowDay = now.getDate();
-        var nowMonth = now.getMonth();
-        var nowYear = now.getYear();
-        nowYear += (nowYear < 2000) ? 1900 : 0;
-        var getCurrentDate = new Date(nowYear, nowMonth, nowDay + 1);
-        var getCurrentDate = formatDate(getCurrentDate)
-        var getYesterdayDate = new Date(nowYear, nowMonth, nowDay);
-        var getYesterdayDate = formatDate(getYesterdayDate);
+    <script>
+        $(document).ready(function () {
+            var now = new Date();
+            var nowDayOfWeek = now.getDay();
+            var nowDay = now.getDate();
+            var nowMonth = now.getMonth();
+            var nowYear = now.getYear();
+            nowYear += (nowYear < 2000) ? 1900 : 0;
+            var getCurrentDate = new Date(nowYear, nowMonth, nowDay + 1);
+            var getCurrentDate = formatDate(getCurrentDate)
+            var getYesterdayDate = new Date(nowYear, nowMonth, nowDay);
+            var getYesterdayDate = formatDate(getYesterdayDate);
 
-        var getMonthStartDate = new Date(nowYear, nowMonth, 1);
-        var getMonthStartDate = formatDate(getMonthStartDate);
+            var getMonthStartDate = new Date(nowYear, nowMonth, 1);
+            var getMonthStartDate = formatDate(getMonthStartDate);
 
-        var getWeekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek);
-        var getWeekStartDate = formatDate(getWeekStartDate);
+            var getWeekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek);
+            var getWeekStartDate = formatDate(getWeekStartDate);
 
-        var getWeekEndDate = new Date(nowYear, nowMonth, nowDay + (6 - nowDayOfWeek));
-        var getWeekEndDate = formatDate(getWeekEndDate);
+            var getWeekEndDate = new Date(nowYear, nowMonth, nowDay + (6 - nowDayOfWeek));
+            var getWeekEndDate = formatDate(getWeekEndDate);
 
-        var getFirMonthStartDate = new Date(nowYear, nowMonth - 1, nowDay);
-        var getFirMonthStartDate = formatDate(getFirMonthStartDate);
+            var getFirMonthStartDate = new Date(nowYear, nowMonth - 1, nowDay);
+            var getFirMonthStartDate = formatDate(getFirMonthStartDate);
 
-        var getTreeMonthStartDate = new Date(nowYear, nowMonth - 3, nowDay);
-        var getTreeMonthStartDate = formatDate(getTreeMonthStartDate);
+            var getTreeMonthStartDate = new Date(nowYear, nowMonth - 3, nowDay);
+            var getTreeMonthStartDate = formatDate(getTreeMonthStartDate);
 
-        var getYearStartDate = new Date(nowYear, nowMonth - 12, nowDay);
-        var getYearStartDate = formatDate(getYearStartDate);
+            var getYearStartDate = new Date(nowYear, nowMonth - 12, nowDay);
+            var getYearStartDate = formatDate(getYearStartDate);
 
-        function formatDate(date) {
-            var myyear = date.getFullYear();
-            var mymonth = date.getMonth() + 1;
-            var myweekday = date.getDate();
+            function formatDate(date) {
+                var myyear = date.getFullYear();
+                var mymonth = date.getMonth() + 1;
+                var myweekday = date.getDate();
 
-            if (mymonth < 10) {
-                mymonth = "0" + mymonth;
+                if (mymonth < 10) {
+                    mymonth = "0" + mymonth;
+                }
+                if (myweekday < 10) {
+                    myweekday = "0" + myweekday;
+                }
+                return (myyear + "-" + mymonth + "-" + myweekday);
             }
-            if (myweekday < 10) {
-                myweekday = "0" + myweekday;
-            }
-            return (myyear + "-" + mymonth + "-" + myweekday);
-        }
 
-        $("#date_select").change(function () {
-            var flag = parseInt($("#date_select").val());
-            switch (flag) {
-                // 当天
-                case 0:
-                    $('#date_beg').val(getYesterdayDate);
-                    $('#date_end').val(getCurrentDate);
-                    break;
-                // 本周
-                case 1:
-                    $('#date_beg').val(getWeekStartDate);
-                    $('#date_end').val(getWeekEndDate);
-                    break;
-                // 最近一月
-                case 2:
-                    $('#date_beg').val(getFirMonthStartDate);
-                    $('#date_end').val(getCurrentDate);
-                    break;
-                // 最近三月
-                case 3:
-                    $('#date_beg').val(getTreeMonthStartDate);
-                    $('#date_end').val(getCurrentDate);
-                    break;
-                // 最近一年
-                case 4:
-                    $('#date_beg').val(getYearStartDate);
-                    $('#date_end').val(getCurrentDate);
-                    break;
-                default:
-                    $('#date_beg').val("");
-                    $('#date_end').val("");
-                    break;
-            }
+            $("#date_select").change(function () {
+                var flag = parseInt($("#date_select").val());
+                switch (flag) {
+                    // 当天
+                    case 0:
+                        $('#date_beg').val(getYesterdayDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    // 本周
+                    case 1:
+                        $('#date_beg').val(getWeekStartDate);
+                        $('#date_end').val(getWeekEndDate);
+                        break;
+                    // 最近一月
+                    case 2:
+                        $('#date_beg').val(getFirMonthStartDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    // 最近三月
+                    case 3:
+                        $('#date_beg').val(getTreeMonthStartDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    // 最近一年
+                    case 4:
+                        $('#date_beg').val(getYearStartDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    default:
+                        $('#date_beg').val("");
+                        $('#date_end').val("");
+                        break;
+                }
+            });
         });
-    });
-</script>
+    </script>
 
     //For Select2
-<script>
-    $('.select2').select2()
-</script>
+    <script>
+        $('.select2').select2()
+    </script>
 }

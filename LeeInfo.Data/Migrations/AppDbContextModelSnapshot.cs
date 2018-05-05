@@ -261,7 +261,13 @@ namespace LeeInfo.Data.Migrations
 
                     b.Property<double>("Equity");
 
+                    b.Property<double>("FreeMargin");
+
                     b.Property<bool>("IsLive");
+
+                    b.Property<double>("MarginLevel");
+
+                    b.Property<double>("MarginUsed");
 
                     b.Property<string>("Password");
 
@@ -408,6 +414,8 @@ namespace LeeInfo.Data.Migrations
                     b.Property<double>("GrossProfit");
 
                     b.Property<string>("Label");
+
+                    b.Property<double>("Margin");
 
                     b.Property<double>("MarginRate");
 

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Tuple<FrxAccount, List<FrxHistory>, List<FrxAccount>>
+@{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
     var areaName = ViewContext.RouteData.Values["area"].ToString();
@@ -8,6 +9,15 @@
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
 }
+<style>
+    .table th {
+        text-align: center !important;
+    }
+
+    .table td {
+        text-align: center !important;
+    }
+</style>
 <section class="content-header">
     <h1>
         @ViewData["action"]
@@ -20,18 +30,69 @@
 </section>
 <section class="content">
     <div class="row">
+        <div class="col-md-12">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Info</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-wrench"></i>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var f in Model.Item3)
+                                {
+                                    <li><a href="@Url.Action("Index","FrxHistory",new { acNum=f.AccountNumber.ToString() })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body" style="margin:30px">
+                    <div class="row">
+                        <div class="col-md-8">
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header">
-                    @*<h3 class="box-title">Data Table With Full Features</h3>*@
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Histories</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-wrench"></i>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var f in Model.Item3)
+                                {
+                                    <li><a href="@Url.Action("Index","FrxHistory",new { acNum=f.AccountNumber.ToString() })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
                 </div>
                 <div class="box-body table-responsive">
                     <div class="form-group col-lg-12">
                         <div class="col-lg-3">
-                            <input type="text" placeholder="Search" id="search_his" class="form-control">
+                            <input type="text" placeholder="Search" id="search" class="form-control">
                         </div>
                         <div class="col-lg-3">
-                            <select id="date_select_his" class="form-control select2" style="width: 100%;">
+                            <select id="date_select" class="form-control select2" style="width: 100%;">
                                 <option value="0">最后一天</option>
                                 <option value="1">最后一周</option>
                                 <option value="2">最后一月</option>
@@ -41,13 +102,13 @@
                             </select>
                         </div>
                         <div class="col-lg-2">
-                            <input type="text" placeholder="StartDate" id="date_beg_his" class="form-control">
+                            <input type="text" placeholder="StartDate" id="date_beg" class="form-control">
                         </div>
                         <div class="col-lg-2">
-                            <input type="text" placeholder="EndDate" id="date_end_his" class="form-control">
+                            <input type="text" placeholder="EndDate" id="date_end" class="form-control">
                         </div>
                         <div class="col-lg-2">
-                            <button id="hehe_his" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
+                            <button id="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
                         </div>
                     </div>
                     <table id="example_his" class="table  table-bordered table-striped table-hover" width="100%">
@@ -94,7 +155,7 @@
                         <tbody></tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="11" style="text-align:right">Total:</th>
+                                <th colspan="11" style="text-align:right !important">Total:</th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -105,9 +166,14 @@
     </div>
 </section>
 @section Scripts{
-    <script src="~/js/range_dates_history.js"></script>
     <script>
-        $(function () {
+    </script>
+
+    //For DataTables
+    <script src="~/js/range_dates.js"></script>
+    <script src="~/lib/chart.js/Chart.js"></script>
+    <script>
+        $(document).ready(function () {
             var table_his = $('#example_his').dataTable(
                 {
                     'dom':
@@ -184,111 +250,118 @@
                         }
                     ],
                     "footerCallback": function (tfoot, data, start, end, display) {
-                        var api = this.api(),data;
+                        var api = this.api(), data;
 
-                        // Remove the formatting to get integer data for summation                
-                        var intVal = function (i) { return parseFloat(i) };
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
+                        //var intVal = function (i) { return parseFloat(i) };
 
                         // Total over all pages
                         total = api.column(11).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b);
-                        },0);
+                        }, 0);
 
                         // Total over this page
                         pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b);
-                        },0);
+                        }, 0);
 
                         // Update footer
                         $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
                     }
                 });
-
-            $("#hehe_his").click(function () {
-                $("#date_beg_his").keyup(function () { table_his.draw(); });
-                $("#date_end_his").keyup(function () { table_his.draw(); });
-                table_his.api().search($("#search_his").val()).draw();
+            $("#hehe").click(function () {
+                $("#date_beg,#date_end").keyup(function () { table_his.api().draw(); });
+                table_his.api().search($("#search").val()).draw();
             });
         });
+    </script>
 
-        var now = new Date();
-        var nowDayOfWeek = now.getDay();
-        var nowDay = now.getDate();
-        var nowMonth = now.getMonth();
-        var nowYear = now.getYear();
-        nowYear += (nowYear < 2000) ? 1900 : 0;
-        var getCurrentDate = new Date(nowYear, nowMonth, nowDay + 1);
-        var getCurrentDate = formatDate(getCurrentDate)
-        var getYesterdayDate = new Date(nowYear, nowMonth, nowDay);
-        var getYesterdayDate = formatDate(getYesterdayDate);
+    //Get Date
+    <script>
+        $(document).ready(function () {
+            var now = new Date();
+            var nowDayOfWeek = now.getDay();
+            var nowDay = now.getDate();
+            var nowMonth = now.getMonth();
+            var nowYear = now.getYear();
+            nowYear += (nowYear < 2000) ? 1900 : 0;
+            var getCurrentDate = new Date(nowYear, nowMonth, nowDay + 1);
+            var getCurrentDate = formatDate(getCurrentDate)
+            var getYesterdayDate = new Date(nowYear, nowMonth, nowDay);
+            var getYesterdayDate = formatDate(getYesterdayDate);
 
-        var getMonthStartDate = new Date(nowYear, nowMonth, 1);
-        var getMonthStartDate = formatDate(getMonthStartDate);
+            var getMonthStartDate = new Date(nowYear, nowMonth, 1);
+            var getMonthStartDate = formatDate(getMonthStartDate);
 
-        var getWeekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek);
-        var getWeekStartDate = formatDate(getWeekStartDate);
+            var getWeekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek);
+            var getWeekStartDate = formatDate(getWeekStartDate);
 
-        var getWeekEndDate = new Date(nowYear, nowMonth, nowDay + (6 - nowDayOfWeek));
-        var getWeekEndDate = formatDate(getWeekEndDate);
+            var getWeekEndDate = new Date(nowYear, nowMonth, nowDay + (6 - nowDayOfWeek));
+            var getWeekEndDate = formatDate(getWeekEndDate);
 
-        var getFirMonthStartDate = new Date(nowYear, nowMonth - 1, nowDay);
-        var getFirMonthStartDate = formatDate(getFirMonthStartDate);
+            var getFirMonthStartDate = new Date(nowYear, nowMonth - 1, nowDay);
+            var getFirMonthStartDate = formatDate(getFirMonthStartDate);
 
-        var getTreeMonthStartDate = new Date(nowYear, nowMonth - 3, nowDay);
-        var getTreeMonthStartDate = formatDate(getTreeMonthStartDate);
+            var getTreeMonthStartDate = new Date(nowYear, nowMonth - 3, nowDay);
+            var getTreeMonthStartDate = formatDate(getTreeMonthStartDate);
 
-        var getYearStartDate = new Date(nowYear, nowMonth - 12, nowDay);
-        var getYearStartDate = formatDate(getYearStartDate);
+            var getYearStartDate = new Date(nowYear, nowMonth - 12, nowDay);
+            var getYearStartDate = formatDate(getYearStartDate);
 
-        function formatDate(date) {
-            var myyear = date.getFullYear();
-            var mymonth = date.getMonth() + 1;
-            var myweekday = date.getDate();
+            function formatDate(date) {
+                var myyear = date.getFullYear();
+                var mymonth = date.getMonth() + 1;
+                var myweekday = date.getDate();
 
-            if (mymonth < 10) {
-                mymonth = "0" + mymonth;
+                if (mymonth < 10) {
+                    mymonth = "0" + mymonth;
+                }
+                if (myweekday < 10) {
+                    myweekday = "0" + myweekday;
+                }
+                return (myyear + "-" + mymonth + "-" + myweekday);
             }
-            if (myweekday < 10) {
-                myweekday = "0" + myweekday;
-            }
-            return (myyear + "-" + mymonth + "-" + myweekday);
-        }
 
-        $("#date_select_his").change(function () {
-            var flag = parseInt($("#date_select_his").val());
-            switch (flag) {
-                // 当天
-                case 0:
-                    $('#date_beg_his').val(getYesterdayDate);
-                    $('#date_end_his').val(getCurrentDate);
-                    break;
-                // 本周
-                case 1:
-                    $('#date_beg_his').val(getWeekStartDate);
-                    $('#date_end_his').val(getWeekEndDate);
-                    break;
-                // 最近一月
-                case 2:
-                    $('#date_beg_his').val(getFirMonthStartDate);
-                    $('#date_end_his').val(getCurrentDate);
-                    break;
-                // 最近三月
-                case 3:
-                    $('#date_beg_his').val(getTreeMonthStartDate);
-                    $('#date_end_his').val(getCurrentDate);
-                    break;
-                // 最近一年
-                case 4:
-                    $('#date_beg_his').val(getYearStartDate);
-                    $('#date_end_his').val(getCurrentDate);
-                    break;
-                default:
-                    $('#date_beg_his').val("");
-                    $('#date_end_his').val("");
-                    break;
-            }
+            $("#date_select").change(function () {
+                var flag = parseInt($("#date_select").val());
+                switch (flag) {
+                    // 当天
+                    case 0:
+                        $('#date_beg').val(getYesterdayDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    // 本周
+                    case 1:
+                        $('#date_beg').val(getWeekStartDate);
+                        $('#date_end').val(getWeekEndDate);
+                        break;
+                    // 最近一月
+                    case 2:
+                        $('#date_beg').val(getFirMonthStartDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    // 最近三月
+                    case 3:
+                        $('#date_beg').val(getTreeMonthStartDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    // 最近一年
+                    case 4:
+                        $('#date_beg').val(getYearStartDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    default:
+                        $('#date_beg').val("");
+                        $('#date_end').val("");
+                        break;
+                }
+            });
         });
+    </script>
 
+    //For Select2
+    <script>
         $('.select2').select2()
     </script>
 }

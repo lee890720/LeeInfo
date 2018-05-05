@@ -21,7 +21,9 @@ namespace LeeInfo.Data.AppIdentity
                 // The password is set with the following command:
                 // dotnet user-secrets set SeedUserPW <pw>
                 // The admin user can do anything
-
+                var userManager = serviceProvider.GetService<UserManager<AppIdentityUser>>();
+                if (userManager.Users.Count() != 0)
+                    return;
                 var adminID = await EnsureUser(serviceProvider, config["Data:AdminUser:Password"],config["Data:AdminUser:UserName"]);
                 await EnsureRole(serviceProvider, adminID, config["Data:AdminUser:RoleName"]);
 

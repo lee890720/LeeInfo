@@ -24,6 +24,9 @@ namespace LeeInfo.Data.Forex
         public bool IsLive { get; set; }
         public double Balance { get; set; }
         public double Equity { get; set; }
+        public double MarginUsed { get; set; }
+        public double FreeMargin { get; set; }
+        public double MarginLevel { get; set; }
         public double PreciseLeverage { get; set; }
         public double UnrealizedNetProfit { get; set; }
         public string UserName { get; set; }

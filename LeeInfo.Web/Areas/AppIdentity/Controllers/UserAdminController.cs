@@ -46,7 +46,7 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
                     UserName = model.Name,
                     Email = model.Email,
                     RegisterDate = DateTime.Now,
-                    UserImage="~/lib/adminlte/img/photo2.png"
+                    UserImage="/images/photo2.png"
                 };
                 IdentityResult result
                     = await userManager.CreateAsync(user, model.Password);

@@ -1,7 +1,8 @@
 ﻿.dataTable th {
     white-space: nowrap !important;
-    text-align:center;
+    text-align: center !important;
 }
+
 .dataTable td{
     white-space:nowrap!important;
     text-align:center!important;

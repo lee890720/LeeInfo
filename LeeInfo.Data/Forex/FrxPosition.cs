@@ -25,6 +25,7 @@ namespace LeeInfo.Data.Forex
         public double? TakeProfit { get; set; }
         public double? StopLoss { get; set; }
         public double Commissions { get; set; }
+        public double Margin { get; set; }
         public double Swap { get; set; }
         public double GrossProfit { get; set; }
         public double NetProfit { get; set; }

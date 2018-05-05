@@ -8,10 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Forex\Models\**" />
     <Compile Remove="Areas\Forex\Views\Shared\**" />
+    <Compile Remove="Data\**" />
+    <Content Remove="Areas\Forex\Models\**" />
     <Content Remove="Areas\Forex\Views\Shared\**" />
+    <Content Remove="Data\**" />
+    <EmbeddedResource Remove="Areas\Forex\Models\**" />
     <EmbeddedResource Remove="Areas\Forex\Views\Shared\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <None Remove="Areas\Forex\Models\**" />
     <None Remove="Areas\Forex\Views\Shared\**" />
+    <None Remove="Data\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,10 +48,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Forex\Models\" />
     <Folder Include="Connected Services\" />
     <Folder Include="Properties\PublishProfiles\" />
-    <Folder Include="Data\" />
   </ItemGroup>
 
   <ItemGroup>

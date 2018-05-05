@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LeeInfo.Data.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -56,20 +56,25 @@ namespace LeeInfo.Data.Migrations
                 name: "Frx_Account",
                 columns: table => new
                 {
+                    AccountId = table.Column<int>(nullable: false),
                     AccountNumber = table.Column<int>(nullable: false),
                     Balance = table.Column<double>(nullable: false),
                     BrokerName = table.Column<string>(nullable: true),
                     Currency = table.Column<string>(nullable: true),
                     Equity = table.Column<double>(nullable: false),
+                    FreeMargin = table.Column<double>(nullable: false),
                     IsLive = table.Column<bool>(nullable: false),
+                    MarginLevel = table.Column<double>(nullable: false),
+                    MarginUsed = table.Column<double>(nullable: false),
                     Password = table.Column<string>(nullable: true),
                     PreciseLeverage = table.Column<double>(nullable: false),
+                    TraderRegistrationTime = table.Column<DateTime>(nullable: false),
                     UnrealizedNetProfit = table.Column<double>(nullable: false),
                     UserName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Frx_Account", x => x.AccountNumber);
+                    table.PrimaryKey("PK_Frx_Account", x => x.AccountId);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,20 +207,28 @@ namespace LeeInfo.Data.Migrations
                 columns: table => new
                 {
                     ClosingDealId = table.Column<int>(nullable: false),
-                    AccountNumber = table.Column<int>(nullable: false),
+                    AccountId = table.Column<int>(nullable: false),
                     Balance = table.Column<double>(nullable: false),
+                    BalanceVersion = table.Column<int>(nullable: false),
+                    BaseToUSDConversionRate = table.Column<double>(nullable: false),
+                    ClosedToDepoitConversionRate = table.Column<double>(nullable: true),
                     ClosingPrice = table.Column<double>(nullable: false),
                     ClosingTime = table.Column<DateTime>(nullable: false),
                     Comment = table.Column<string>(nullable: true),
                     Commissions = table.Column<double>(nullable: false),
                     EntryPrice = table.Column<double>(nullable: false),
                     EntryTime = table.Column<DateTime>(nullable: false),
+                    Equity = table.Column<double>(nullable: false),
+                    EquityBaseRoi = table.Column<double>(nullable: false),
                     GrossProfit = table.Column<double>(nullable: false),
                     Label = table.Column<string>(nullable: true),
+                    MarginRate = table.Column<double>(nullable: false),
                     NetProfit = table.Column<double>(nullable: false),
                     Pips = table.Column<double>(nullable: false),
                     PositionId = table.Column<int>(nullable: false),
                     Quantity = table.Column<double>(nullable: false),
+                    QuoteToDepositConversionRate = table.Column<double>(nullable: true),
+                    Roi = table.Column<double>(nullable: false),
                     Swap = table.Column<double>(nullable: false),
                     SymbolCode = table.Column<string>(nullable: true),
                     TradeType = table.Column<int>(nullable: false),
@@ -225,10 +238,10 @@ namespace LeeInfo.Data.Migrations
                 {
                     table.PrimaryKey("PK_Frx_History", x => x.ClosingDealId);
                     table.ForeignKey(
-                        name: "FK_Frx_History_Frx_Account_AccountNumber",
-                        column: x => x.AccountNumber,
+                        name: "FK_Frx_History_Frx_Account_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Frx_Account",
-                        principalColumn: "AccountNumber",
+                        principalColumn: "AccountId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -237,13 +250,17 @@ namespace LeeInfo.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false),
-                    AccountNumber = table.Column<int>(nullable: false),
+                    AccountId = table.Column<int>(nullable: false),
+                    Channel = table.Column<string>(nullable: true),
                     Comment = table.Column<string>(nullable: true),
                     Commissions = table.Column<double>(nullable: false),
+                    CurrentPrice = table.Column<double>(nullable: false),
                     EntryPrice = table.Column<double>(nullable: false),
                     EntryTime = table.Column<DateTime>(nullable: false),
                     GrossProfit = table.Column<double>(nullable: false),
                     Label = table.Column<string>(nullable: true),
+                    Margin = table.Column<double>(nullable: false),
+                    MarginRate = table.Column<double>(nullable: false),
                     NetProfit = table.Column<double>(nullable: false),
                     Pips = table.Column<double>(nullable: false),
                     Quantity = table.Column<double>(nullable: false),
@@ -258,10 +275,10 @@ namespace LeeInfo.Data.Migrations
                 {
                     table.PrimaryKey("PK_Frx_Position", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Frx_Position_Frx_Account_AccountNumber",
-                        column: x => x.AccountNumber,
+                        name: "FK_Frx_Position_Frx_Account_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Frx_Account",
-                        principalColumn: "AccountNumber",
+                        principalColumn: "AccountId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -346,14 +363,14 @@ namespace LeeInfo.Data.Migrations
                 column: "PosId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Frx_History_AccountNumber",
+                name: "IX_Frx_History_AccountId",
                 table: "Frx_History",
-                column: "AccountNumber");
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Frx_Position_AccountNumber",
+                name: "IX_Frx_Position_AccountId",
                 table: "Frx_Position",
-                column: "AccountNumber");
+                column: "AccountId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
