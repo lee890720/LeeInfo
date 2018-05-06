@@ -13,9 +13,10 @@ using System;
 namespace LeeInfo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180506110526_m-frxaccount2")]
+    partial class mfrxaccount2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -458,6 +459,26 @@ namespace LeeInfo.Data.Migrations
                     b.ToTable("Frx_Server");
                 });
 
+            modelBuilder.Entity("LeeInfo.Data.Forex.FrxUserAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AccountNumber");
+
+                    b.Property<string>("Password");
+
+                    b.Property<int>("Sequence");
+
+                    b.Property<string>("UserName");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountNumber");
+
+                    b.ToTable("Frx_UserAccount");
+                });
+
             modelBuilder.Entity("LeeInfo.Data.CreditCard.CcdBill", b =>
                 {
                     b.HasOne("LeeInfo.Data.CreditCard.CcdData", "CcdData")
@@ -521,6 +542,14 @@ namespace LeeInfo.Data.Migrations
                     b.HasOne("LeeInfo.Data.Forex.FrxAccount", "FrxAccount")
                         .WithMany("FrxPosition")
                         .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("LeeInfo.Data.Forex.FrxUserAccount", b =>
+                {
+                    b.HasOne("LeeInfo.Data.Forex.FrxAccount", "FrxAccount")
+                        .WithMany("FrxUserAccount")
+                        .HasForeignKey("AccountNumber")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

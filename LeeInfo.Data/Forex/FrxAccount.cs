@@ -29,7 +29,6 @@ namespace LeeInfo.Data.Forex
         public double MarginLevel { get; set; }
         public double PreciseLeverage { get; set; }
         public double UnrealizedNetProfit { get; set; }
-        public string UserName { get; set; }
         public ICollection<FrxPosition> FrxPosition { get; set; }
         public ICollection<FrxHistory> FrxHistory { get; set; }
     }

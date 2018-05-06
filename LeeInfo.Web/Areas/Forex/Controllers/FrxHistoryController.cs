@@ -27,65 +27,57 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
     [Authorize(Roles = "Admins,Forex")]
     public class FrxHistoryController : Controller
     {
-        private readonly AppDbContext _identitycontext;
-        UserManager<AppIdentityUser> _userManager;
+        private readonly AppIdentityDbContext _identitycontext;
+        private UserManager<AppIdentityUser> _userManager;
         private readonly AppDbContext _context;
 
-        public FrxHistoryController(AppDbContext identitycontext, UserManager<AppIdentityUser> usermgr, AppDbContext context)
+        public FrxHistoryController(AppIdentityDbContext identitycontext, UserManager<AppIdentityUser> usermgr, AppDbContext context)
         {
             _identitycontext = identitycontext;
             _userManager = usermgr;
             _context = context;
         }
-        public async Task<IActionResult> Index(string acNum = null)
+        public async Task<IActionResult> Index(int? acId)
         {
             #region Parameters
-            string _clientId = "";
-            string _clientSecret = "";
             string _accessToken = "";
-            string _refreshToken = "";
             string _apiUrl = "https://api.spotware.com/";
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
-            _clientId = _user.ClientId;
-            _clientSecret = _user.ClientSecret;
             _accessToken = _user.AccessToken;
-            _refreshToken = _user.RefreshToken;
             #endregion
             #region GetAccount
+            var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == _user.Id).ToList();
+            //var useraccounts = _user.AspNetUserForexAccount;
+            var temp = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
+            if (temp.Count == 0)
+                return Redirect("/");
             var accounts = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken);
-            var temp = _context.FrxAccount.Where(x => x.UserName == User.Identity.Name);
-            _context.RemoveRange(temp);
-            await _context.SaveChangesAsync();
             foreach (var a in accounts)
             {
-                var sql_accounts = _context.FrxAccount.Where(x => x.AccountId == Convert.ToInt32(a.AccountId));
-                if (sql_accounts.Count() == 0)
+                var temp_ac = temp.SingleOrDefault(x => x.AccountNumber == a.AccountNumber);
+                if (temp_ac != null)
                 {
-                    FrxAccount fa = new FrxAccount();
-                    fa.AccountId = a.AccountId;
-                    fa.AccountNumber = a.AccountNumber;
-                    fa.Balance = a.Balance / 100;
-                    fa.BrokerName = a.BrokerTitle;
-                    fa.Currency = a.DepositCurrency;
-                    fa.IsLive = a.Live;
-                    fa.PreciseLeverage = a.Leverage;
-                    fa.TraderRegistrationTime = ConvertJson.StampToDateTime(a.TraderRegistrationTimestamp);
-                    fa.UserName = User.Identity.Name;
-                    _context.Add(fa);
+                    temp_ac.Balance = a.Balance / 100;
+                    temp_ac.BrokerName = a.BrokerTitle;
+                    temp_ac.Currency = a.DepositCurrency;
+                    temp_ac.IsLive = a.Live;
+                    temp_ac.PreciseLeverage = a.Leverage;
+                    temp_ac.TraderRegistrationTime = ConvertJson.StampToDateTime(a.TraderRegistrationTimestamp);
+                    _context.Update(temp_ac);
                     await _context.SaveChangesAsync();
                 }
             }
-            var frxaccounts = _context.FrxAccount.Where(x => x.UserName == _user.UserName);
+            var frxaccounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
             var frxaccount = new FrxAccount();
-            var vd_AccountNumber = acNum;
-            if (string.IsNullOrEmpty(vd_AccountNumber))
+            if (acId == null)
             {
-                frxaccount = frxaccounts.FirstOrDefault(x => x.IsLive == true);
+                var tempuserac = useraccounts.SingleOrDefault(x => x.Alive == true);
+                if (tempuserac == null)
+                    tempuserac = useraccounts[0];
+                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == tempuserac.AccountNumber && x.Password == tempuserac.Password);
             }
             else
-            {
-                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == Convert.ToInt32(vd_AccountNumber));
-            }
+                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountId == acId);
             #endregion
             #region GetPosition
             var temppositions = _context.FrxPosition.Where(x => x.AccountId == frxaccount.AccountId);
@@ -214,56 +206,68 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             }
             var frxhistories = _context.FrxHistory.Where(x => x.AccountId == frxaccount.AccountId);
             #endregion
-            //SetChart
-            //GeneratePieChart(poss);
 
             return View(Tuple.Create<FrxAccount, List<FrxHistory>, List<FrxAccount>>(frxaccount, frxhistories.ToList(), frxaccounts.ToList()));
         }
 
-        public JsonResult GetHistory()
+        public JsonResult GetHistory(int? acId)
         {
-            var data = _context.FrxHistory.ToList();
+            var data = _context.FrxHistory.Where(x => x.AccountId == acId).ToList();
             return Json(new { data, data.Count });
         }
 
-        public void GeneratePieChart(List<PosGroup> posgroup)
+        public JsonResult GetEarnings(int? acId)
         {
-            List<string> lables = new List<string>();
-            List<double> lots = new List<double>();
-            List<string> colors = new List<string>();
-            foreach (var a in posgroup)
+            var frxhistories = _context.FrxHistory.Where(x => x.AccountId == acId).OrderBy(x => x.ClosingTime).ToList();
+            var days = (DateTime.UtcNow - frxhistories[0].ClosingTime).Days;
+            var data =new List<Earnings>();
+            for(int i=1;i<=days;i++)
             {
-                lables.Add(a.SymbolCode);
-                lots.Add(Math.Round(a.Quantity, 2));
-                colors.Add(Tools.GetRandomColor());
+                var earnings = new Earnings();
+                double net = 0;
+                double qua = 0;
+                var closingtime = frxhistories[0].ClosingTime.Date.AddDays(i);
+                var temptime = closingtime.AddDays(-1);
+                var tempid = 0;
+                for(int f=0;f<frxhistories.Count;f++)
+                {
+                    if (closingtime <= frxhistories[f].ClosingTime)
+                    {
+                        tempid = frxhistories[f].ClosingDealId;
+                        if(temptime> frxhistories[f].ClosingTime)
+                        {
+                            net += frxhistories[f].NetProfit;
+                            qua += frxhistories[f].Quantity;
+                        }
+                    }
+                    else
+                        break;
+                }
+                var frxhistory = frxhistories.SingleOrDefault(x => x.ClosingDealId==tempid);
+                if (frxhistory != null)
+                {
+                    earnings.Id = i;
+                    earnings.AccountId = frxhistory.AccountId;
+                    earnings.Balance = frxhistory.Balance;
+                    earnings.Equity = frxhistory.Equity;
+                    earnings.ClosingTime = temptime;
+                    earnings.NetProfit = net;
+                    earnings.Quantity = qua;
+                    data.Add(earnings);
+                }
             }
-            Chart chart = new Chart();
-            chart.Type = "pie";
-            ChartJSCore.Models.Data data = new ChartJSCore.Models.Data();
-            data.Labels = lables;
-
-            PieDataset dataset = new PieDataset()
-            {
-                Label = "My dataset",
-                BackgroundColor = colors,
-                HoverBackgroundColor = colors,
-                Data = lots
-            };
-
-            data.Datasets = new List<Dataset>();
-            data.Datasets.Add(dataset);
-
-            ChartJSCore.Models.Options options = new ChartJSCore.Models.Options();
-            options.Legend = new Legend
-            {
-                Display = true,
-                Position = "right"
-            };
-
-            chart.Data = data;
-            chart.Options = options;
-
-            ViewData["chart"] = chart;
+            return Json(new { data, data.Count });
         }
+    }
+
+    public class Earnings
+    {
+        public int Id { get; set; }
+        public int AccountId { get; set; }
+        public double Balance { get; set; }
+        public double Equity { get; set; }
+        public DateTime ClosingTime { get; set; }
+        public double NetProfit { get; set; }
+        public double Quantity { get; set; }
     }
 }

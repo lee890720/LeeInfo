@@ -13,9 +13,10 @@ using System;
 namespace LeeInfo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180506111800_m-frxaccount3")]
+    partial class mfrxaccount3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -456,6 +457,24 @@ namespace LeeInfo.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Frx_Server");
+                });
+
+            modelBuilder.Entity("LeeInfo.Data.Forex.FrxUserAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AccountNumber");
+
+                    b.Property<string>("Password");
+
+                    b.Property<int>("Sequence");
+
+                    b.Property<string>("UserName");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Frx_UserAccount");
                 });
 
             modelBuilder.Entity("LeeInfo.Data.CreditCard.CcdBill", b =>

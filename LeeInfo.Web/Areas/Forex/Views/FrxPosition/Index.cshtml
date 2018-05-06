@@ -45,7 +45,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item3)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxPosition",new { acNum=f.AccountNumber.ToString() })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -89,12 +89,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="row">
-                                <div class="chart-responsive">
-                                    <canvas id="pieChart"></canvas>
-                                    @{ChartJSCore.Models.Chart chart = (ChartJSCore.Models.Chart)ViewData["chart"]; }
-                                </div>
-                            </div>
+                            <div id="pieChart" style="width: 400px;height:300px;"></div>
                         </div>
                     </div>
                 </div>
@@ -157,7 +152,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item3)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxPosition",new { acNum=f.AccountNumber.ToString() })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -245,9 +240,84 @@
 </section>
 @section Scripts{
     //For Chart
-    <script src="~/lib/chart.js/Chart.js"></script>
+    <script src="~/lib/echart/echarts.js"></script>
     <script>
-        @Html.Raw(chart.CreateChartCode("pieChart"));
+        $(document).ready(function () {
+            var myChart = echarts.init(document.getElementById('pieChart'));
+            var legendData = [];
+            var seriesData = [];
+            myChart.setOption({
+                title: {
+                    text: 'Positions',
+                    show: false
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    type: 'scroll',
+                    orient: 'vertical',
+                    right: 10,
+                    top: 20,
+                    bottom: 20,
+                    data: legendData
+                },
+                series: [
+                    {
+                        name: 'SymbolCode',
+                        type: 'pie',
+                        radius: '55%',
+                        center: ['40%', '50%'],
+                        data: seriesData,
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            });
+
+            myChart.showLoading();
+
+            $.ajax({
+                type: "post",
+                async: true,
+                url: "@Url.Action("GetPosGroup", "FrxPosition", new { acId = Model.Item1.AccountId })",
+                data: {},
+                dataType: "json",
+                success: function (result) {
+                    if (result) {
+                        for (var i = 0; i < result.data.length; i++) {
+                            var _name = result.data[i].symbolCode;
+                            var _value = parseFloat(result.data[i].quantity).toFixed(2);
+                            legendData.push(_name);
+                            seriesData.push({ name: _name, value: _value });
+                        }
+                        myChart.hideLoading();
+                        myChart.setOption({
+                            legend: {
+                                data: legendData
+                            },
+                            series: [
+                                {
+                                    name: 'SymbolCode',
+                                    data: seriesData
+                                }
+                            ]
+                        });
+                    }
+                },
+                error: function (errorMsg) {
+                    alert("图表请求数据失败!");
+                    myChart.hideLoading();
+                }
+            })
+
+        });
     </script>
 
     //For DataTables
@@ -264,7 +334,7 @@
                     'ajax': {
                         'type': "POST",
                         'contentType': "application/json; charset=utf-8",
-                        'url': "/Forex/FrxPosition/GetPosition"
+                        'url': "@Url.Action("GetPosition","FrxPosition",new { acId=Model.Item1.AccountId})"
                     },
                     'columns': [
                         { "data": "id" },

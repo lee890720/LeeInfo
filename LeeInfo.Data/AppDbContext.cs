@@ -18,7 +18,7 @@ namespace LeeInfo.Data
         public virtual DbSet<FrxAccount> FrxAccount { get; set; }
         public virtual DbSet<FrxCbotset> FrxCbotset { get; set; }
         public virtual DbSet<FrxHistory> FrxHistory { get; set; }
-       public virtual DbSet<FrxPosition> FrxPosition { get; set; }
+        public virtual DbSet<FrxPosition> FrxPosition { get; set; }
         public virtual DbSet<FrxServer> FrxServer { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

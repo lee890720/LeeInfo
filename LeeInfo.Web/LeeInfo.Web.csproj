@@ -8,17 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Areas\Forex\Models\**" />
-    <Compile Remove="Areas\Forex\Views\Shared\**" />
     <Compile Remove="Data\**" />
-    <Content Remove="Areas\Forex\Models\**" />
-    <Content Remove="Areas\Forex\Views\Shared\**" />
     <Content Remove="Data\**" />
-    <EmbeddedResource Remove="Areas\Forex\Models\**" />
-    <EmbeddedResource Remove="Areas\Forex\Views\Shared\**" />
     <EmbeddedResource Remove="Data\**" />
-    <None Remove="Areas\Forex\Models\**" />
-    <None Remove="Areas\Forex\Views\Shared\**" />
     <None Remove="Data\**" />
   </ItemGroup>
 
@@ -28,6 +20,7 @@
 
   <ItemGroup>
     <None Remove="Properties\PublishProfiles\leeinfo - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\leeinfoweb - Web Deploy.pubxml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -74,8 +67,16 @@
     <None Include="Areas\CreditCard\Views\CcdRecord\_PartialCreate.cshtml" />
     <None Include="Areas\CreditCard\Views\_ViewImports.cshtml" />
     <None Include="Areas\CreditCard\Views\_ViewStart.cshtml" />
-    <None Include="Areas\Forex\Views\Proto\Index.cshtml" />
+    <None Include="Areas\Forex\Views\FrxCbotset\CreateEdit.cshtml" />
+    <None Include="Areas\Forex\Views\FrxCbotset\Delete.cshtml" />
+    <None Include="Areas\Forex\Views\FrxCbotset\Index.cshtml" />
     <None Include="Areas\Forex\Views\FrxHistory\Index.cshtml" />
+    <None Include="Areas\Forex\Views\FrxPosition\Index.cshtml" />
+    <None Include="Areas\Forex\Views\FrxUserAccount\CreateEdit.cshtml" />
+    <None Include="Areas\Forex\Views\FrxUserAccount\Delete.cshtml" />
+    <None Include="Areas\Forex\Views\FrxUserAccount\Index.cshtml" />
+    <None Include="Areas\Forex\Views\_ViewImports.cshtml" />
+    <None Include="Areas\Forex\Views\_ViewStart.cshtml" />
     <None Include="wwwroot\lib\icheck\icheck.js" />
     <None Include="wwwroot\lib\icheck\icheck.min.js" />
   </ItemGroup>

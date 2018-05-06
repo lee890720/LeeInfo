@@ -10,6 +10,10 @@ namespace LeeInfo.Data.AppIdentity
     // Add profile data for application users by adding properties to the ApplicationUser class
     public class AppIdentityUser : IdentityUser
     {
+        public AppIdentityUser()
+        {
+            AspNetUserForexAccount = new HashSet<AspNetUserForexAccount>();
+        }
         [Display(Name = "性别")]
         public SexType Sex { get; set; }
         [Display(Name = "注册时间")]
@@ -19,7 +23,9 @@ namespace LeeInfo.Data.AppIdentity
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string AccessToken { get; set; }
-        public string RefreshToken { get;set; }
+        public string RefreshToken { get; set; }
+
+        public ICollection<AspNetUserForexAccount> AspNetUserForexAccount { get; set; }
     }
     public enum SexType
     {

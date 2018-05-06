@@ -11,9 +11,10 @@ using System;
 namespace LeeInfo.Data.Migrations.AppIdentityDb
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180506135040_addforexaccount2")]
+    partial class addforexaccount2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,6 +98,8 @@ namespace LeeInfo.Data.Migrations.AppIdentityDb
                     b.Property<string>("AppIdentityUserId");
 
                     b.Property<string>("Password");
+
+                    b.Property<string>("UserName");
 
                     b.HasKey("Id");
 

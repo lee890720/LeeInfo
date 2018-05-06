@@ -123,6 +123,7 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Edit(string id, string email,
                 string password,SexType sex,string userImage,string clientId,string clientSecret,string accessToken,string refreshToken)
         {

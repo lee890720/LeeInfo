@@ -13,9 +13,10 @@ using System;
 namespace LeeInfo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180506072320_m-frxaccount")]
+    partial class mfrxaccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,9 +274,13 @@ namespace LeeInfo.Data.Migrations
 
                     b.Property<double>("PreciseLeverage");
 
+                    b.Property<int>("Sequence");
+
                     b.Property<DateTime>("TraderRegistrationTime");
 
                     b.Property<double>("UnrealizedNetProfit");
+
+                    b.Property<string>("UserName");
 
                     b.HasKey("AccountId");
 
