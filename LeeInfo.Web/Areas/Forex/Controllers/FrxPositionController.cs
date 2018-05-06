@@ -169,7 +169,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             }
             #endregion
 
-            return View(Tuple.Create<FrxAccount, List<PosGroup>, List<FrxAccount>>(frxaccount, poss, frxaccounts.ToList()));
+            return View(Tuple.Create<FrxAccount, List<FrxAccount > ,List<PosGroup>> (frxaccount, frxaccounts.ToList(), poss));
         }
 
         public JsonResult GetPosition(int? acId)

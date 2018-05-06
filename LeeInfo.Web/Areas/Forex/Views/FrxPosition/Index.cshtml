@@ -1,4 +1,4 @@
-﻿@model Tuple<FrxAccount, List<PosGroup>, List<FrxAccount>>
+﻿@model Tuple<FrxAccount,  List<FrxAccount> ,List<PosGroup>>
 @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
@@ -43,7 +43,7 @@
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                @foreach (var f in Model.Item3)
+                                @foreach (var f in Model.Item2)
                                 {
                                     <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
                                 }
@@ -70,7 +70,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var p in Model.Item2)
+                                        @foreach (var p in Model.Item3)
                                         {
                                             <tr>
                                                 <td>@p.SymbolCode</td>
@@ -89,7 +89,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div id="pieChart" style="width: 400px;height:300px;"></div>
+                            <div id="pieChart" style="width: 100%;height:300px;"></div>
                         </div>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                @foreach (var f in Model.Item3)
+                                @foreach (var f in Model.Item2)
                                 {
                                     <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
                                 }

@@ -1,4 +1,4 @@
-﻿@model Tuple<FrxAccount, List<FrxHistory>, List<FrxAccount>>
+﻿@model Tuple<FrxAccount, List<FrxAccount>, AccountInfo>
 @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
@@ -17,6 +17,14 @@
     .table td {
         text-align: center !important;
     }
+
+        .table td.brr {
+            text-align: left !important;
+        }
+
+        .table td.brl {
+            text-align: right !important;
+        }
 </style>
 <section class="content-header">
     <h1>
@@ -43,7 +51,7 @@
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                @foreach (var f in Model.Item3)
+                                @foreach (var f in Model.Item2)
                                 {
                                     <li><a href="@Url.Action("Index","FrxHistory",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
                                 }
@@ -54,10 +62,51 @@
                 </div>
                 <div class="box-body" style="margin:30px">
                     <div class="row">
-                        <div class="col-md-8">
-                            <div id="main" style="width: 100%;height:400px;"></div>
+                        <div class="col-md-7">
+                            <div id="beChart" style="width: 100%;height:300px;"></div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-5">
+                            <table class="table no-margin" width="100%">
+                                <tbody>
+
+                                    <tr>
+                                        <td class="brr">收益率：</td>
+                                        <td class="brl"><strong style="color:coral">@Model.Item3.Gain %</strong></td>
+                                        <td class="brr">余额：</td>
+                                        <td class="brl">@Model.Item3.Balance</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="brr">绝对收益率：</td>
+                                        <td class="brl"><strong style="color:coral">@Model.Item3.AbsGain %</strong></td>
+                                        <td class="brr">净值：</td>
+                                        <td class="brl">@Model.Item3.Equity</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="brr">最大回撤率： </td>
+                                        <td class="brl">-@Model.Item3.MaxDraw % (@Model.Item3.MaxDrawTime.ToShortDateString())</td>
+                                        <td class="brr">最高净值： </td>
+                                        <td class="brl">@Model.Item3.MaxBalance (@Model.Item3.MaxBalanceTime.ToShortDateString())</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="brr">入金： </td>
+                                        <td class="brl">@Model.Item3.Deposit</td>
+                                        <td class="brr">利润：</td>
+                                        <td class="brl"><strong style="color:coral">@Model.Item3.TotalProfit</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="brr">出金： </td>
+                                        <td class="brl">@Model.Item3.Withdraw</td>
+                                        <td class="brr">利息： </td>
+                                        <td class="brl"><strong style="color:coral">@Model.Item3.TotalSwap</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="brr">统计起始：</td>
+                                        <td class="brl">@Model.Item3.RigistrationTime</td>
+                                        <td class="brr">最后交易：</td>
+                                        <td class="brl">@Model.Item3.LastTradeTime</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -78,7 +127,7 @@
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                @foreach (var f in Model.Item3)
+                                @foreach (var f in Model.Item2)
                                 {
                                     <li><a href="@Url.Action("Index","FrxHistory",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
                                 }
@@ -167,102 +216,10 @@
     </div>
 </section>
 @section Scripts{
-    //For Echarts
-    <script src="~/lib/echart/echarts.js"></script>
-    <script>
-        var myChart = echarts.init(document.getElementById('main'));
-        // 显示标题，图例和空的坐标轴
-        myChart.setOption({
-            title: {
-                text: 'Balance/Equity',
-                show:false
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'cross',
-                    label: {
-                        backgroundColor: '#6a7985'
-                    }
-                }
-            },
-            legend: {
-                data: ['balance', 'equity']
-            },
-            xAxis: {
-                data: []
-            },
-            yAxis: {},
-            series: [
-                {
-                    name: 'balance',
-                    type: 'line',
-                    data: []
-                },
-                {
-                    name: 'equity',
-                    type: 'line',
-                    data: []
-                }
-            ]
-        });
-
-        myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
-
-        var names = [];    //类别数组（实际用来盛放X轴坐标值）
-        var bs = [];    //销量数组（实际用来盛放Y坐标值）
-        var es = [];
-
-        $.ajax({
-            type: "post",
-            async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
-            url: "@Url.Action("GetHistory", "FrxHistory", new { acId = Model.Item1.AccountId })",
-            data: {},
-            dataType: "json",        //返回数据形式为json
-            success: function (result) {
-                //请求成功时执行该函数内容，result即为服务器返回的json对象
-                if (result) {
-                    for (var i = 0; i < result.data.length; i++) {
-                        //alert(result[i].name);
-                        names.push(moment(result.data[i].closingTime).format('YYYY-MM-DD'));    //挨个取出类别并填入类别数组
-                    }
-                    for (var i = 0; i < result.data.length; i++) {
-                        bs.push(result.data[i].balance);    //挨个取出销量并填入销量数组
-                    }
-                    for (var i = 0; i < result.data.length; i++) {
-                        es.push(result.data[i].equity);    //挨个取出销量并填入销量数组
-                    }
-                    myChart.hideLoading();    //隐藏加载动画
-                    myChart.setOption({        //加载数据图表
-                        xAxis: {
-                            data: names
-                        },
-                        series: [
-                            {
-                                // 根据名字对应到相应的系列
-                                name: 'balance',
-                                data: bs
-                            },
-                            {
-                                name: 'equity',
-                                data: es
-                            }
-                        ]
-                    });
-
-                }
-
-            },
-            error: function (errorMsg) {
-                //请求失败时执行该函数
-                alert("图表请求数据失败!");
-                myChart.hideLoading();
-            }
-        })
-    </script>
 
     //For DataTables
     <script src="~/js/range_dates.js"></script>
+    <script src="~/lib/echart/echarts.js"></script>
     <script>
         $(document).ready(function () {
             var table_his = $('#example_his').dataTable(
@@ -272,11 +229,7 @@
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
                     'processing': true,
-                    'ajax': {
-                        'type': "POST",
-                        'contentType': "application/json; charset=utf-8",
-                        'url': "@Url.Action("GetHistory","FrxHistory",new { acId=Model.Item1.AccountId})"
-                    },
+                    'data': [],
                     'columns': [
                         { "data": "closingDealId" },
                         { "data": "symbolCode" },
@@ -364,6 +317,85 @@
                 $("#date_beg,#date_end").keyup(function () { table_his.api().draw(); });
                 table_his.api().search($("#search").val()).draw();
             });
+            var myChart = echarts.init(document.getElementById('beChart'));
+            myChart.setOption({
+                title: {
+                    text: 'beChart',
+                    show: false
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                legend: {
+                    data: ['balance', 'equity']
+                },
+                xAxis: {
+                    data: []
+                },
+                yAxis: {},
+                series: [
+                    {
+                        name: 'balance',
+                        type: 'line',
+                        data: []
+                    },
+                    {
+                        name: 'equity',
+                        type: 'line',
+                        data: []
+                    }
+                ]
+            });
+
+            myChart.showLoading();
+
+            var names = [];
+            var bs = [];
+            var es = [];
+
+            $.ajax({
+                type: "post",
+                async: true,
+                url: "@Url.Action("GetHistory", "FrxHistory", new { acId = Model.Item1.AccountId })",
+                data: {},
+                dataType: "json",
+                success: function (result) {
+                    if (result) {
+                        for (var i = 0; i < result.data.length; i++) {
+                            names.push(moment(result.data[i].closingTime).format('YYYY-MM-DD'));
+                            bs.push(result.data[i].balance);
+                            es.push(result.data[i].equity);
+                        }
+                        myChart.hideLoading();
+                        myChart.setOption({
+                            xAxis: {
+                                data: names
+                            },
+                            series: [
+                                {
+                                    name: 'balance',
+                                    data: bs
+                                },
+                                {
+                                    name: 'equity',
+                                    data: es
+                                }
+                            ]
+                        });
+                        table_his.api().rows.add(result.data).draw();
+                    }
+                },
+                error: function (errorMsg) {
+                    alert("图表请求数据失败!");
+                    myChart.hideLoading();
+                }
+            })
         });
     </script>
 

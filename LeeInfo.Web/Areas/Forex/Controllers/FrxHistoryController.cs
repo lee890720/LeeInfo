@@ -79,6 +79,18 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             else
                 frxaccount = frxaccounts.SingleOrDefault(x => x.AccountId == acId);
             #endregion
+            #region GetCashflow
+            var cashflow = CashflowHistory.GetCashflowHistory(_apiUrl, frxaccount.AccountId.ToString(), _accessToken);
+            var deposit = 0.00;
+            var withdraw = 0.00;
+            foreach(var c in cashflow)
+            {
+                if (c.Type == "DEPOSIT")
+                    deposit += c.Delta / 100;
+                if (c.Type == "WITHDRAW")
+                    withdraw += c.Delta / 100;
+            }
+            #endregion
             #region GetPosition
             var temppositions = _context.FrxPosition.Where(x => x.AccountId == frxaccount.AccountId);
             _context.RemoveRange(temppositions);
@@ -139,75 +151,103 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             await _context.SaveChangesAsync();
             #endregion
             #region GetHistory
-            DateTime utcnow = DateTime.UtcNow;
-            string fromtimestamp = ConvertJson.DateTimeToStamp(frxaccount.TraderRegistrationTime);
-            string totimestamp = ConvertJson.DateTimeToStamp(utcnow);
-            var deal = Deal.GetDeals(_apiUrl, frxaccount.AccountId.ToString(), _accessToken, fromtimestamp, totimestamp);
-            var deal_history = new List<Deal>();
-            foreach (var d in deal)
-            {
-                if (d.PositionCloseDetails != null)
-                    deal_history.Add(d);
-            }
-            foreach (var h in deal_history)
-            {
-                FrxHistory fh = new FrxHistory();
-                fh.ClosingDealId = h.DealID;
-                fh.AccountId = frxaccount.AccountId;
-                fh.Balance = h.PositionCloseDetails.Balance / 100;
-                fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
-                fh.BaseToUSDConversionRate = h.BaseToUSDConversionRate;
-                fh.ClosedToDepoitConversionRate = h.PositionCloseDetails.ClosedToDepositConversionRate;
-                fh.ClosingTime = ConvertJson.StampToDateTime(h.ExecutionTimestamp);
-                fh.ClosingPrice = h.ExecutionPrice;
-                fh.Comment = h.Comment;
-                fh.Commissions = h.PositionCloseDetails.Commission / 100;
-                fh.EntryPrice = h.PositionCloseDetails.EntryPrice;
-                long tempstamp = System.Convert.ToInt64(h.ExecutionTimestamp);
-                foreach (var d in deal)
-                {
-                    if (d.PositionID == h.PositionID)
-                    {
-                        if (System.Convert.ToInt64(d.ExecutionTimestamp) < tempstamp)
-                            tempstamp = System.Convert.ToInt64(d.ExecutionTimestamp);
-                    }
-                }
-                fh.EntryTime = ConvertJson.StampToDateTime(tempstamp.ToString());
-                fh.Equity = h.PositionCloseDetails.Equity / 100;
-                fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi / 100;
-                fh.GrossProfit = h.PositionCloseDetails.Profit / 100;
-                fh.Label = h.Label;
-                fh.MarginRate = h.MarginRate;
-                fh.Swap = h.PositionCloseDetails.Swap / 100;
-                fh.NetProfit = fh.GrossProfit + fh.Swap + fh.Commissions;
-                fh.Pips = h.PositionCloseDetails.ProfitInPips;
-                fh.PositionId = h.PositionID;
-                fh.SymbolCode = h.SymbolName;
-                fh.Volume = h.PositionCloseDetails.ClosedVolume / 100;
+            //DateTime utcnow = DateTime.UtcNow;
+            //string fromtimestamp = ConvertJson.DateTimeToStamp(frxaccount.TraderRegistrationTime);
+            //string totimestamp = ConvertJson.DateTimeToStamp(utcnow);
+            //var deal = Deal.GetDeals(_apiUrl, frxaccount.AccountId.ToString(), _accessToken, fromtimestamp, totimestamp);
+            //var deal_history = new List<Deal>();
+            //foreach (var d in deal)
+            //{
+            //    if (d.PositionCloseDetails != null)
+            //        deal_history.Add(d);
+            //}
+            //foreach (var h in deal_history)
+            //{
+            //    FrxHistory fh = new FrxHistory();
+            //    fh.ClosingDealId = h.DealID;
+            //    fh.AccountId = frxaccount.AccountId;
+            //    fh.Balance = h.PositionCloseDetails.Balance / 100;
+            //    fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
+            //    fh.BaseToUSDConversionRate = h.BaseToUSDConversionRate;
+            //    fh.ClosedToDepoitConversionRate = h.PositionCloseDetails.ClosedToDepositConversionRate;
+            //    fh.ClosingTime = ConvertJson.StampToDateTime(h.ExecutionTimestamp);
+            //    fh.ClosingPrice = h.ExecutionPrice;
+            //    fh.Comment = h.Comment;
+            //    fh.Commissions = h.PositionCloseDetails.Commission / 100;
+            //    fh.EntryPrice = h.PositionCloseDetails.EntryPrice;
+            //    long tempstamp = System.Convert.ToInt64(h.ExecutionTimestamp);
+            //    foreach (var d in deal)
+            //    {
+            //        if (d.PositionID == h.PositionID)
+            //        {
+            //            if (System.Convert.ToInt64(d.ExecutionTimestamp) < tempstamp)
+            //                tempstamp = System.Convert.ToInt64(d.ExecutionTimestamp);
+            //        }
+            //    }
+            //    fh.EntryTime = ConvertJson.StampToDateTime(tempstamp.ToString());
+            //    fh.Equity = h.PositionCloseDetails.Equity / 100;
+            //    fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi / 100;
+            //    fh.GrossProfit = h.PositionCloseDetails.Profit / 100;
+            //    fh.Label = h.Label;
+            //    fh.MarginRate = h.MarginRate;
+            //    fh.Swap = h.PositionCloseDetails.Swap / 100;
+            //    fh.NetProfit = fh.GrossProfit + fh.Swap + fh.Commissions;
+            //    fh.Pips = h.PositionCloseDetails.ProfitInPips;
+            //    fh.PositionId = h.PositionID;
+            //    fh.SymbolCode = h.SymbolName;
+            //    fh.Volume = h.PositionCloseDetails.ClosedVolume / 100;
 
-                var tempvolume = Convert.ToDouble(fh.Volume);
-                double tempsub = 100000;
-                if (fh.SymbolCode == "XBRUSD" || fh.SymbolCode == "XTIUSD")
-                    tempsub = 100;
-                if (fh.SymbolCode == "XAGUSD" || fh.SymbolCode == "XAGEUR")
-                    tempsub = 1000;
-                if (fh.SymbolCode == "XAUUSD" || fh.SymbolCode == "XAUEUR")
-                    tempsub = 100;
-                fh.Quantity = tempvolume / tempsub;
-                fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
-                fh.Roi = h.PositionCloseDetails.Roi;
-                fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
-                var result = _context.FrxHistory.Find(fh.ClosingDealId);
-                if (result == null)
-                {
-                    _context.Add(fh);
-                    await _context.SaveChangesAsync();
-                }
-            }
+            //    var tempvolume = Convert.ToDouble(fh.Volume);
+            //    double tempsub = 100000;
+            //    if (fh.SymbolCode == "XBRUSD" || fh.SymbolCode == "XTIUSD")
+            //        tempsub = 100;
+            //    if (fh.SymbolCode == "XAGUSD" || fh.SymbolCode == "XAGEUR")
+            //        tempsub = 1000;
+            //    if (fh.SymbolCode == "XAUUSD" || fh.SymbolCode == "XAUEUR")
+            //        tempsub = 100;
+            //    fh.Quantity = tempvolume / tempsub;
+            //    fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
+            //    fh.Roi = h.PositionCloseDetails.Roi;
+            //    fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
+            //    var result = _context.FrxHistory.Find(fh.ClosingDealId);
+            //    if (result == null)
+            //    {
+            //        _context.Add(fh);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //}
             var frxhistories = _context.FrxHistory.Where(x => x.AccountId == frxaccount.AccountId);
             #endregion
-
-            return View(Tuple.Create<FrxAccount, List<FrxHistory>, List<FrxAccount>>(frxaccount, frxhistories.ToList(), frxaccounts.ToList()));
+            var maxbalance = frxhistories.Select(x => x.Balance).Max();
+            DateTime maxtime = frxhistories.SingleOrDefault(x => x.Balance == maxbalance).ClosingTime.Date;
+            var maxdrawdown = frxhistories.Select(x => Math.Round((x.Balance - x.Equity) / x.Balance,4)).Max();
+            DateTime maxdrawtime = frxhistories.SingleOrDefault(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4) == maxdrawdown).ClosingTime.Date;
+            var totalswap = frxhistories.Select(x => x.Swap).Sum();
+            DateTime lasttradetime;
+            if (frxpositions.Count() > 0)
+                lasttradetime = frxpositions.OrderByDescending(x => x.EntryTime).ToList()[0].EntryTime;
+            else if (frxhistories.Count() > 0)
+                lasttradetime = frxhistories.OrderByDescending(x => x.ClosingTime).ToList()[0].ClosingTime;
+            else
+                lasttradetime = frxaccount.TraderRegistrationTime;
+            var accountinfo = new AccountInfo
+            {
+                Gain = Math.Round((frxaccount.Balance - deposit + withdraw) / frxaccount.Equity,4)*100,
+                AbsGain = Math.Round((frxaccount.Balance - deposit + withdraw) / deposit, 4) * 100,
+                MaxDraw = maxdrawdown * 100,
+                MaxDrawTime = maxdrawtime,
+                Deposit = deposit,
+                Withdraw = withdraw,
+                Balance = frxaccount.Balance,
+                Equity = frxaccount.Equity,
+                MaxBalance = maxbalance,
+                MaxBalanceTime = maxtime,
+                TotalProfit = frxaccount.Balance - deposit + withdraw,
+                TotalSwap = Math.Round(totalswap,2),
+                LastTradeTime = lasttradetime,
+                RigistrationTime=frxaccount.TraderRegistrationTime
+            };
+            return View(Tuple.Create<FrxAccount, List<FrxAccount>, AccountInfo>(frxaccount, frxaccounts.ToList(), accountinfo ));
         }
 
         public JsonResult GetHistory(int? acId)
@@ -258,6 +298,24 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             }
             return Json(new { data, data.Count });
         }
+    }
+
+    public class AccountInfo
+    {
+        public double Gain { get; set; }
+        public double AbsGain { get; set; }
+        public double MaxDraw { get; set; }
+        public DateTime MaxDrawTime { get; set; }
+        public double Deposit { get; set; }
+        public double Withdraw { get; set; }
+        public double Balance { get; set; }
+        public double Equity { get; set; }
+        public double MaxBalance { get; set; }
+        public DateTime MaxBalanceTime { get; set; }
+        public double TotalProfit { get; set; }
+        public double TotalSwap { get; set; }
+        public DateTime LastTradeTime { get; set; }
+        public DateTime RigistrationTime { get; set; }
     }
 
     public class Earnings

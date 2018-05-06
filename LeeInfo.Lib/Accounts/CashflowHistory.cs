@@ -17,7 +17,7 @@ namespace Connect_API.Accounts
         /// The cashflow identifier.
         /// </value>
         [JsonProperty("cashflowId")]
-        public string CashflowID { get; set; }
+        public long CashflowID { get; set; }
 
         /// <summary>
         /// Gets or sets the type.
@@ -35,7 +35,7 @@ namespace Connect_API.Accounts
         /// The delta.
         /// </value>
         [JsonProperty("delta")]
-        public string Delta { get; set; }
+        public double Delta { get; set; }
 
         /// <summary>
         /// Gets or sets the balance.
@@ -44,7 +44,7 @@ namespace Connect_API.Accounts
         /// The balance.
         /// </value>
         [JsonProperty("balance")]
-        public string Balance { get; set; }
+        public double Balance { get; set; }
 
         /// <summary>
         /// Gets or sets the balance version.
@@ -53,7 +53,7 @@ namespace Connect_API.Accounts
         /// The balance version.
         /// </value>
         [JsonProperty("balanceVersion")]
-        public string BalanceVersion { get; set; }
+        public long BalanceVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the change timestamp.
@@ -71,7 +71,7 @@ namespace Connect_API.Accounts
         /// The equity.
         /// </value>
         [JsonProperty("equity")]
-        public string Equity { get; set; }
+        public double Equity { get; set; }
 
         /// <summary>
         /// Gets the cashflow history.
