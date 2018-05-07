@@ -25,13 +25,13 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
 {
     [Area("Forex")]
     [Authorize(Roles = "Admins,Forex")]
-    public class FrxHistoryController : Controller
+    public class FrxAnalyzeController : Controller
     {
         private readonly AppIdentityDbContext _identitycontext;
         private UserManager<AppIdentityUser> _userManager;
         private readonly AppDbContext _context;
 
-        public FrxHistoryController(AppIdentityDbContext identitycontext, UserManager<AppIdentityUser> usermgr, AppDbContext context)
+        public FrxAnalyzeController(AppIdentityDbContext identitycontext, UserManager<AppIdentityUser> usermgr, AppDbContext context)
         {
             _identitycontext = identitycontext;
             _userManager = usermgr;
@@ -83,7 +83,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             var cashflow = CashflowHistory.GetCashflowHistory(_apiUrl, frxaccount.AccountId.ToString(), _accessToken);
             var deposit = 0.00;
             var withdraw = 0.00;
-            foreach(var c in cashflow)
+            foreach (var c in cashflow)
             {
                 if (c.Type == "DEPOSIT")
                     deposit += c.Delta / 100;
@@ -151,76 +151,76 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             await _context.SaveChangesAsync();
             #endregion
             #region GetHistory
-            DateTime utcnow = DateTime.UtcNow;
-            string fromtimestamp = ConvertJson.DateTimeToStamp(frxaccount.TraderRegistrationTime);
-            string totimestamp = ConvertJson.DateTimeToStamp(utcnow);
-            var deal = Deal.GetDeals(_apiUrl, frxaccount.AccountId.ToString(), _accessToken, fromtimestamp, totimestamp);
-            var deal_history = new List<Deal>();
-            foreach (var d in deal)
-            {
-                if (d.PositionCloseDetails != null)
-                    deal_history.Add(d);
-            }
-            foreach (var h in deal_history)
-            {
-                FrxHistory fh = new FrxHistory();
-                fh.ClosingDealId = h.DealID;
-                fh.AccountId = frxaccount.AccountId;
-                fh.Balance = h.PositionCloseDetails.Balance / 100;
-                fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
-                fh.BaseToUSDConversionRate = h.BaseToUSDConversionRate;
-                fh.ClosedToDepoitConversionRate = h.PositionCloseDetails.ClosedToDepositConversionRate;
-                fh.ClosingTime = ConvertJson.StampToDateTime(h.ExecutionTimestamp);
-                fh.ClosingPrice = h.ExecutionPrice;
-                fh.Comment = h.Comment;
-                fh.Commissions = h.PositionCloseDetails.Commission / 100;
-                fh.EntryPrice = h.PositionCloseDetails.EntryPrice;
-                long tempstamp = System.Convert.ToInt64(h.ExecutionTimestamp);
-                foreach (var d in deal)
-                {
-                    if (d.PositionID == h.PositionID)
-                    {
-                        if (System.Convert.ToInt64(d.ExecutionTimestamp) < tempstamp)
-                            tempstamp = System.Convert.ToInt64(d.ExecutionTimestamp);
-                    }
-                }
-                fh.EntryTime = ConvertJson.StampToDateTime(tempstamp.ToString());
-                fh.Equity = h.PositionCloseDetails.Equity / 100;
-                fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi / 100;
-                fh.GrossProfit = h.PositionCloseDetails.Profit / 100;
-                fh.Label = h.Label;
-                fh.MarginRate = h.MarginRate;
-                fh.Swap = h.PositionCloseDetails.Swap / 100;
-                fh.NetProfit = fh.GrossProfit + fh.Swap + fh.Commissions;
-                fh.Pips = h.PositionCloseDetails.ProfitInPips;
-                fh.PositionId = h.PositionID;
-                fh.SymbolCode = h.SymbolName;
-                fh.Volume = h.PositionCloseDetails.ClosedVolume / 100;
+            //DateTime utcnow = DateTime.UtcNow;
+            //string fromtimestamp = ConvertJson.DateTimeToStamp(frxaccount.TraderRegistrationTime);
+            //string totimestamp = ConvertJson.DateTimeToStamp(utcnow);
+            //var deal = Deal.GetDeals(_apiUrl, frxaccount.AccountId.ToString(), _accessToken, fromtimestamp, totimestamp);
+            //var deal_history = new List<Deal>();
+            //foreach (var d in deal)
+            //{
+            //    if (d.PositionCloseDetails != null)
+            //        deal_history.Add(d);
+            //}
+            //foreach (var h in deal_history)
+            //{
+            //    FrxHistory fh = new FrxHistory();
+            //    fh.ClosingDealId = h.DealID;
+            //    fh.AccountId = frxaccount.AccountId;
+            //    fh.Balance = h.PositionCloseDetails.Balance / 100;
+            //    fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
+            //    fh.BaseToUSDConversionRate = h.BaseToUSDConversionRate;
+            //    fh.ClosedToDepoitConversionRate = h.PositionCloseDetails.ClosedToDepositConversionRate;
+            //    fh.ClosingTime = ConvertJson.StampToDateTime(h.ExecutionTimestamp);
+            //    fh.ClosingPrice = h.ExecutionPrice;
+            //    fh.Comment = h.Comment;
+            //    fh.Commissions = h.PositionCloseDetails.Commission / 100;
+            //    fh.EntryPrice = h.PositionCloseDetails.EntryPrice;
+            //    long tempstamp = System.Convert.ToInt64(h.ExecutionTimestamp);
+            //    foreach (var d in deal)
+            //    {
+            //        if (d.PositionID == h.PositionID)
+            //        {
+            //            if (System.Convert.ToInt64(d.ExecutionTimestamp) < tempstamp)
+            //                tempstamp = System.Convert.ToInt64(d.ExecutionTimestamp);
+            //        }
+            //    }
+            //    fh.EntryTime = ConvertJson.StampToDateTime(tempstamp.ToString());
+            //    fh.Equity = h.PositionCloseDetails.Equity / 100;
+            //    fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi / 100;
+            //    fh.GrossProfit = h.PositionCloseDetails.Profit / 100;
+            //    fh.Label = h.Label;
+            //    fh.MarginRate = h.MarginRate;
+            //    fh.Swap = h.PositionCloseDetails.Swap / 100;
+            //    fh.NetProfit = fh.GrossProfit + fh.Swap + fh.Commissions;
+            //    fh.Pips = h.PositionCloseDetails.ProfitInPips;
+            //    fh.PositionId = h.PositionID;
+            //    fh.SymbolCode = h.SymbolName;
+            //    fh.Volume = h.PositionCloseDetails.ClosedVolume / 100;
 
-                var tempvolume = Convert.ToDouble(fh.Volume);
-                double tempsub = 100000;
-                if (fh.SymbolCode == "XBRUSD" || fh.SymbolCode == "XTIUSD")
-                    tempsub = 100;
-                if (fh.SymbolCode == "XAGUSD" || fh.SymbolCode == "XAGEUR")
-                    tempsub = 1000;
-                if (fh.SymbolCode == "XAUUSD" || fh.SymbolCode == "XAUEUR")
-                    tempsub = 100;
-                fh.Quantity = tempvolume / tempsub;
-                fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
-                fh.Roi = h.PositionCloseDetails.Roi;
-                fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
-                var result = _context.FrxHistory.Find(fh.ClosingDealId);
-                if (result == null)
-                {
-                    _context.Add(fh);
-                    await _context.SaveChangesAsync();
-                }
-            }
+            //    var tempvolume = Convert.ToDouble(fh.Volume);
+            //    double tempsub = 100000;
+            //    if (fh.SymbolCode == "XBRUSD" || fh.SymbolCode == "XTIUSD")
+            //        tempsub = 100;
+            //    if (fh.SymbolCode == "XAGUSD" || fh.SymbolCode == "XAGEUR")
+            //        tempsub = 1000;
+            //    if (fh.SymbolCode == "XAUUSD" || fh.SymbolCode == "XAUEUR")
+            //        tempsub = 100;
+            //    fh.Quantity = tempvolume / tempsub;
+            //    fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
+            //    fh.Roi = h.PositionCloseDetails.Roi;
+            //    fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
+            //    var result = _context.FrxHistory.Find(fh.ClosingDealId);
+            //    if (result == null)
+            //    {
+            //        _context.Add(fh);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //}
             var frxhistories = _context.FrxHistory.Where(x => x.AccountId == frxaccount.AccountId);
             #endregion
             var maxbalance = frxhistories.Select(x => x.Balance).Max();
             DateTime maxtime = frxhistories.SingleOrDefault(x => x.Balance == maxbalance).ClosingTime.Date;
-            var maxdrawdown = frxhistories.Select(x => Math.Round((x.Balance - x.Equity) / x.Balance,4)).Max();
+            var maxdrawdown = frxhistories.Select(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4)).Max();
             DateTime maxdrawtime = frxhistories.SingleOrDefault(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4) == maxdrawdown).ClosingTime.Date;
             var totalswap = frxhistories.Select(x => x.Swap).Sum();
             DateTime lasttradetime;
@@ -232,7 +232,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 lasttradetime = frxaccount.TraderRegistrationTime;
             var accountinfo = new AccountInfo
             {
-                Gain = Math.Round((frxaccount.Balance - deposit + withdraw) / frxaccount.Equity,4)*100,
+                Gain = Math.Round((frxaccount.Balance - deposit + withdraw) / frxaccount.Equity, 4) * 100,
                 AbsGain = Math.Round((frxaccount.Balance - deposit + withdraw) / deposit, 4) * 100,
                 MaxDraw = maxdrawdown * 100,
                 MaxDrawTime = maxdrawtime,
@@ -243,35 +243,77 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 MaxBalance = maxbalance,
                 MaxBalanceTime = maxtime,
                 TotalProfit = frxaccount.Balance - deposit + withdraw,
-                TotalSwap = Math.Round(totalswap,2),
+                TotalSwap = Math.Round(totalswap, 2),
                 LastTradeTime = lasttradetime,
-                RigistrationTime=frxaccount.TraderRegistrationTime
+                RigistrationTime = frxaccount.TraderRegistrationTime
             };
-            return View(Tuple.Create<FrxAccount, List<FrxAccount>, AccountInfo>(frxaccount, frxaccounts.ToList(), accountinfo ));
+            return View(Tuple.Create<FrxAccount, List<FrxAccount>, AccountInfo>(frxaccount, frxaccounts.ToList(), accountinfo));
         }
 
         public JsonResult GetHistory(int? acId)
         {
-            var data = _context.FrxHistory.Where(x => x.AccountId == acId).ToList();
-            return Json(new { data, data.Count });
+            var histories = _context.FrxHistory.Where(x => x.AccountId == acId).OrderByDescending(x=>x.ClosingTime).ToList();
+            var lasthis = histories[0];
+            var lasthistime = lasthis.ClosingTime;
+            var lasthistimeyear = lasthistime.Year;
+            var lasthistimemonth = lasthistime.Month;
+            List<XData> XDatas = new List<XData>();
+            var xTime= new DateTime(lasthistimeyear, lasthistimemonth, 1);
+            for(int i=0;i<12;i++)
+            {
+               XData xData = new XData();
+                xData.XTime = xTime.AddMonths(i-11);
+                xData.XName = xData.XTime.Month.ToString() + "月份";
+                XDatas.Add(xData);
+            }
+            List<MonthData> MDatas = new List<MonthData>();
+            for (int i = 0; i < 12; i++)
+            {
+                MonthData mdata = new MonthData();
+                mdata.xData = XDatas[i];
+                var temphis = histories.Where(x => x.ClosingTime > mdata.xData.XTime && x.ClosingTime < mdata.xData.XTime.AddMonths(1)).OrderBy(y => y.ClosingTime);
+                if (temphis.Count() != 0)
+                {
+                    var initBalance = temphis.ToList()[0].Balance - temphis.ToList()[0].NetProfit;
+                    var netrprofit = temphis.Select(x => x.NetProfit).Sum();
+                    var gain = netrprofit / initBalance;
+                    var swap = temphis.Select(x => x.Swap).Sum();
+                    var pips = temphis.Select(x => x.Pips).Sum();
+                    var lots = temphis.Select(x => x.Quantity).Sum();
+                    mdata.NetProfit = Math.Round(netrprofit,2);
+                    mdata.Gain = Math.Round(gain * 100, 2);
+                    mdata.Swap = Math.Round(swap,2);
+                    mdata.Pips = Math.Round(pips,2);
+                    mdata.Lots = Math.Round(lots,2);
+                    MDatas.Add(mdata);
+                }
+                else
+                {
+                    mdata.NetProfit = 0;
+                    mdata.Gain = 0;
+                    mdata.Swap =0;
+                    mdata.Pips =0;
+                    mdata.Lots = 0;
+                    MDatas.Add(mdata);
+                }
+            }
+            return Json(new { XDatas, MDatas });
         }
     }
 
-    public class AccountInfo
+    public class XData
     {
+        public string XName { get; set; }
+        public DateTime XTime { get; set; }
+    }
+
+    public class MonthData
+    {
+        public XData xData { get; set; }
+        public double NetProfit { get; set; }   
         public double Gain { get; set; }
-        public double AbsGain { get; set; }
-        public double MaxDraw { get; set; }
-        public DateTime MaxDrawTime { get; set; }
-        public double Deposit { get; set; }
-        public double Withdraw { get; set; }
-        public double Balance { get; set; }
-        public double Equity { get; set; }
-        public double MaxBalance { get; set; }
-        public DateTime MaxBalanceTime { get; set; }
-        public double TotalProfit { get; set; }
-        public double TotalSwap { get; set; }
-        public DateTime LastTradeTime { get; set; }
-        public DateTime RigistrationTime { get; set; }
+        public double Swap { get; set; }
+        public double Pips { get; set; }
+        public double Lots { get; set; }
     }
 }
