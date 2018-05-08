@@ -24,43 +24,46 @@
         <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Info</h3>
+                    <h3 class="box-title">月度分析报告</h3>
                     <div class="box-tools pull-right">
+                        <button id="MonthProfitBtn" type="button" class="btn btn-box-tool">NET</button>
+                        <button id="MonthHandBtn" type="button" class="btn btn-box-tool">LOT</button>
+                        <button id="MonthPointBtn" type="button" class="btn btn-box-tool">PIP</button>
+                        <button id="MonthProfitRateBtn" type="button" class="btn btn-box-tool">ROI</button>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
                         </button>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-refresh"></i>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li id="analyze_net"><a href="#"><i class="fa fa-circle-o" style="color:skyblue"></i>net</a></li>
-                                <li id="analyze_lots"><a href="#"><i class="fa fa-circle-o" style="color:skyblue"></i>lots</a></li>
-                                <li id="analyze_gain"><a href="#"><i class="fa fa-circle-o" style="color:skyblue"></i>gain</a></li>
-                            </ul>
-                        </div>
                         <div class="btn-group">
                             <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
-            {
-                    <li><a href="@Url.Action("Index","FrxHistory",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
-}
+                                {
+                                    <li><a href="@Url.Action("Index","FrxHistory",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                }
                             </ul>
                         </div>
                         <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                     </div>
                 </div>
                 <div class="box-body">
-                    <div id="dataAnalyzeChart" style="height:300px;width:100%"></div>
+                    <div class="col-md-10">
+                        <div id="MonthBaseCharts" style="height: 340px; width: 100%;">
+                            <!--月分析图表位置-->
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div style="width:100%;height:340px;" id="TotalYearCharts" class="clearfix">
+                            <!--统计年 和 总的收益率-->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
                     <h3 class="box-title">Histories</h3>
@@ -91,122 +94,252 @@
 @section Scripts{
     <script src="~/lib/echart/echarts.js"></script>
     <script>
-        var myChart = echarts.init(document.getElementById('dataAnalyzeChart'));
-        var xdata = [];
-        var mdata = [];
-        var ydata = [];
-        option = {
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'cross'
-                }
-            },
-            xAxis: [{
-                    type: 'category',
-                    axisTick: {
-                        alignWithLabel: true
-                    },
-                    data: []
-                }],
-            yAxis: [{
-                type:'value',
-            }],
-            dataZoom: [
-                {
-                    id: 'dataZoomX',
-                    type: 'inside',
-                    xAxisIndex: [0],
-                    filterMode: 'filter'
-                }
-            ],
-            series: [
-                {
-                    name: 'val',
-                    type: 'bar',
-                    label: {
-                            show: true,
-                            position: 'insideTop',
-                            formatter: function (p) {
-                                return p.value > 0 ? (p.value) : '';
-                            }
-                    },
-                    data: []
-                }
-            ]
-        };
-        myChart.setOption(option, true);
-        $.ajax({
-            type: "post",
-            async: true,
-            url: "@Url.Action("GetHistory", "FrxAnalyze", new { acId = Model.Item1.AccountId })",
-            data: {},
-            dataType: "json",
-            success: function (result) {
-                if (result) {
-                    for (var i = 0; i < result.xDatas.length; i++) {
-                        xdata.push(result.xDatas[i].xName);
-                        mdata.push(result.mDatas[i]);
-                        ydata.push(result.mDatas[i].netProfit);
+        $(document).ready(function () {
+            //初始化数据
+            var MonthBaseData = [];
+            var YearSourceData = [];
+            var monthBaseChart = echarts.init(document.getElementById('MonthBaseCharts'));
+            var yearChart = echarts.init(document.getElementById("TotalYearCharts"));
+
+            if (MonthBaseData.length == 0) {
+                $.ajax({
+                    url: '@Url.Action("GetAnalyzeData", "FrxAnalyze", new { acId = Model.Item1.AccountId })',
+                    async: true,
+                    type: "post",
+                    dataType: "json",
+                    success: function (result) {
+                        MonthBaseData = result.monthBaseData;
+                        ParseAndRender_monthBaseChart(MonthBaseData, 1);
+                        YearSourceData = result.yearSourceData;
+                        RenderChart_yearChart(1);
                     }
-                    myChart.setOption({
-                        xAxis: {
-                            data: xdata
+                });
+
+            }
+            //月度分析报告
+            monthBaseChart.on('click', function (params) {
+
+             });
+
+            var optionMonthBase = {
+                color: ['#3398DB'],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '3%',
+                    top:'10%',
+                    bottom: '5%',
+                    containLabel: true
+                },
+                xAxis:
+                    {
+                        type: 'category',
+                        data: []
+                    },
+                yAxis: [
+                    {
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
                         },
-                        series: [
-                            {
-                                name: 'val',
-                                data: ydata
-                            },
-                        ]
-                    });
+                    }
+
+                ],
+                series:
+                    {
+                        name: '',
+                        type: 'bar',
+                        barWidth: '60%',
+                        data: [],
+                        label: {
+                            normal: {
+                                show: true,
+                                formatter: '{c}',
+                                position: 'top',
+                                textStyle: {
+                                    color: '#000'
+                                }
+                            }
+                        }
+                    }
+            };
+
+            function ParseAndRender_monthBaseChart(data, type) {
+
+                optionMonthBase.xAxis.data = [];
+                optionMonthBase.series.data = [];
+
+                var seriesName = "";
+
+                if (type == 1) {
+                    seriesName = "收益率";
                 }
-            },
-            error: function (errorMsg) {
-                alert("图表请求数据失败!");
-                myChart.hideLoading();
+                else if (type == 2) {
+                    seriesName = "利润";
+                }
+                else if (type == 3) {
+                    seriesName = "手数";
+                }
+                else if (type == 4) {
+                    seriesName = "点数";
+                }
+
+                optionMonthBase.series.name = seriesName;
+                if (data != null) {
+                    $.each(data, function () {
+                        optionMonthBase.xAxis.data.push(this.xData.xName);
+                        //收益率
+                        if (type == 1) {
+                            optionMonthBase.series.data.push((this.gain * 100).toFixed(2));
+                            optionMonthBase.series.label.normal.formatter = function (p) {
+                                return (p.value > 0 || p.value < 0) ? (p.value+'%') : '';
+                            };
+                        }
+                        //收益
+                        else if (type == 2) {
+                            optionMonthBase.series.data.push(this.net.toFixed(2));
+                            optionMonthBase.series.label.normal.formatter = function (p) {
+                                return (p.value > 0 || p.value < 0) ? ('$'+p.value) : '';
+                            };
+                        }
+                        //手数
+                        else if (type == 3) {
+                            optionMonthBase.series.data.push(this.lots.toFixed(2));
+                            optionMonthBase.series.label.normal.formatter = function (p) {
+                                return (p.value > 0 || p.value < 0) ? ('l.' +p.value) : '';
+                            };
+                        }
+                        //点数
+                        else if (type == 4) {
+                            optionMonthBase.series.data.push(this.pips.toFixed(2));
+                            optionMonthBase.series.label.normal.formatter = function (p) {
+                                return (p.value>0||p.value<0) ? ('p.' +p.value) : '';
+                            };
+                        }
+                    })
+
+                    if (type == 1) {
+                        optionMonthBase.yAxis[0].axisLabel.formatter = '{value} %';
+                        optionMonthBase.tooltip.formatter = "{a} <br/>{b} : {c} %";
+                    } else {
+                        optionMonthBase.yAxis[0].axisLabel.formatter = '{value} ';
+                        optionMonthBase.tooltip.formatter = "{a} <br/>{b} : {c}";
+                    }
+                    monthBaseChart.setOption(optionMonthBase);
+                }
             }
-        });
-        $("#analyze_net").click(function () {
-            var temp = [];
-            for (var i = 0; i < mdata.length; i++) {
-                temp.push(mdata[i].netProfit);
-            }
-            myChart.setOption({
+
+            //月度分析报告 右边统计分析图表
+            var optionTotalYear = {
+                grid: {
+                    left: '1%',
+                    right: '6%',
+                    top: '10%',
+                    bottom: '5%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: ['全年', '总计'],
+                        axisTick: {
+                            alignWithLabel: true
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        show: false,
+                        type: 'value'
+                    }
+                ],
                 series: [
                     {
-                        name: 'val',
-                        data: temp
+                        name: '利润',
+                        type: 'bar',
+                        barWidth: '70%',
+                        data: [],
+                        label: {
+                            normal: {
+                                show: true,
+                                formatter: '{c}',
+                                position: 'top',
+                                textStyle: {
+                                    color: '#000'
+                                }
+                            }
+                        }
                     }
                 ]
+            };
+
+            function RenderChart_yearChart(type) {
+
+                var data = YearSourceData;
+                var ydata;
+                var tdata;
+                for (var i= 0; i < data.length; i++) {
+                    if (data[i].xData.xName == "全年")
+                        ydata = data[i];
+                    if (data[i].xData.xName == "总计")
+                        tdata = data[i];
+                }
+
+                    optionTotalYear.series[0].data = [];
+                    if (type == 1) {
+                        optionTotalYear.series[0].name = "收益率";
+                        optionTotalYear.series[0].data.push((ydata.gain*100).toFixed(2));
+                        optionTotalYear.series[0].data.push((tdata.gain*100).toFixed(2));
+                        optionTotalYear.series[0].label.normal.formatter = "{c}%";
+                    }
+                    else if (type == 2) {
+                        optionTotalYear.series[0].name = "利润";
+                        optionTotalYear.series[0].data.push(ydata.net.toFixed(2));
+                        optionTotalYear.series[0].data.push(tdata.net.toFixed(2));
+                        optionTotalYear.series[0].label.normal.formatter = "${c}";
+                    }
+                    else if (type == 3) {
+                        optionTotalYear.series[0].name = "手数";
+                        optionTotalYear.series[0].data.push(ydata.lots.toFixed(2));
+                        optionTotalYear.series[0].data.push(tdata.lots.toFixed(2));
+                        optionTotalYear.series[0].label.normal.formatter = "l.{c}";
+                    }
+                    else if (type == 4) {
+                        optionTotalYear.series[0].name = "点数";
+                        optionTotalYear.series[0].data.push(ydata.pips.toFixed(2));
+                        optionTotalYear.series[0].data.push(tdata.pips.toFixed(2));
+                        optionTotalYear.series[0].label.normal.formatter = "p.{c}";
+                    }
+                yearChart.setOption(optionTotalYear);
+            };
+
+            //月份收益率
+            $("#MonthProfitRateBtn").click(function () {
+                ParseAndRender_monthBaseChart(MonthBaseData, 1);
+                RenderChart_yearChart(1);
             });
-        });
-        $("#analyze_lots").click(function () {
-            var temp = [];
-            for (var i = 0; i < mdata.length; i++) {
-                temp.push(mdata[i].lots);
-            }
-            myChart.setOption({
-                series: [
-                    {
-                        name: 'val',
-                        data: temp
-                    }
-                ]
+
+            //月份收益
+            $("#MonthProfitBtn").click(function () {
+                ParseAndRender_monthBaseChart(MonthBaseData, 2);
+                RenderChart_yearChart(2);
             });
-        });
-        $("#analyze_gain").click(function () {
-            var temp = [];
-            for (var i = 0; i < mdata.length; i++) {
-                temp.push(mdata[i].gain);
-            }
-            myChart.setOption({
-                series: [
-                    {
-                        name: 'val',
-                        data: temp
-                    }
-                ]
+
+            //月份手数
+            $("#MonthHandBtn").click(function () {
+                ParseAndRender_monthBaseChart(MonthBaseData, 3);
+                RenderChart_yearChart(3);
+            });
+
+            //月份点数
+            $("#MonthPointBtn").click(function () {
+                ParseAndRender_monthBaseChart(MonthBaseData, 4);
+                RenderChart_yearChart(4);
             });
         });
     </script>

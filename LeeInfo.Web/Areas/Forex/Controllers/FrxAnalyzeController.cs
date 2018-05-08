@@ -250,67 +250,117 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             return View(Tuple.Create<FrxAccount, List<FrxAccount>, AccountInfo>(frxaccount, frxaccounts.ToList(), accountinfo));
         }
 
-        public JsonResult GetHistory(int? acId)
+        public JsonResult GetAnalyzeData(int? acId)
         {
-            var histories = _context.FrxHistory.Where(x => x.AccountId == acId).OrderByDescending(x=>x.ClosingTime).ToList();
-            var lasthis = histories[0];
-            var lasthistime = lasthis.ClosingTime;
-            var lasthistimeyear = lasthistime.Year;
-            var lasthistimemonth = lasthistime.Month;
-            List<XData> XDatas = new List<XData>();
-            var xTime= new DateTime(lasthistimeyear, lasthistimemonth, 1);
-            for(int i=0;i<12;i++)
-            {
-               XData xData = new XData();
-                xData.XTime = xTime.AddMonths(i-11);
-                xData.XName = xData.XTime.Month.ToString() + "月份";
-                XDatas.Add(xData);
-            }
-            List<MonthData> MDatas = new List<MonthData>();
+            var histories = _context.FrxHistory.Where(x => x.AccountId == acId).OrderByDescending(x => x.ClosingTime).ToList();
+            #region Get MonthBaseData
+            var lastHistory = histories[0];
+            var lastHisTime = lastHistory.ClosingTime;
+            var lastHisTimeYear = lastHisTime.Year;
+            var lastHisTimeMonth = lastHisTime.Month;
+            List<XData> xDatas = new List<XData>();
+            var xTime = new DateTime(lastHisTimeYear, lastHisTimeMonth, 1);
             for (int i = 0; i < 12; i++)
             {
-                MonthData mdata = new MonthData();
-                mdata.xData = XDatas[i];
-                var temphis = histories.Where(x => x.ClosingTime > mdata.xData.XTime && x.ClosingTime < mdata.xData.XTime.AddMonths(1)).OrderBy(y => y.ClosingTime);
-                if (temphis.Count() != 0)
+                var xt = xTime.AddMonths(i - 11);
+                var xn = xt.Month.ToString() + "月份";
+                XData xData = new XData(xn,xt);
+                xDatas.Add(xData);
+            }
+            List<MonthBaseData> mDatas = new List<MonthBaseData>();
+            for (int i = 0; i < 12; i++)
+            {
+                MonthBaseData mdata = new MonthBaseData();
+                mdata.xData = xDatas[i];
+                var tempHis = histories.Where(x => x.ClosingTime > mdata.xData.XTime && x.ClosingTime < mdata.xData.XTime.AddMonths(1)).OrderBy(y => y.ClosingTime);
+                if (tempHis.Count() != 0)
                 {
-                    var initBalance = temphis.ToList()[0].Balance - temphis.ToList()[0].NetProfit;
-                    var netrprofit = temphis.Select(x => x.NetProfit).Sum();
-                    var gain = netrprofit / initBalance;
-                    var swap = temphis.Select(x => x.Swap).Sum();
-                    var pips = temphis.Select(x => x.Pips).Sum();
-                    var lots = temphis.Select(x => x.Quantity).Sum();
-                    mdata.NetProfit = Math.Round(netrprofit,2);
-                    mdata.Gain = Math.Round(gain * 100, 2);
-                    mdata.Swap = Math.Round(swap,2);
-                    mdata.Pips = Math.Round(pips,2);
-                    mdata.Lots = Math.Round(lots,2);
-                    MDatas.Add(mdata);
+                    var initBalance = tempHis.ToList()[0].Balance - tempHis.ToList()[0].NetProfit;
+                    var net = tempHis.Select(x => x.NetProfit).Sum();
+                    var gain = net / initBalance;
+                    var swap = tempHis.Select(x => x.Swap).Sum();
+                    var pips = tempHis.Select(x => x.Pips).Sum();
+                    var lots = tempHis.Select(x => x.Quantity).Sum();
+                    mdata.Net = Math.Round(net, 2);
+                    mdata.Gain = Math.Round(gain, 2);
+                    mdata.Swap = Math.Round(swap, 2);
+                    mdata.Pips = Math.Round(pips, 2);
+                    mdata.Lots = Math.Round(lots, 2);
+                    mDatas.Add(mdata);
                 }
                 else
                 {
-                    mdata.NetProfit = 0;
+                    mdata.Net = 0;
                     mdata.Gain = 0;
-                    mdata.Swap =0;
-                    mdata.Pips =0;
+                    mdata.Swap = 0;
+                    mdata.Pips = 0;
                     mdata.Lots = 0;
-                    MDatas.Add(mdata);
+                    mDatas.Add(mdata);
                 }
             }
-            return Json(new { XDatas, MDatas });
+            var monthBaseData = mDatas;
+            #endregion
+            #region Get YearSourceData
+            var yearBeginTime = new DateTime(lastHisTimeYear, 1, 1);
+            var frxaccount = _context.FrxAccount.SingleOrDefault(x => x.AccountId == acId);
+            var totalBeginTime = frxaccount.TraderRegistrationTime;
+            var endTime = lastHisTime;
+            var yearXData = new XData("全年",yearBeginTime);
+            var totalXData = new XData("总计",totalBeginTime);
+            List<MonthBaseData> yearSourceData = new List<MonthBaseData>();
+            List<XData> xDatasTemp = new List<XData>();
+            xDatasTemp.Add(yearXData);
+            xDatasTemp.Add(totalXData);
+            foreach(var t in xDatasTemp )
+            {
+                MonthBaseData mdata = new MonthBaseData();
+                mdata.xData = t;
+                var tempHis = histories.Where(x => x.ClosingTime > t.XTime && x.ClosingTime < endTime).OrderBy(o => o.ClosingTime);
+                if (tempHis.Count() != 0)
+                {
+                    var initBalance = tempHis.ToList()[0].Balance - tempHis.ToList()[0].NetProfit;
+                    var net = tempHis.Select(x => x.NetProfit).Sum();
+                    var gain = net / initBalance;
+                    var swap = tempHis.Select(x => x.Swap).Sum();
+                    var pips = tempHis.Select(x => x.Pips).Sum();
+                    var lots = tempHis.Select(x => x.Quantity).Sum();
+                    mdata.Net = Math.Round(net, 2);
+                    mdata.Gain = Math.Round(gain, 2);
+                    mdata.Swap = Math.Round(swap, 2);
+                    mdata.Pips = Math.Round(pips, 2);
+                    mdata.Lots = Math.Round(lots, 2);
+                    yearSourceData.Add(mdata);
+                }
+                else
+                {
+                    mdata.Net = 0;
+                    mdata.Gain = 0;
+                    mdata.Swap = 0;
+                    mdata.Pips = 0;
+                    mdata.Lots = 0;
+                    yearSourceData.Add(mdata);
+                }
+            }
+            #endregion
+            return Json(new { monthBaseData,yearSourceData });
         }
     }
 
     public class XData
     {
+        public XData(string xn,DateTime xt)
+        {
+            XName = xn;
+            XTime = xt;
+        }
         public string XName { get; set; }
         public DateTime XTime { get; set; }
     }
 
-    public class MonthData
+    public class MonthBaseData
     {
         public XData xData { get; set; }
-        public double NetProfit { get; set; }   
+        public double Net { get; set; }
         public double Gain { get; set; }
         public double Swap { get; set; }
         public double Pips { get; set; }
