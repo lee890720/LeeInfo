@@ -218,6 +218,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             }
             var frxhistories = _context.FrxHistory.Where(x => x.AccountId == frxaccount.AccountId);
             #endregion
+            #region GetAccountInfo
             var maxbalance = frxhistories.Select(x => x.Balance).Max();
             DateTime maxtime = frxhistories.SingleOrDefault(x => x.Balance == maxbalance).ClosingTime.Date;
             var maxdrawdown = frxhistories.Select(x => Math.Round((x.Balance - x.Equity) / x.Balance,4)).Max();
@@ -247,6 +248,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 LastTradeTime = lasttradetime,
                 RigistrationTime=frxaccount.TraderRegistrationTime
             };
+            #endregion
+
             return View(Tuple.Create<FrxAccount, List<FrxAccount>, AccountInfo>(frxaccount, frxaccounts.ToList(), accountinfo ));
         }
 
