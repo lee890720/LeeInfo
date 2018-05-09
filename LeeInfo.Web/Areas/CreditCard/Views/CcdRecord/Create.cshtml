@@ -66,38 +66,46 @@
                             </thead>
                             <tbody>
                                 @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.CreditCardId)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.PersonName)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.IssuingBank)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.BillAmount)
-                                        </td>
-                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
-                                            @Html.DisplayFor(modelItem => item.OutstandingAmount)
-                                        </td>
-                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-                                            @Html.DisplayFor(modelItem => item.RepaymentDate)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.ExpendCount)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.ExpendSum)
-                                        </td>
-                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:fuchsia">
-                                            @Html.DisplayFor(modelItem => item.Total)
-                                        </td>
-                                    </tr>
-                                }
+        {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CreditCardId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PersonName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IssuingBank)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BillAmount)
+                            </td>
+                            <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
+                                @Html.DisplayFor(modelItem => item.OutstandingAmount)
+                            </td>
+                            <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                                @Html.DisplayFor(modelItem => item.RepaymentDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ExpendCount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ExpendSum)
+                            </td>
+                            <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:fuchsia">
+                                @Html.DisplayFor(modelItem => item.Total)
+                            </td>
+                        </tr>
+}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4" style="text-align:right !important">Total:</th>
+                                    <th style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">@ViewBag.SumOut</th>
+                                    <th colspan="3" style="text-align:right !important">Total:</th>
+                                    <th style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">@ViewBag.SumTotal</th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -111,9 +119,9 @@
         $('#example1').DataTable(
             {
                 'order': [[5, "asc"]],
-                'pageLength':10,
+                'pageLength': 10,
                 initComplete: function () {
-                    $("#mytool").append('<a  class="btn btn-primary" style="width:80px;border-radius:0;" href="@path/Index"><i class="glyphicon glyphicon-th-list"></i> Index</a><a class="btn btn-primary" style="width:80px;border-radius:0;" href="@path/RecordList"><i class="glyphicon glyphicon-th"></i> Details</a><a  class="btn btn-primary" style="width:80px;border-radius:0;">@ViewBag.SumOut</a><a  class="btn btn-primary" style="width:80px;border-radius:0;">@ViewBag.SumTotal</a>');
+                    $("#mytool").append('<a  class="btn btn-primary" style="width:80px;border-radius:0;" href="@path/Index"><i class="glyphicon glyphicon-th-list"></i> Index</a><a class="btn btn-primary" style="width:80px;border-radius:0;" href="@path/RecordList"><i class="glyphicon glyphicon-th"></i> Details</a>');
                 }
             })
         $('#example2').DataTable({

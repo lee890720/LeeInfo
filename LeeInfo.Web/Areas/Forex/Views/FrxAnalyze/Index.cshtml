@@ -48,14 +48,9 @@
                     </div>
                 </div>
                 <div class="box-body">
-                    <div class="col-md-10">
+                    <div class="col-md-12">
                         <div id="MonthBaseChart" style="height: 300px;">
                             <!--月分析图表位置-->
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div id="TotalYearChart" style="height:300px;"  class="clearfix">
-                            <!--统计年 和 总的收益率-->
                         </div>
                     </div>
                 </div>
@@ -92,10 +87,95 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                           <div id="MonthPieChart" class="clearfix" style="height: 300px;">
-                                <!--月Pie图表位置-->
-                            </div>
+                        <div id="MonthPieChart" class="clearfix" style="height: 300px;">
+                            <!--月Pie图表位置-->
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">摘要</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-wrench"></i>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var f in Model.Item2)
+                                {
+                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body table-responsive" style="height:560px">
+                    <table id="example_pos" class="table  table-bordered table-striped table-hover" width="100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th colspan="4">多头</th>
+                                <th colspan="4">空头</th>
+                                <th colspan="6">总计</th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    货币
+                                </th>
+                                <th>
+                                    交易
+                                </th>
+                                <th>
+                                    手
+                                </th>
+                                <th>
+                                    点
+                                </th>
+                                <th>
+                                    利润
+                                </th>
+                                <th>
+                                    交易
+                                </th>
+                                <th>
+                                    手
+                                </th>
+                                <th>
+                                    点
+                                </th>
+                                <th>
+                                    利润
+                                </th>
+                                <th>
+                                    交易
+                                </th>
+                                <th>
+                                    手
+                                </th>
+                                <th>
+                                    点
+                                </th>
+                                <th>
+                                    利润
+                                </th>
+                                <th>
+                                    赢利
+                                </th>
+                                <th>
+                                    亏损
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
         </div>
@@ -106,11 +186,9 @@
         $(document).ready(function () {
             //初始化数据
             var MonthBaseData = [];
-            var YearSourceData = [];
-            var monthBaseChart = echarts.init(document.getElementById('MonthBaseChart'));
-            var yearChart = echarts.init(document.getElementById("TotalYearChart"));
-            var monthPieChart = echarts.init(document.getElementById("MonthPieChart"));
-            var buySellRateChart = echarts.init(document.getElementById("BuySellRateChart"));
+            var MonthBaseChart = echarts.init(document.getElementById('MonthBaseChart'));
+            var MonthPieChart = echarts.init(document.getElementById("MonthPieChart"));
+            var BuySellRateChart = echarts.init(document.getElementById("BuySellRateChart"));
 
             if (MonthBaseData.length == 0) {
                 $.ajax({
@@ -120,23 +198,20 @@
                     dataType: "json",
                     success: function (result) {
                         MonthBaseData = result.monthBaseData;
-                        YearSourceData = result.yearSourceData;
-                        Render_monthBaseChart(MonthBaseData, 1);
-                        Render_yearChart(1);
-                        Render_monthPieChart(11, "");
-                        Render_buySellRateChart(11, "");
+                        Render_MonthBaseChart(MonthBaseData, 1);
+                        Render_MonthPieChart(11);
+                        Render_BuySellRateChart(11);
+                        table_pos.api().rows.add(result.monthBaseData[11].buySellData).draw();
                     }
                 });
 
             }
             //月度分析报告
-            monthBaseChart.on('click', function (params) {
-                Render_monthPieChart(params.dataIndex, params.name);
-                Render_buySellRateChart(params.dataIndex, params.name);
-            });
-            yearChart.on('click', function (params) {
-                Render_monthPieChart(params.dataIndex, params.name); 
-                Render_buySellRateChart(params.dataIndex, params.name);
+            MonthBaseChart.on('click', function (params) {
+                Render_MonthPieChart(params.dataIndex);
+                Render_BuySellRateChart(params.dataIndex);
+                table_pos.api().clear();
+                table_pos.api().rows.add(MonthBaseData[params.dataIndex].buySellData).draw();
             });
 
             var optionMonthBase = {
@@ -187,7 +262,7 @@
                     }
             };
 
-            function Render_monthBaseChart(data, type) {
+            function Render_MonthBaseChart(data, type) {
 
                 optionMonthBase.xAxis.data = [];
                 optionMonthBase.series.data = [];
@@ -248,93 +323,9 @@
                         optionMonthBase.yAxis[0].axisLabel.formatter = '{value} ';
                         optionMonthBase.tooltip.formatter = "{a} <br/>{b} : {c}";
                     }
-                    monthBaseChart.setOption(optionMonthBase);
+                    MonthBaseChart.setOption(optionMonthBase);
                 }
             }
-
-            //月度分析报告 右边统计分析图表
-            var optionTotalYear = {
-                grid: {
-                    left: '1%',
-                    right: '6%',
-                    top: '10%',
-                    bottom: '5%',
-                    containLabel: true
-                },
-                xAxis: [
-                    {
-                        type: 'category',
-                        data: ['全年', '总计'],
-                        axisTick: {
-                            alignWithLabel: true
-                        }
-                    }
-                ],
-                yAxis: [
-                    {
-                        show: false,
-                        type: 'value'
-                    }
-                ],
-                series: [
-                    {
-                        name: '利润',
-                        type: 'bar',
-                        barWidth: '70%',
-                        data: [],
-                        label: {
-                            normal: {
-                                show: true,
-                                formatter: '{c}',
-                                position: 'top',
-                                textStyle: {
-                                    color: '#000'
-                                }
-                            }
-                        }
-                    }
-                ]
-            };
-
-            function Render_yearChart(type) {
-
-                var data = YearSourceData;
-                var ydata;
-                var tdata;
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i].xData.xName == "全年")
-                        ydata = data[i];
-                    if (data[i].xData.xName == "总计")
-                        tdata = data[i];
-                }
-
-                optionTotalYear.series[0].data = [];
-                if (type == 1) {
-                    optionTotalYear.series[0].name = "收益率";
-                    optionTotalYear.series[0].data.push((ydata.gain * 100).toFixed(2));
-                    optionTotalYear.series[0].data.push((tdata.gain * 100).toFixed(2));
-                    optionTotalYear.series[0].label.normal.formatter = "{c}%";
-                }
-                else if (type == 2) {
-                    optionTotalYear.series[0].name = "利润";
-                    optionTotalYear.series[0].data.push(ydata.net.toFixed(2));
-                    optionTotalYear.series[0].data.push(tdata.net.toFixed(2));
-                    optionTotalYear.series[0].label.normal.formatter = "${c}";
-                }
-                else if (type == 3) {
-                    optionTotalYear.series[0].name = "手数";
-                    optionTotalYear.series[0].data.push(ydata.lots.toFixed(2));
-                    optionTotalYear.series[0].data.push(tdata.lots.toFixed(2));
-                    optionTotalYear.series[0].label.normal.formatter = "l.{c}";
-                }
-                else if (type == 4) {
-                    optionTotalYear.series[0].name = "点数";
-                    optionTotalYear.series[0].data.push(ydata.pips.toFixed(2));
-                    optionTotalYear.series[0].data.push(tdata.pips.toFixed(2));
-                    optionTotalYear.series[0].label.normal.formatter = "p.{c}";
-                }
-                yearChart.setOption(optionTotalYear);
-            };
 
             //月Pie图表
             var optionMonthPie = {
@@ -381,24 +372,17 @@
                 ]
             };
 
-            function Render_monthPieChart(index, name) {
-                var legendData = [];
+            function Render_MonthPieChart(index) {
                 var seriesData = [];
-                var data;
-                if (name == "全年" || name == "总计")
-                    data = YearSourceData;
-                else
-                    data = MonthBaseData;
+                var data= MonthBaseData;
                 var idx = parseInt(index);
-                for (var i = 0; i < data[idx].pieDatas.length; i++) {
-                    var _name = data[idx].pieDatas[i].symbolCode;
-                    var _value = parseFloat(data[idx].pieDatas[i].lots).toFixed(2);
-                    //legendData.push(_name);
+                for (var i = 0; i < data[idx].buySellData.length; i++) {
+                    var _name = data[idx].buySellData[i].symbolCode;
+                    var _value = parseFloat(data[idx].buySellData[i].lots).toFixed(2);;
                     seriesData.push({ name: _name, value: _value });
                 }
-                //optionMonthPie.legend.data = legendData;
                 optionMonthPie.series[0].data = seriesData;
-                monthPieChart.setOption(optionMonthPie);
+                MonthPieChart.setOption(optionMonthPie);
             };
 
             //月多空比
@@ -468,20 +452,16 @@
             ]
         };
 
-            function Render_buySellRateChart(index,name) {
+            function Render_BuySellRateChart(index) {
                 var buydata = [];
                 var selldata=[];
                 var xnamedata=[];
-                var data;
-                if (name == "全年" || name == "总计")
-                    data = YearSourceData;
-                else
-                    data = MonthBaseData;
+                var data=MonthBaseData;
                 var idx = parseInt(index);
-                for (var i = 0; i < data[idx].buySellRateDatas.length; i++) {
-                    var _name = data[idx].buySellRateDatas[i].symbolCode;
-                    var _buy = parseFloat(data[idx].buySellRateDatas[i].buyRate).toFixed(2);
-                    var _sell = parseFloat(data[idx].buySellRateDatas[i].sellRate).toFixed(2);
+                for (var i = 0; i < data[idx].buySellData.length; i++) {
+                    var _name = data[idx].buySellData[i].symbolCode;
+                    var _buy = parseFloat(data[idx].buySellData[i].buyRate).toFixed(2);
+                    var _sell = parseFloat(data[idx].buySellData[i].sellRate).toFixed(2);
                     xnamedata.push(_name);
                     buydata.push(_buy);
                     selldata.push(_sell);
@@ -495,32 +475,93 @@
                 optionBuySellRate.series[1].label.normal.formatter = function (p) {
                     return (p.value > 0 || p.value < 0) ? (p.value) : '';
                 };
-                buySellRateChart.setOption(optionBuySellRate);
+                BuySellRateChart.setOption(optionBuySellRate);
              };
 
             //月份收益率
             $("#MonthProfitRateBtn").click(function () {
-                Render_monthBaseChart(MonthBaseData, 1);
-                Render_yearChart(1);
+                Render_MonthBaseChart(MonthBaseData, 1);
             });
 
             //月份收益
             $("#MonthProfitBtn").click(function () {
-                Render_monthBaseChart(MonthBaseData, 2);
-                Render_yearChart(2);
+                Render_MonthBaseChart(MonthBaseData, 2);
             });
 
             //月份手数
             $("#MonthHandBtn").click(function () {
-                Render_monthBaseChart(MonthBaseData, 3);
-                Render_yearChart(3);
+                Render_MonthBaseChart(MonthBaseData, 3);
             });
 
             //月份点数
             $("#MonthPointBtn").click(function () {
-                Render_monthBaseChart(MonthBaseData, 4);
-                Render_yearChart(4);
+                Render_MonthBaseChart(MonthBaseData, 4);
             });
+
+            //For DataTables
+            var table_pos = $('#example_pos').dataTable(
+                {
+                    'dom':
+                        "<'row'<'col-sm-6'><'col-sm-6'f>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    'processing': true,
+                    'data':[],
+                    'columns': [
+                        { "data": "symbolCode" },
+                        { "data": "buyCount" },
+                        { "data": "buyLots" },
+                        { "data": "buyPips" },
+                        { "data": "buyProfit" },
+                        { "data": "sellCount" },
+                        { "data": "sellLots" },
+                        { "data": "sellPips" },
+                        { "data": "sellProfit" },
+                        { "data": "count" },
+                        { "data": "lots" },
+                        { "data": "pips" },
+                        { "data": "profit" },
+                        { "data": "winRate" },
+                        { "data": "lossRate" },
+                    ],
+                    "columnDefs": [
+                        {
+                            "targets": [2, 3, 4, 6, 7, 8, 10, 11, 12],
+                            render: function (data, type, row, meta) {
+                                return data.toString() == "NaN" ? parseFloat(0).toFixed(2):parseFloat(data).toFixed(2);
+                            }
+                        },
+                        {
+                            "targets": [ 3, 4,  7, 8,  11, 12],
+                            "createdCell": function (td, cellData, rowData, row, col) {
+                                if (cellData > 0)
+                                    $(td).css('color', '#4cae05');
+                                else
+                                    $(td).css('color', '#ff5256');
+                            },
+                        },
+                        {
+                            "targets": 13,
+                            "orderable":false,
+                            "createdCell": function (td, cellData, rowData, row, col) {
+                                $(td).css('color', '#4cae05');
+                            },
+                            render: function (data, type, row, meta) {
+                                return row.winCount + "(" + (row.winRate*100).toFixed(2)+"%)";
+                            }
+                        },
+                        {
+                            "targets": 14,
+                            "orderable":false,
+                            "createdCell": function (td, cellData, rowData, row, col) {
+                                $(td).css('color', '#ff5256');
+                            },
+                            render: function (data, type, row, meta) {
+                                return row.lossCount + "(" + (row.lossRate * 100).toFixed(2) + "%)";
+                            }
+                        },
+                        ],
+                });
         });
     </script>
 }
