@@ -151,71 +151,71 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             await _context.SaveChangesAsync();
             #endregion
             #region GetHistory
-            DateTime utcnow = DateTime.UtcNow;
-            string fromtimestamp = ConvertJson.DateTimeToStamp(frxaccount.TraderRegistrationTime);
-            string totimestamp = ConvertJson.DateTimeToStamp(utcnow);
-            var deal = Deal.GetDeals(_apiUrl, frxaccount.AccountId.ToString(), _accessToken, fromtimestamp, totimestamp);
-            var deal_history = new List<Deal>();
-            foreach (var d in deal)
-            {
-                if (d.PositionCloseDetails != null)
-                    deal_history.Add(d);
-            }
-            foreach (var h in deal_history)
-            {
-                FrxHistory fh = new FrxHistory();
-                fh.ClosingDealId = h.DealID;
-                fh.AccountId = frxaccount.AccountId;
-                fh.Balance = h.PositionCloseDetails.Balance / 100;
-                fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
-                fh.BaseToUSDConversionRate = h.BaseToUSDConversionRate;
-                fh.ClosedToDepoitConversionRate = h.PositionCloseDetails.ClosedToDepositConversionRate;
-                fh.ClosingTime = ConvertJson.StampToDateTime(h.ExecutionTimestamp);
-                fh.ClosingPrice = h.ExecutionPrice;
-                fh.Comment = h.Comment;
-                fh.Commissions = h.PositionCloseDetails.Commission / 100;
-                fh.EntryPrice = h.PositionCloseDetails.EntryPrice;
-                long tempstamp = System.Convert.ToInt64(h.ExecutionTimestamp);
-                foreach (var d in deal)
-                {
-                    if (d.PositionID == h.PositionID)
-                    {
-                        if (System.Convert.ToInt64(d.ExecutionTimestamp) < tempstamp)
-                            tempstamp = System.Convert.ToInt64(d.ExecutionTimestamp);
-                    }
-                }
-                fh.EntryTime = ConvertJson.StampToDateTime(tempstamp.ToString());
-                fh.Equity = h.PositionCloseDetails.Equity / 100;
-                fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi / 100;
-                fh.GrossProfit = h.PositionCloseDetails.Profit / 100;
-                fh.Label = h.Label;
-                fh.MarginRate = h.MarginRate;
-                fh.Swap = h.PositionCloseDetails.Swap / 100;
-                fh.NetProfit = fh.GrossProfit + fh.Swap + fh.Commissions;
-                fh.Pips = h.PositionCloseDetails.ProfitInPips;
-                fh.PositionId = h.PositionID;
-                fh.SymbolCode = h.SymbolName;
-                fh.Volume = h.PositionCloseDetails.ClosedVolume / 100;
+            //DateTime utcnow = DateTime.UtcNow;
+            //string fromtimestamp = ConvertJson.DateTimeToStamp(frxaccount.TraderRegistrationTime);
+            //string totimestamp = ConvertJson.DateTimeToStamp(utcnow);
+            //var deal = Deal.GetDeals(_apiUrl, frxaccount.AccountId.ToString(), _accessToken, fromtimestamp, totimestamp);
+            //var deal_history = new List<Deal>();
+            //foreach (var d in deal)
+            //{
+            //    if (d.PositionCloseDetails != null)
+            //        deal_history.Add(d);
+            //}
+            //foreach (var h in deal_history)
+            //{
+            //    FrxHistory fh = new FrxHistory();
+            //    fh.ClosingDealId = h.DealID;
+            //    fh.AccountId = frxaccount.AccountId;
+            //    fh.Balance = h.PositionCloseDetails.Balance / 100;
+            //    fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
+            //    fh.BaseToUSDConversionRate = h.BaseToUSDConversionRate;
+            //    fh.ClosedToDepoitConversionRate = h.PositionCloseDetails.ClosedToDepositConversionRate;
+            //    fh.ClosingTime = ConvertJson.StampToDateTime(h.ExecutionTimestamp);
+            //    fh.ClosingPrice = h.ExecutionPrice;
+            //    fh.Comment = h.Comment;
+            //    fh.Commissions = h.PositionCloseDetails.Commission / 100;
+            //    fh.EntryPrice = h.PositionCloseDetails.EntryPrice;
+            //    long tempstamp = System.Convert.ToInt64(h.ExecutionTimestamp);
+            //    foreach (var d in deal)
+            //    {
+            //        if (d.PositionID == h.PositionID)
+            //        {
+            //            if (System.Convert.ToInt64(d.ExecutionTimestamp) < tempstamp)
+            //                tempstamp = System.Convert.ToInt64(d.ExecutionTimestamp);
+            //        }
+            //    }
+            //    fh.EntryTime = ConvertJson.StampToDateTime(tempstamp.ToString());
+            //    fh.Equity = h.PositionCloseDetails.Equity / 100;
+            //    fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi / 100;
+            //    fh.GrossProfit = h.PositionCloseDetails.Profit / 100;
+            //    fh.Label = h.Label;
+            //    fh.MarginRate = h.MarginRate;
+            //    fh.Swap = h.PositionCloseDetails.Swap / 100;
+            //    fh.NetProfit = fh.GrossProfit + fh.Swap + fh.Commissions;
+            //    fh.Pips = h.PositionCloseDetails.ProfitInPips;
+            //    fh.PositionId = h.PositionID;
+            //    fh.SymbolCode = h.SymbolName;
+            //    fh.Volume = h.PositionCloseDetails.ClosedVolume / 100;
 
-                var tempvolume = Convert.ToDouble(fh.Volume);
-                double tempsub = 100000;
-                if (fh.SymbolCode == "XBRUSD" || fh.SymbolCode == "XTIUSD")
-                    tempsub = 100;
-                if (fh.SymbolCode == "XAGUSD" || fh.SymbolCode == "XAGEUR")
-                    tempsub = 1000;
-                if (fh.SymbolCode == "XAUUSD" || fh.SymbolCode == "XAUEUR")
-                    tempsub = 100;
-                fh.Quantity = tempvolume / tempsub;
-                fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
-                fh.Roi = h.PositionCloseDetails.Roi;
-                fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
-                var result = _context.FrxHistory.Find(fh.ClosingDealId);
-                if (result == null)
-                {
-                    _context.Add(fh);
-                    await _context.SaveChangesAsync();
-                }
-            }
+            //    var tempvolume = Convert.ToDouble(fh.Volume);
+            //    double tempsub = 100000;
+            //    if (fh.SymbolCode == "XBRUSD" || fh.SymbolCode == "XTIUSD")
+            //        tempsub = 100;
+            //    if (fh.SymbolCode == "XAGUSD" || fh.SymbolCode == "XAGEUR")
+            //        tempsub = 1000;
+            //    if (fh.SymbolCode == "XAUUSD" || fh.SymbolCode == "XAUEUR")
+            //        tempsub = 100;
+            //    fh.Quantity = tempvolume / tempsub;
+            //    fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
+            //    fh.Roi = h.PositionCloseDetails.Roi;
+            //    fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
+            //    var result = _context.FrxHistory.Find(fh.ClosingDealId);
+            //    if (result == null)
+            //    {
+            //        _context.Add(fh);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //}
             var frxhistories = _context.FrxHistory.Where(x => x.AccountId == frxaccount.AccountId);
             #endregion
             #region GetAccountInfo
@@ -278,12 +278,35 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 var tempHis = histories.Where(x => x.ClosingTime > mdata.xData.XTime && x.ClosingTime < mdata.xData.XTime.AddMonths(1)).OrderBy(y => y.ClosingTime);
                 if (tempHis.Count() != 0)
                 {
+                    var list_pie = tempHis.GroupBy(g => new
+                    {
+                        g.SymbolCode
+                    }).Select(s => new PieData
+                    {
+                        SymbolCode = s.Key.SymbolCode,
+                        Lots = s.Sum(z => z.Quantity)
+                    }).ToList();
+                    var list_bsRate = tempHis.GroupBy(g => new
+                    {
+                        g.SymbolCode
+                    }).Select(s => new BuySellRateData
+                    {
+                        SymbolCode = s.Key.SymbolCode,
+                        BuyRate = s.Where(t => t.TradeType == TradeType.Buy).Count() == 0 ? 0 
+                        : (s.Where(t => t.TradeType == TradeType.Sell).Count() == 0 ? 1
+                        :Math.Round(s.Where(t => t.TradeType == TradeType.Buy).Sum(a => a.Quantity) / s.Sum(b => b.Quantity), 2)),
+                        SellRate = s.Where(t => t.TradeType == TradeType.Buy).Count() == 0 ? 1
+                        : (s.Where(t => t.TradeType == TradeType.Sell).Count() == 0 ? 0
+                        : (1-Math.Round(s.Where(t => t.TradeType == TradeType.Buy).Sum(a => a.Quantity) / s.Sum(b => b.Quantity), 2))),
+                    }).ToList();
                     var initBalance = tempHis.ToList()[0].Balance - tempHis.ToList()[0].NetProfit;
                     var net = tempHis.Select(x => x.NetProfit).Sum();
                     var gain = net / initBalance;
                     var swap = tempHis.Select(x => x.Swap).Sum();
                     var pips = tempHis.Select(x => x.Pips).Sum();
                     var lots = tempHis.Select(x => x.Quantity).Sum();
+                    mdata.pieDatas = list_pie;
+                    mdata.buySellRateDatas = list_bsRate;
                     mdata.Net = Math.Round(net, 2);
                     mdata.Gain = Math.Round(gain, 2);
                     mdata.Swap = Math.Round(swap, 2);
@@ -293,6 +316,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 }
                 else
                 {
+                    mdata.pieDatas = new List<PieData>();
+                    mdata.buySellRateDatas = new List<BuySellRateData>();
                     mdata.Net = 0;
                     mdata.Gain = 0;
                     mdata.Swap = 0;
@@ -321,12 +346,35 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 var tempHis = histories.Where(x => x.ClosingTime > t.XTime && x.ClosingTime < endTime).OrderBy(o => o.ClosingTime);
                 if (tempHis.Count() != 0)
                 {
+                    var list_pie = tempHis.GroupBy(g => new
+                    {
+                        g.SymbolCode
+                    }).Select(s => new PieData
+                    {
+                        SymbolCode = s.Key.SymbolCode,
+                        Lots = s.Sum(z => z.Quantity)
+                    }).ToList();
+                    var list_bsRate = tempHis.GroupBy(g => new
+                    {
+                        g.SymbolCode
+                    }).Select(s => new BuySellRateData
+                    {
+                        SymbolCode = s.Key.SymbolCode,
+                        BuyRate = s.Where(z => z.TradeType == TradeType.Buy).Count() == 0 ? 0
+                        : (s.Where(z => z.TradeType == TradeType.Sell).Count() == 0 ? 1
+                        : Math.Round(s.Where(z => z.TradeType == TradeType.Buy).Sum(a => a.Quantity) / s.Sum(b => b.Quantity), 2)),
+                        SellRate = s.Where(z => z.TradeType == TradeType.Buy).Count() == 0 ? 1
+                        : (s.Where(z => z.TradeType == TradeType.Sell).Count() == 0 ? 0
+                        : (1 - Math.Round(s.Where(z => z.TradeType == TradeType.Buy).Sum(a => a.Quantity) / s.Sum(b => b.Quantity), 2))),
+                    }).ToList();
                     var initBalance = tempHis.ToList()[0].Balance - tempHis.ToList()[0].NetProfit;
                     var net = tempHis.Select(x => x.NetProfit).Sum();
                     var gain = net / initBalance;
                     var swap = tempHis.Select(x => x.Swap).Sum();
                     var pips = tempHis.Select(x => x.Pips).Sum();
                     var lots = tempHis.Select(x => x.Quantity).Sum();
+                    mdata.pieDatas = list_pie;
+                    mdata.buySellRateDatas =list_bsRate;
                     mdata.Net = Math.Round(net, 2);
                     mdata.Gain = Math.Round(gain, 2);
                     mdata.Swap = Math.Round(swap, 2);
@@ -336,6 +384,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 }
                 else
                 {
+                    mdata.pieDatas = new List<PieData>();
+                    mdata.buySellRateDatas = new List<BuySellRateData>();
                     mdata.Net = 0;
                     mdata.Gain = 0;
                     mdata.Swap = 0;
@@ -363,10 +413,25 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
     public class MonthBaseData
     {
         public XData xData { get; set; }
+        public List<PieData> pieDatas { get; set; }
+        public List<BuySellRateData> buySellRateDatas { get; set; }
         public double Net { get; set; }
         public double Gain { get; set; }
         public double Swap { get; set; }
         public double Pips { get; set; }
         public double Lots { get; set; }
+    }
+
+    public class PieData
+    {
+        public string SymbolCode { get; set; }
+        public double Lots { get; set; }
+    }
+
+    public class BuySellRateData
+    {
+        public string SymbolCode { get; set; }
+        public double BuyRate { get; set; }
+        public double SellRate { get; set; }
     }
 }

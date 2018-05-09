@@ -49,12 +49,12 @@
                 </div>
                 <div class="box-body">
                     <div class="col-md-10">
-                        <div id="MonthBaseCharts" style="height: 340px; width: 100%;">
+                        <div id="MonthBaseChart" style="height: 300px;">
                             <!--月分析图表位置-->
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div style="width:100%;height:340px;" id="TotalYearCharts" class="clearfix">
+                        <div id="TotalYearChart" style="height:300px;"  class="clearfix">
                             <!--统计年 和 总的收益率-->
                         </div>
                     </div>
@@ -66,7 +66,7 @@
         <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Histories</h3>
+                    <h3 class="box-title">多空比</h3>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
@@ -85,21 +85,32 @@
                         <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                     </div>
                 </div>
-                <div class="box-body table-responsive">
+                <div class="box-body no-margin">
+                    <div class="col-md-8">
+                        <div id="BuySellRateChart" class="clearfix" style="height: 300px; ">
+                            <!--月Pie图表位置-->
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                           <div id="MonthPieChart" class="clearfix" style="height: 300px;">
+                                <!--月Pie图表位置-->
+                            </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 @section Scripts{
-    <script src="~/lib/echart/echarts.js"></script>
     <script>
         $(document).ready(function () {
             //初始化数据
             var MonthBaseData = [];
             var YearSourceData = [];
-            var monthBaseChart = echarts.init(document.getElementById('MonthBaseCharts'));
-            var yearChart = echarts.init(document.getElementById("TotalYearCharts"));
+            var monthBaseChart = echarts.init(document.getElementById('MonthBaseChart'));
+            var yearChart = echarts.init(document.getElementById("TotalYearChart"));
+            var monthPieChart = echarts.init(document.getElementById("MonthPieChart"));
+            var buySellRateChart = echarts.init(document.getElementById("BuySellRateChart"));
 
             if (MonthBaseData.length == 0) {
                 $.ajax({
@@ -109,17 +120,24 @@
                     dataType: "json",
                     success: function (result) {
                         MonthBaseData = result.monthBaseData;
-                        ParseAndRender_monthBaseChart(MonthBaseData, 1);
                         YearSourceData = result.yearSourceData;
-                        RenderChart_yearChart(1);
+                        Render_monthBaseChart(MonthBaseData, 1);
+                        Render_yearChart(1);
+                        Render_monthPieChart(11, "");
+                        Render_buySellRateChart(11, "");
                     }
                 });
 
             }
             //月度分析报告
             monthBaseChart.on('click', function (params) {
-
-             });
+                Render_monthPieChart(params.dataIndex, params.name);
+                Render_buySellRateChart(params.dataIndex, params.name);
+            });
+            yearChart.on('click', function (params) {
+                Render_monthPieChart(params.dataIndex, params.name); 
+                Render_buySellRateChart(params.dataIndex, params.name);
+            });
 
             var optionMonthBase = {
                 color: ['#3398DB'],
@@ -132,7 +150,7 @@
                 grid: {
                     left: '3%',
                     right: '3%',
-                    top:'10%',
+                    top: '10%',
                     bottom: '5%',
                     containLabel: true
                 },
@@ -169,7 +187,7 @@
                     }
             };
 
-            function ParseAndRender_monthBaseChart(data, type) {
+            function Render_monthBaseChart(data, type) {
 
                 optionMonthBase.xAxis.data = [];
                 optionMonthBase.series.data = [];
@@ -197,28 +215,28 @@
                         if (type == 1) {
                             optionMonthBase.series.data.push((this.gain * 100).toFixed(2));
                             optionMonthBase.series.label.normal.formatter = function (p) {
-                                return (p.value > 0 || p.value < 0) ? (p.value+'%') : '';
+                                return (p.value > 0 || p.value < 0) ? (p.value + '%') : '';
                             };
                         }
                         //收益
                         else if (type == 2) {
                             optionMonthBase.series.data.push(this.net.toFixed(2));
                             optionMonthBase.series.label.normal.formatter = function (p) {
-                                return (p.value > 0 || p.value < 0) ? ('$'+p.value) : '';
+                                return (p.value > 0 || p.value < 0) ? ('$' + p.value) : '';
                             };
                         }
                         //手数
                         else if (type == 3) {
                             optionMonthBase.series.data.push(this.lots.toFixed(2));
                             optionMonthBase.series.label.normal.formatter = function (p) {
-                                return (p.value > 0 || p.value < 0) ? ('l.' +p.value) : '';
+                                return (p.value > 0 || p.value < 0) ? ('l.' + p.value) : '';
                             };
                         }
                         //点数
                         else if (type == 4) {
                             optionMonthBase.series.data.push(this.pips.toFixed(2));
                             optionMonthBase.series.label.normal.formatter = function (p) {
-                                return (p.value>0||p.value<0) ? ('p.' +p.value) : '';
+                                return (p.value > 0 || p.value < 0) ? ('p.' + p.value) : '';
                             };
                         }
                     })
@@ -278,68 +296,230 @@
                 ]
             };
 
-            function RenderChart_yearChart(type) {
+            function Render_yearChart(type) {
 
                 var data = YearSourceData;
                 var ydata;
                 var tdata;
-                for (var i= 0; i < data.length; i++) {
+                for (var i = 0; i < data.length; i++) {
                     if (data[i].xData.xName == "全年")
                         ydata = data[i];
                     if (data[i].xData.xName == "总计")
                         tdata = data[i];
                 }
 
-                    optionTotalYear.series[0].data = [];
-                    if (type == 1) {
-                        optionTotalYear.series[0].name = "收益率";
-                        optionTotalYear.series[0].data.push((ydata.gain*100).toFixed(2));
-                        optionTotalYear.series[0].data.push((tdata.gain*100).toFixed(2));
-                        optionTotalYear.series[0].label.normal.formatter = "{c}%";
-                    }
-                    else if (type == 2) {
-                        optionTotalYear.series[0].name = "利润";
-                        optionTotalYear.series[0].data.push(ydata.net.toFixed(2));
-                        optionTotalYear.series[0].data.push(tdata.net.toFixed(2));
-                        optionTotalYear.series[0].label.normal.formatter = "${c}";
-                    }
-                    else if (type == 3) {
-                        optionTotalYear.series[0].name = "手数";
-                        optionTotalYear.series[0].data.push(ydata.lots.toFixed(2));
-                        optionTotalYear.series[0].data.push(tdata.lots.toFixed(2));
-                        optionTotalYear.series[0].label.normal.formatter = "l.{c}";
-                    }
-                    else if (type == 4) {
-                        optionTotalYear.series[0].name = "点数";
-                        optionTotalYear.series[0].data.push(ydata.pips.toFixed(2));
-                        optionTotalYear.series[0].data.push(tdata.pips.toFixed(2));
-                        optionTotalYear.series[0].label.normal.formatter = "p.{c}";
-                    }
+                optionTotalYear.series[0].data = [];
+                if (type == 1) {
+                    optionTotalYear.series[0].name = "收益率";
+                    optionTotalYear.series[0].data.push((ydata.gain * 100).toFixed(2));
+                    optionTotalYear.series[0].data.push((tdata.gain * 100).toFixed(2));
+                    optionTotalYear.series[0].label.normal.formatter = "{c}%";
+                }
+                else if (type == 2) {
+                    optionTotalYear.series[0].name = "利润";
+                    optionTotalYear.series[0].data.push(ydata.net.toFixed(2));
+                    optionTotalYear.series[0].data.push(tdata.net.toFixed(2));
+                    optionTotalYear.series[0].label.normal.formatter = "${c}";
+                }
+                else if (type == 3) {
+                    optionTotalYear.series[0].name = "手数";
+                    optionTotalYear.series[0].data.push(ydata.lots.toFixed(2));
+                    optionTotalYear.series[0].data.push(tdata.lots.toFixed(2));
+                    optionTotalYear.series[0].label.normal.formatter = "l.{c}";
+                }
+                else if (type == 4) {
+                    optionTotalYear.series[0].name = "点数";
+                    optionTotalYear.series[0].data.push(ydata.pips.toFixed(2));
+                    optionTotalYear.series[0].data.push(tdata.pips.toFixed(2));
+                    optionTotalYear.series[0].label.normal.formatter = "p.{c}";
+                }
                 yearChart.setOption(optionTotalYear);
             };
 
+            //月Pie图表
+            var optionMonthPie = {
+                title: {
+                    text: 'MonthPie',
+                    show: false
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    show: false,
+                    type: 'plain',
+                    tooltip: {
+                        show: true
+                    },
+                    orient: 'vertical',
+                    right: 10,
+                    top: 20,
+                    bottom: 20,
+                    data: []
+                },
+                series: [
+                    {
+                        name: 'SymbolCode',
+                        type: 'pie',
+                        radius: [0,'55%'],
+                        center: ['50%', '50%'],
+                        label: {
+                            normal: {
+                                formatter: '{b} {d}%',
+                            }
+                        },
+                        data: [],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+
+            function Render_monthPieChart(index, name) {
+                var legendData = [];
+                var seriesData = [];
+                var data;
+                if (name == "全年" || name == "总计")
+                    data = YearSourceData;
+                else
+                    data = MonthBaseData;
+                var idx = parseInt(index);
+                for (var i = 0; i < data[idx].pieDatas.length; i++) {
+                    var _name = data[idx].pieDatas[i].symbolCode;
+                    var _value = parseFloat(data[idx].pieDatas[i].lots).toFixed(2);
+                    //legendData.push(_name);
+                    seriesData.push({ name: _name, value: _value });
+                }
+                //optionMonthPie.legend.data = legendData;
+                optionMonthPie.series[0].data = seriesData;
+                monthPieChart.setOption(optionMonthPie);
+            };
+
+            //月多空比
+            var optionBuySellRate={
+                tooltip: {
+                    trigger: 'axis',
+                        axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                axisLabel: {
+                    show: true,
+                    interval: 0,
+                    rotate: 90,
+                }
+            },
+            yAxis: {
+                type: 'value',
+            },
+            series: [
+                {
+                    name: '多头',
+                    type: 'bar',
+                    stack: '总量',
+                    label: {
+                        normal: {
+                            show: true,
+                            rotate: 90,
+                            align: 'left',
+                            verticalAlign: 'middle',
+                            position: 'insideBottom',
+                            distance: 3,
+                        }
+                    },
+                    data:[],
+                    itemStyle: {
+                        normal: { color: '#eecb71' }
+                    }
+                },
+                {
+                    name: '空头',
+                    type: 'bar',
+                    stack: '总量',
+                    label: {
+                        normal: {
+                            show: true,
+                            rotate: 90,
+                            align: 'left',
+                            verticalAlign: 'middle',
+                            position: 'insideBottom',
+                            distance:3,
+                        }
+                    },
+                    data: [],
+                    itemStyle: {
+                        normal: { color: '#cbe2f3' }
+                    }
+                }
+            ]
+        };
+
+            function Render_buySellRateChart(index,name) {
+                var buydata = [];
+                var selldata=[];
+                var xnamedata=[];
+                var data;
+                if (name == "全年" || name == "总计")
+                    data = YearSourceData;
+                else
+                    data = MonthBaseData;
+                var idx = parseInt(index);
+                for (var i = 0; i < data[idx].buySellRateDatas.length; i++) {
+                    var _name = data[idx].buySellRateDatas[i].symbolCode;
+                    var _buy = parseFloat(data[idx].buySellRateDatas[i].buyRate).toFixed(2);
+                    var _sell = parseFloat(data[idx].buySellRateDatas[i].sellRate).toFixed(2);
+                    xnamedata.push(_name);
+                    buydata.push(_buy);
+                    selldata.push(_sell);
+                }
+                optionBuySellRate.xAxis.data = xnamedata;
+                optionBuySellRate.series[0].data = buydata;
+                optionBuySellRate.series[1].data = selldata;
+                optionBuySellRate.series[0].label.normal.formatter = function (p) {
+                    return (p.value > 0 || p.value < 0) ? (p.value) : '';
+                };
+                optionBuySellRate.series[1].label.normal.formatter = function (p) {
+                    return (p.value > 0 || p.value < 0) ? (p.value) : '';
+                };
+                buySellRateChart.setOption(optionBuySellRate);
+             };
+
             //月份收益率
             $("#MonthProfitRateBtn").click(function () {
-                ParseAndRender_monthBaseChart(MonthBaseData, 1);
-                RenderChart_yearChart(1);
+                Render_monthBaseChart(MonthBaseData, 1);
+                Render_yearChart(1);
             });
 
             //月份收益
             $("#MonthProfitBtn").click(function () {
-                ParseAndRender_monthBaseChart(MonthBaseData, 2);
-                RenderChart_yearChart(2);
+                Render_monthBaseChart(MonthBaseData, 2);
+                Render_yearChart(2);
             });
 
             //月份手数
             $("#MonthHandBtn").click(function () {
-                ParseAndRender_monthBaseChart(MonthBaseData, 3);
-                RenderChart_yearChart(3);
+                Render_monthBaseChart(MonthBaseData, 3);
+                Render_yearChart(3);
             });
 
             //月份点数
             $("#MonthPointBtn").click(function () {
-                ParseAndRender_monthBaseChart(MonthBaseData, 4);
-                RenderChart_yearChart(4);
+                Render_monthBaseChart(MonthBaseData, 4);
+                Render_yearChart(4);
             });
         });
     </script>

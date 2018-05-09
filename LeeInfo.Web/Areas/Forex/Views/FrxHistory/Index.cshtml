@@ -60,13 +60,12 @@
                         <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                     </div>
                 </div>
-                <div class="box-body" style="margin:30px">
-                    <div class="row">
+                <div class="box-body no-margin">
                         <div class="col-md-7">
-                            <div id="beChart" style="width: 100%;height:300px;"></div>
+                            <div id="beChart" style="height:300px;"></div>
                         </div>
-                        <div class="col-md-5">
-                            <table class="table no-margin" width="100%">
+                        <div class="col-md-5" style="padding:30px">
+                            <table class="table" >
                                 <tbody>
 
                                     <tr>
@@ -101,20 +100,19 @@
                                     </tr>
                                     <tr>
                                         <td class="brr">统计起始：</td>
-                                        <td class="brl">@Model.Item3.RigistrationTime</td>
+                                        <td class="brl">@Model.Item3.RigistrationTime.ToString("yyyy-MM-dd hh:mm")</td>
                                         <td class="brr">最后交易：</td>
-                                        <td class="brl">@Model.Item3.LastTradeTime</td>
+                                        <td class="brl">@Model.Item3.LastTradeTime.ToString("yyyy-MM-dd hh:mm")</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
                     <h3 class="box-title">Histories</h3>
@@ -137,11 +135,11 @@
                     </div>
                 </div>
                 <div class="box-body table-responsive">
-                    <div class="form-group col-lg-12">
-                        <div class="col-lg-3">
+                    <div class="form-group col-md-12">
+                        <div class="col-md-3">
                             <input type="text" placeholder="Search" id="search" class="form-control">
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-md-3">
                             <select id="date_select" class="form-control select2" style="width: 100%;">
                                 <option value="0">最后一天</option>
                                 <option value="1">最后一周</option>
@@ -151,13 +149,13 @@
                                 <option value="5" selected="selected">全部</option>
                             </select>
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-md-2">
                             <input type="text" placeholder="StartDate" id="date_beg" class="form-control">
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-md-2">
                             <input type="text" placeholder="EndDate" id="date_end" class="form-control">
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-md-2">
                             <button id="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
                         </div>
                     </div>
@@ -220,7 +218,6 @@
 
     //For DataTables
     <script src="~/js/range_dates.js"></script>
-    <script src="~/lib/echart/echarts.js"></script>
     <script>
         $(document).ready(function () {
             var table_his = $('#example_his').dataTable(
@@ -335,6 +332,14 @@
                 },
                 legend: {
                     data: ['balance', 'equity']
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none',
+                        },
+                    }
                 },
                 dataZoom: [
                     {

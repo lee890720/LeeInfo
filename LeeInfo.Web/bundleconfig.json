@@ -48,11 +48,11 @@
     "inputFiles": [
       "wwwroot/lib/jquery/dist/jquery.js",
       "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
-      "wwwroot/lib/chart.js/Chart.js",
       "wwwroot/lib/jquery-slimscroll/jquery.slimscroll.js",
       "wwwroot/lib/fastclick/lib/fastclick.js",
       "wwwroot/lib/select/js/select2.full.js",
       "wwwroot/lib/moment/moment.js",
+      "wwwroot/lib/echart/echarts.js",
       "wwwroot/lib/adminlte/dist/js/adminlte.js"
     ],
     "minify": {

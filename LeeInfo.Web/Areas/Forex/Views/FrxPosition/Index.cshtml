@@ -75,11 +75,11 @@
                                             <tr>
                                                 <td>@p.SymbolCode</td>
                                                 <td>@p.TradeType</td>
-                                                <td>@Math.Round(p.EntryPrice, 5)</td>
+                                                <td>@Math.Round(p.EntryPrice, 4)</td>
                                                 <td>@p.Quantity</td>
                                                 <td>@p.Swap</td>
                                                 <td>@Math.Round(p.Pips)</td>
-                                                <td>@p.NetProfit</td>
+                                                <td>@Math.Round(p.NetProfit)</td>
                                                 <td>@Math.Round(p.Gain * 100, 2) %</td>
                                             </tr>
 
@@ -89,7 +89,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div id="pieChart" style="width: 100%;height:300px;"></div>
+                            <div id="pieChart" style="height:300px"></div>
                         </div>
                     </div>
                 </div>
@@ -240,7 +240,6 @@
 </section>
 @section Scripts{
     //For Chart
-    <script src="~/lib/echart/echarts.js"></script>
     <script>
         $(document).ready(function () {
             var myChart = echarts.init(document.getElementById('pieChart'));
@@ -256,20 +255,26 @@
                     formatter: "{a} <br/>{b} : {c} ({d}%)"
                 },
                 legend: {
+                    show:true,
                     type: 'scroll',
                     orient: 'vertical',
                     right: 10,
-                    top: 20,
-                    bottom: 20,
+                    top: 10,
+                    bottom: 10,
                     data: legendData
                 },
                 series: [
                     {
                         name: 'SymbolCode',
                         type: 'pie',
-                        radius: '55%',
-                        center: ['40%', '50%'],
+                        radius: [0, '55%'],
+                        center: ['50%', '50%'],
                         data: seriesData,
+                        label: {
+                            normal: {
+                                formatter: '{b} {d}%',
+                            }
+                        },
                         itemStyle: {
                             emphasis: {
                                 shadowBlur: 10,
