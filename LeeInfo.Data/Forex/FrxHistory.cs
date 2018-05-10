@@ -38,6 +38,7 @@ namespace LeeInfo.Data.Forex
         public double Equity { get; set; }
         public double Roi { get; set; }
         public double EquityBaseRoi { get; set; }
+        public int? Digits { get; set; }
 
         public FrxAccount FrxAccount { get; set; }
     }

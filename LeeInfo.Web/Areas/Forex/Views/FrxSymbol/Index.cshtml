@@ -1,0 +1,131 @@
+﻿@model IEnumerable<LeeInfo.Data.Forex.FrxSymbol>
+
+@{
+    var actionName = ViewContext.RouteData.Values["action"].ToString();
+    var controllerName = ViewContext.RouteData.Values["controller"].ToString();
+    var areaName = ViewContext.RouteData.Values["area"].ToString();
+    ViewData["action"] = actionName;
+    ViewData["controller"] = controllerName;
+    ViewData["area"] = areaName;
+    ViewData["Title"] = controllerName;
+    string path = "/" + areaName + "/" + controllerName;
+}
+<section class="content-header">
+    <h1>
+        @ViewData["action"]
+        <small>@ViewData["controller"]</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> @ViewData["area"]</a></li>
+        <li class="active"> @ViewData["controller"]</li>
+    </ol>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                </div>
+                <div class="box-body table-responsive">
+                    <table id="example1" class="table  table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.SymbolName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Digits)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.PipPosition)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.MeasurementUnits)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.BaseAsset)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.QuoteAsset)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.TickSize)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.SwapLong)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.SwapShort)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.LastBid)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.LastAsk)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Description)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SymbolName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Digits)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PipPosition)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.MeasurementUnits)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.BaseAsset)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.QuoteAsset)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TickSize)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SwapLong)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SwapShort)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LastBid)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LastAsk)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts{
+    <script>
+    $(function () {
+        $('#example1').DataTable(
+            {
+            'order': [[0, "asc"]],
+            'pageLength':10,
+        })
+    })
+    </script>
+}

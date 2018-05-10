@@ -13,9 +13,10 @@ using System;
 namespace LeeInfo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180510203808_add-frxsymbol")]
+    partial class addfrxsymbol
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -375,8 +376,6 @@ namespace LeeInfo.Data.Migrations
 
                     b.Property<double>("Commissions");
 
-                    b.Property<int?>("Digits");
-
                     b.Property<double>("EntryPrice");
 
                     b.Property<DateTime>("EntryTime");
@@ -431,8 +430,6 @@ namespace LeeInfo.Data.Migrations
                     b.Property<double>("Commissions");
 
                     b.Property<double>("CurrentPrice");
-
-                    b.Property<int?>("Digits");
 
                     b.Property<double>("EntryPrice");
 
@@ -499,9 +496,9 @@ namespace LeeInfo.Data.Migrations
 
                     b.Property<int>("Digits");
 
-                    b.Property<double?>("LastAsk");
+                    b.Property<double>("LastAsk");
 
-                    b.Property<double?>("LastBid");
+                    b.Property<double>("LastBid");
 
                     b.Property<int>("MaxLeverage");
 

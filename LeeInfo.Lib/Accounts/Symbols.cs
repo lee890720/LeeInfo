@@ -10,6 +10,8 @@ namespace Connect_API.Accounts
     /// </summary>
     public class Symbols
     {
+        [JsonProperty("symbolId")]
+        public int SymbolId { get; set; }
         /// <summary>
         /// Gets or sets the name of the symbol.
         /// </summary>
@@ -26,7 +28,7 @@ namespace Connect_API.Accounts
         /// The digits.
         /// </value>
         [JsonProperty("digits")]
-        public string Digits { get; set; }
+        public int Digits { get; set; }
 
         /// <summary>
         /// Gets or sets the pip position.
@@ -35,7 +37,7 @@ namespace Connect_API.Accounts
         /// The pip position.
         /// </value>
         [JsonProperty("pipPosition")]
-        public string PipPosition { get; set; }
+        public int PipPosition { get; set; }
 
         /// <summary>
         /// Gets or sets the measurement units.
@@ -71,7 +73,7 @@ namespace Connect_API.Accounts
         /// The trade enabled.
         /// </value>
         [JsonProperty("tradeEnabled")]
-        public string TradeEnabled { get; set; }
+        public bool TradeEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets the size of the tick.
@@ -80,7 +82,7 @@ namespace Connect_API.Accounts
         /// The size of the tick.
         /// </value>
         [JsonProperty("tickSize")]
-        public string TickSize { get; set; }
+        public double TickSize { get; set; }
 
         [JsonProperty("description")]
         public string Description { get; set; }
@@ -92,7 +94,7 @@ namespace Connect_API.Accounts
         /// The maximum leverage.
         /// </value>
         [JsonProperty("maxLeverage")]
-        public string MaxLeverage { get; set; }
+        public int MaxLeverage { get; set; }
 
         /// <summary>
         /// Gets or sets the swap long.
@@ -101,7 +103,7 @@ namespace Connect_API.Accounts
         /// The swap long.
         /// </value>
         [JsonProperty("swapLong")]
-        public string SwapLong { get; set; }
+        public double SwapLong { get; set; }
 
         /// <summary>
         /// Gets or sets the swap short.
@@ -110,7 +112,7 @@ namespace Connect_API.Accounts
         /// The swap short.
         /// </value>
         [JsonProperty("swapShort")]
-        public string SwapShort { get; set; }
+        public double SwapShort { get; set; }
 
         /// <summary>
         /// Gets or sets the three days swaps.
@@ -128,7 +130,7 @@ namespace Connect_API.Accounts
         /// The minimum order volume.
         /// </value>
         [JsonProperty("minOrderVolume")]
-        public string MinOrderVolume { get; set; }
+        public long MinOrderVolume { get; set; }
 
         /// <summary>
         /// Gets or sets the minimum order step.
@@ -137,7 +139,7 @@ namespace Connect_API.Accounts
         /// The minimum order step.
         /// </value>
         [JsonProperty("minOrderStep")]
-        public string MinOrderStep { get; set; }
+        public long MinOrderStep { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum order volume.
@@ -146,7 +148,7 @@ namespace Connect_API.Accounts
         /// The maximum order volume.
         /// </value>
         [JsonProperty("maxOrderVolume")]
-        public string MaxOrderVolume { get; set; }
+        public long MaxOrderVolume { get; set; }
 
         /// <summary>
         /// Gets or sets the asset class.
@@ -155,10 +157,10 @@ namespace Connect_API.Accounts
         /// The asset class.
         /// </value>
         [JsonProperty("assetClass")]
-        public string AssetClass { get; set; }
+        public int AssetClass { get; set; }
 
         [JsonProperty("lastBid")]
-        public string LastBid { get; set; }
+        public double? LastBid { get; set; }
 
         /// <summary>
         /// Gets or sets the last ask.
@@ -167,7 +169,7 @@ namespace Connect_API.Accounts
         /// The last ask.
         /// </value>
         [JsonProperty("lastAsk")]
-        public string LastAsk { get; set; }
+        public double? LastAsk { get; set; }
 
         /// <summary>
         /// Gets or sets the trading mode.

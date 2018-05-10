@@ -75,7 +75,7 @@
                                             <tr>
                                                 <td>@p.SymbolCode</td>
                                                 <td>@p.TradeType</td>
-                                                <td>@Math.Round(p.EntryPrice, 4)</td>
+                                                <td>@Math.Round(p.EntryPrice, (int)p.Digits)</td>
                                                 <td>@p.Quantity</td>
                                                 <td>@p.Swap</td>
                                                 <td>@Math.Round(p.Pips)</td>
@@ -333,6 +333,7 @@
         $(document).ready(function () {
             var table_pos = $('#example_pos').dataTable(
                 {
+                    'order': [[4, "desc"]],
                     'dom':
                         "<'row'<'col-sm-6'><'col-sm-6'>>" +
                         "<'row'<'col-sm-12'tr>>" +
@@ -409,10 +410,7 @@
                             "targets": [5, 6],
                             render: function (data, type, row, meta) {
                                 var result = parseFloat(data);
-                                if (result > 50)
-                                    return result.toFixed(2);
-                                else
-                                    return result.toFixed(4);
+                                    return result.toFixed(parseInt(row.digits));
                             }
                         },
                         {

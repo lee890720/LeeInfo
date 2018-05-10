@@ -44,6 +44,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             string _apiUrl = "https://api.spotware.com/";
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
             AppIdentityUser _admin = await _userManager.FindByNameAsync("lee890720");
+            var symbols = _context.FrxSymbol;
             if (_user.ConnectAPI)
                 _accessToken = _user.AccessToken;
             else
@@ -136,6 +137,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fp.SymbolCode = p.SymbolName;
                 fp.TradeType = p.TradeSide == "BUY" ? TradeType.Buy : TradeType.Sell;
                 fp.Margin = fp.MarginRate * fp.Volume / frxaccount.PreciseLeverage;
+                fp.Digits = symbols.SingleOrDefault(x => x.SymbolName == fp.SymbolCode).PipPosition;
                 _context.Add(fp);
                 await _context.SaveChangesAsync();
             }
@@ -216,6 +218,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
                 fh.Roi = h.PositionCloseDetails.Roi;
                 fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
+                fh.Digits= symbols.SingleOrDefault(x => x.SymbolName == fh.SymbolCode).PipPosition;
                 var result = _context.FrxHistory.SingleOrDefault(x => x.ClosingDealId == fh.ClosingDealId);
                 if (result == null)
                 {

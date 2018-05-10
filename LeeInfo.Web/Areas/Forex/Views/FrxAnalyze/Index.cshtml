@@ -868,6 +868,7 @@
             //For DataTables
             var table_bs = $('#example_bs').dataTable(
                 {
+                    'order': [[0, "asc"]],
                     'dom':
                         "<'row'<'col-sm-6'><'col-sm-6'f>>" +
                         "<'row'<'col-sm-12'tr>>" +
@@ -955,6 +956,7 @@
                 });
             var table_his = $('#example_his').dataTable(
                 {
+                    'order': [[4, "desc"]],
                     'dom':
                         "<'row'<'col-sm-6'><'col-sm-6'>>" +
                         "<'row'<'col-sm-12'tr>>" +
@@ -1027,10 +1029,7 @@
                             "targets": [5, 6],
                             render: function (data, type, row, meta) {
                                 var result = parseFloat(data);
-                                if (result > 50)
-                                    return result.toFixed(2);
-                                else
-                                    return result.toFixed(4);
+                                return result.toFixed(parseInt(row.digits));
                             }
                         },
                         {

@@ -16,6 +16,7 @@ namespace LeeInfo.Data
         public virtual DbSet<CcdPos> CcdPos { get; set; }
         public virtual DbSet<CcdRecord> CcdRecord { get; set; }
         public virtual DbSet<FrxCbotset> FrxCbotset { get; set; }
+        public virtual DbSet<FrxSymbol> FrxSymbol { get; set; }
         public virtual DbSet<FrxAccount> FrxAccount { get; set; }
         public virtual DbSet<FrxPosition> FrxPosition { get; set; }
         public virtual DbSet<FrxHistory> FrxHistory { get; set; }
@@ -180,6 +181,13 @@ namespace LeeInfo.Data
                 entity.HasKey(e => e.Id);
 
                 entity.ToTable("Frx_Cbotset");
+            });
+
+            modelBuilder.Entity<FrxSymbol>(entity =>
+            {
+                entity.HasKey(e => e.SymbolId);
+
+                entity.ToTable("Frx_Symbol");
             });
 
             modelBuilder.Entity<FrxAccount>(entity =>

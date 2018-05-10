@@ -32,6 +32,7 @@ namespace LeeInfo.Data.Forex
         public double Pips { get; set; }
         public string Channel { get; set; }
         public double MarginRate { get; set; }
+        public int? Digits { get; set; }
 
         public FrxAccount FrxAccount { get; set; }
     }

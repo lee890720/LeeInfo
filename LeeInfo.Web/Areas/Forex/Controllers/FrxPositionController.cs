@@ -44,6 +44,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             string _apiUrl = "https://api.spotware.com/";
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
             AppIdentityUser _admin = await _userManager.FindByNameAsync("lee890720");
+            var symbols = _context.FrxSymbol;
             if (_user.ConnectAPI)
                 _accessToken = _user.AccessToken;
             else
@@ -115,6 +116,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fp.SymbolCode = p.SymbolName;
                 fp.TradeType = p.TradeSide == "BUY" ? TradeType.Buy : TradeType.Sell;
                 fp.Margin = fp.MarginRate * fp.Volume / frxaccount.PreciseLeverage;
+                fp.Digits = symbols.SingleOrDefault(x => x.SymbolName == fp.SymbolCode).PipPosition;
                 _context.Add(fp);
                 await _context.SaveChangesAsync();
             }
@@ -138,7 +140,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             #endregion
             #region GetPosGroup
             List<PosGroup> poss = new List<PosGroup>();
-            poss = frxpositions.GroupBy(g => new { g.SymbolCode, g.TradeType })
+            poss = frxpositions.GroupBy(g => new { g.SymbolCode, g.TradeType, g.Digits })
                 .Select(s => new PosGroup
                 {
                     SymbolCode = s.Key.SymbolCode,
@@ -148,7 +150,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     Swap = s.Sum(a => a.Swap),
                     NetProfit = s.Sum(a => a.NetProfit),
                     Pips = s.Sum(a => a.Pips * a.Quantity) / s.Sum(b => b.Quantity),
-                    Gain = s.Sum(a => a.NetProfit) / frxaccount.Balance
+                    Gain = s.Sum(a => a.NetProfit) / frxaccount.Balance,
+                    Digits = s.Key.Digits,
                 }).OrderBy(o=>o.NetProfit).ToList();
             #endregion
 
@@ -175,7 +178,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     Swap = 0,
                     NetProfit = 0,
                     Pips = 0,
-                    Gain = 0
+                    Gain = 0,
+                    Digits=0
                 }).OrderByDescending(o=>o.Quantity).ToList();
             var data = poss;
             return Json(new { data, data.Count });
@@ -192,5 +196,6 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public double NetProfit { get; set; }
         public double Pips { get; set; }
         public double Gain { get; set; }
+        public int? Digits { get; set; }
     }
 }
