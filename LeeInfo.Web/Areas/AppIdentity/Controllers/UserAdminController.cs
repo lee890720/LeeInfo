@@ -124,8 +124,8 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Edit(string id, string email,
-                string password,SexType sex,string userImage,string clientId,string clientSecret,string accessToken,string refreshToken)
+        public async Task<IActionResult> Edit(string id, string email,string password,SexType sex,string userImage,bool connectAPI,
+            string clientId,string clientSecret,string accessToken,string refreshToken)
         {
             AppIdentityUser user = await userManager.FindByIdAsync(id);
             if (user != null)
@@ -133,6 +133,7 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
                 user.Email = email;
                 user.Sex = sex;
                 user.UserImage = userImage;
+                user.ConnectAPI = connectAPI;
                 user.ClientId = clientId;
                 user.ClientSecret = clientSecret;
                 user.AccessToken = accessToken;
@@ -165,7 +166,7 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
                     IdentityResult result = await userManager.UpdateAsync(user);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("Index");
+                        return Redirect("/");
                     }
                     else
                     {

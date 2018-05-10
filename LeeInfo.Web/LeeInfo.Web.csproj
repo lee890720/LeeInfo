@@ -70,7 +70,6 @@
     <None Include="Areas\Forex\Views\FrxCbotset\CreateEdit.cshtml" />
     <None Include="Areas\Forex\Views\FrxCbotset\Delete.cshtml" />
     <None Include="Areas\Forex\Views\FrxCbotset\Index.cshtml" />
-    <None Include="Areas\Forex\Views\FrxHistory\Index.cshtml" />
     <None Include="Areas\Forex\Views\FrxPosition\Index.cshtml" />
     <None Include="Areas\Forex\Views\FrxUserAccount\CreateEdit.cshtml" />
     <None Include="Areas\Forex\Views\FrxUserAccount\Delete.cshtml" />

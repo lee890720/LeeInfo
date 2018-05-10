@@ -12,6 +12,7 @@ namespace LeeInfo.Data.Forex
         {
             FrxPosition = new HashSet<FrxPosition>();
             FrxHistory = new HashSet<FrxHistory>();
+            FrxCashflow = new HashSet<FrxCashflow>();
         }
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.None)]
@@ -31,5 +32,6 @@ namespace LeeInfo.Data.Forex
         public double UnrealizedNetProfit { get; set; }
         public ICollection<FrxPosition> FrxPosition { get; set; }
         public ICollection<FrxHistory> FrxHistory { get; set; }
+        public ICollection<FrxCashflow> FrxCashflow { get; set; }
     }
 }

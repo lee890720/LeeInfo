@@ -20,6 +20,7 @@ namespace LeeInfo.Data.AppIdentity
         public DateTime RegisterDate { get; set; }
         [Display(Name = "头像")]
         public string UserImage { get; set; }
+        public bool ConnectAPI { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string AccessToken { get; set; }

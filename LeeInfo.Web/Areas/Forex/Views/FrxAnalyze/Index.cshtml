@@ -1,4 +1,4 @@
-﻿@model Tuple<FrxAccount, List<FrxAccount>, AccountInfo>
+﻿@model Tuple<FrxAccount, List<FrxAccount>>
 @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
@@ -9,6 +9,23 @@
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
 }
+<style>
+    .table th {
+        text-align: center !important;
+    }
+
+    .table td {
+        text-align: center !important;
+    }
+
+        .table td.brr {
+            text-align: left !important;
+        }
+
+        .table td.brl {
+            text-align: right !important;
+        }
+</style>
 <section class="content-header">
     <h1>
         @ViewData["action"]
@@ -20,6 +37,84 @@
     </ol>
 </section>
 <section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">基本信息</h3>
+                    <div class="box-tools pull-right">
+                        <button id="BalanceProfitBtn" type="button" class="btn btn-box-tool">NET</button>
+                        <button id="BalanceHandBtn" type="button" class="btn btn-box-tool">LOT</button>
+                        <button id="BalancePointBtn" type="button" class="btn btn-box-tool">PIP</button>
+                        <button id="BalanceProfitRateBtn" type="button" class="btn btn-box-tool">ROI</button>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-wrench"></i>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var f in Model.Item2)
+                                {
+                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body no-margin">
+                    <div class="col-md-7">
+                        <div id="BalanceChart" style="height:300px;"></div>
+                    </div>
+                    <div class="col-md-5" style="padding:30px">
+                        <table class="table">
+                            <tbody>
+
+                                <tr>
+                                    <td class="brr">收益率：</td>
+                                    <td class="brl"><strong id="accountinfo-gain" style="color:coral"></strong></td>
+                                    <td class="brr">余额：</td>
+                                    <td id="accountinfo-balance" class="brl"></td>
+                                </tr>
+                                <tr>
+                                    <td class="brr">绝对收益率：</td>
+                                    <td class="brl"><strong id="accountinfo-absgain" style="color:coral"></strong></td>
+                                    <td class="brr">净值：</td>
+                                    <td id="accountinfo-equity" class="brl"></td>
+                                </tr>
+                                <tr>
+                                    <td class="brr">最大回撤率： </td>
+                                    <td id="accountinfo-maxdraw" class="brl"></td>
+                                    <td class="brr">最高净值： </td>
+                                    <td id="accountinfo-maxbalance" class="brl"></td>
+                                </tr>
+                                <tr>
+                                    <td class="brr">入金： </td>
+                                    <td id="accountinfo-deposit" class="brl"></td>
+                                    <td class="brr">利润：</td>
+                                    <td class="brl"><strong id="accountinfo-totalprofit" style="color:coral"></strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="brr">出金： </td>
+                                    <td id="accountinfo-withdraw" class="brl"></td>
+                                    <td class="brr">利息： </td>
+                                    <td class="brl"><strong id="accountinfo-totalswap" style="color:coral"></strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="brr">统计起始：</td>
+                                    <td id="accountinfo-rigistrationtime" class="brl"></td>
+                                    <td class="brr">最后交易：</td>
+                                    <td id="accountinfo-lasttradetime" class="brl"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="box box-info">
@@ -40,7 +135,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxHistory",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -73,7 +168,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxHistory",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -82,12 +177,12 @@
                 </div>
                 <div class="box-body no-margin">
                     <div class="col-md-8">
-                        <div id="BuySellRateChart" class="clearfix" style="height: 300px; ">
+                        <div id="BuySellRateChart" class="clearfix" style="height: 300px;">
                             <!--月Pie图表位置-->
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div id="MonthPieChart" class="clearfix" style="height: 300px;">
+                        <div id="MonthPieChart" class="clearfix" style="height: 300px">
                             <!--月Pie图表位置-->
                         </div>
                     </div>
@@ -119,7 +214,7 @@
                     </div>
                 </div>
                 <div class="box-body table-responsive" style="height:560px">
-                    <table id="example_pos" class="table  table-bordered table-striped table-hover" width="100%">
+                    <table id="example_bs" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
                                 <th></th>
@@ -180,38 +275,300 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">历史记录</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-wrench"></i>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var f in Model.Item2)
+                                {
+                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body table-responsive">
+                    <div class="form-group col-md-12">
+                        <div class="col-md-3">
+                            <input type="text" placeholder="Search" id="search" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <select id="date_select" class="form-control select2" style="width: 100%;">
+                                <option value="7">全部</option>
+                                <option value="0">今天</option>
+                                <option value="1">昨天</option>
+                                <option value="2">最后一周</option>
+                                <option value="3">本月</option>
+                                <option value="4">上个月</option>
+                                <option value="5">最后三个月</option>
+                                <option value="6">最后一年</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" placeholder="StartDate" id="date_beg" class="form-control datepickertemp">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" placeholder="EndDate" id="date_end" class="form-control datepickertemp">
+                        </div>
+                        @*<div class="col-md-2">
+                            <button id="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
+                        </div>*@
+                    </div>
+                    <table id="example_his" class="table  table-bordered table-striped table-hover" width="100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    ID(Label/Comment)
+                                </th>
+                                <th>
+                                    Symbol
+                                </th>
+                                <th>
+                                    Direction
+                                </th>
+                                <th>
+                                    OpeningTime
+                                </th>
+                                <th>
+                                    ClosingTime
+                                </th>
+
+                                <th>
+                                    EntryPrice
+                                </th>
+                                <th>
+                                    ClosingPrice
+                                </th>
+                                <th>
+                                    Volume
+                                </th>
+                                <th>
+                                    Commission
+                                </th>
+                                <th>
+                                    Swap
+                                </th>
+                                <th>
+                                    Pips
+                                </th>
+                                <th>
+                                    NetProfit
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="11" style="text-align:right !important">Total:</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 @section Scripts{
+    <script src="~/js/range_dates.js"></script>
     <script>
         $(document).ready(function () {
             //初始化数据
             var MonthBaseData = [];
+            var AccountInfoData;
+            var HistoryData = [];
+            var BalanceChart = echarts.init(document.getElementById('BalanceChart'));
             var MonthBaseChart = echarts.init(document.getElementById('MonthBaseChart'));
             var MonthPieChart = echarts.init(document.getElementById("MonthPieChart"));
             var BuySellRateChart = echarts.init(document.getElementById("BuySellRateChart"));
 
-            if (MonthBaseData.length == 0) {
-                $.ajax({
-                    url: '@Url.Action("GetAnalyzeData", "FrxAnalyze", new { acId = Model.Item1.AccountId })',
-                    async: true,
-                    type: "post",
-                    dataType: "json",
-                    success: function (result) {
+            $.ajax({
+                type: "post",
+                async: true,
+                url: '@Url.Action("GetMonthBaseData", "FrxAnalyze", new { acId = Model.Item1.AccountId })',
+                dataType: "json",
+                success: function (result) {
                         MonthBaseData = result.monthBaseData;
-                        Render_MonthBaseChart(MonthBaseData, 1);
+                        AccountInfoData = result.accountinfo;
+                        Render_AccountInfo(result.accountinfo);
+                        Render_MonthBaseChart(MonthBaseData, 2);
                         Render_MonthPieChart(11);
                         Render_BuySellRateChart(11);
-                        table_pos.api().rows.add(result.monthBaseData[11].buySellData).draw();
-                    }
-                });
+                        table_bs.api().rows.add(result.monthBaseData[11].buySellData).draw();
+                },
+                error: function (errorMsg) {
+                    alert("MonthBaseData请求数据失败!");
+                }
+            })
 
-            }
+            $.ajax({
+                type: "post",
+                async: true,
+                url: '@Url.Action("GetHistoryData", "FrxAnalyze", new { acId = Model.Item1.AccountId })',
+                dataType: "json",
+                success: function (result) {
+                    HistoryData = result.data;
+                    Render_BalanceChart(result.data,2);
+                    table_his.api().rows.add(result.data).draw();
+                },
+                error: function (errorMsg) {
+                    alert("HistoryData请求数据失败!");
+                }
+            })
+
+            //AccountInfo
+            function Render_AccountInfo(data) {
+                if (data != null) {
+                    $("#accountinfo-gain").html(data.gain.toFixed(2) + "%");
+                    $("#accountinfo-balance").html(data.balance.toFixed(2));
+                    $("#accountinfo-absgain").html(data.absGain.toFixed(2) + "%");
+                    $("#accountinfo-equity").html(data.equity.toFixed(2));
+                    $("#accountinfo-maxdraw").html("-" + data.maxDraw.toFixed(2) + "%" + "(" + moment(data.maxDrawTime).format('YYYY-MM-DD') + ")");
+                    $("#accountinfo-maxbalance").html(data.maxBalance.toFixed(2) + "(" + moment(data.maxBalanceTime).format('YYYY-MM-DD') + ")");
+                    $("#accountinfo-deposit").html(data.deposit.toFixed(2));
+                    $("#accountinfo-totalprofit").html(data.totalProfit.toFixed(2));
+                    $("#accountinfo-withdraw").html(data.withdraw.toFixed(2));
+                    $("#accountinfo-totalswap").html(data.totalSwap.toFixed(2));
+                    $("#accountinfo-rigistrationtime").html(moment(data.rigistrationTime).format('YYYY-MM-DD hh:mm'));
+                    $("#accountinfo-lasttradetime").html(moment(data.lastTradeTime).format('YYYY-MM-DD hh:mm'));
+                }
+            };
+
+            //Balance图表
+            var optionBalance = {
+                title: {
+                    text: 'BalanceChart',
+                    show: false
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                legend: {
+                    data: []
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none',
+                        },
+                    }
+                },
+                dataZoom: [
+                    {
+                        id: 'dataZoomX',
+                        type: 'inside',
+                        xAxisIndex: [0],
+                        filterMode: 'filter'
+                    }
+                ],
+                xAxis: {
+                    data: []
+                },
+                yAxis: {},
+                series: [
+                    {
+                        name: '',
+                        type: 'line',
+                        data: []
+                    },
+                    {
+                        name: '',
+                        type: 'line',
+                        data: []
+                    }
+                ]
+            };
+            function Render_BalanceChart(data,type) {
+                if (data != null) {
+                    var names = [];
+                    var bs = [];
+                    var es = [];
+                    var series0Name = "";
+                    var series1Name = "";
+
+                    if (type == 1) {
+                        var series0Name = "ROI";
+                        var series1Name = "EROI";
+                    }
+                    else if (type == 2) {
+                        var series0Name = "Balance";
+                        var series1Name = "Equity";
+                    }
+                    else if (type == 3) {
+                        var series0Name = "Total";
+                        var series1Name = "Lots";
+                    }
+                    else if (type == 4) {
+                        var series0Name = "Total";
+                        var series1Name = "Pips";
+                    }
+                    optionBalance.series[0].name = series0Name;
+                    optionBalance.series[1].name = series1Name;                    optionBalance.legend.data.push(series0Name);
+                    optionBalance.legend.data.push(series1Name);
+
+                    if (type == 1) {
+                        for (var i = 0; i < data.length; i++) {
+                            names.push(moment(data[i].closingTime).format('YYYY-MM-DD'));
+                            bs.push((data[i].roi * 100).toFixed(2));
+                            es.push((data[i].equityBaseRoi*100).toFixed(2));
+                        }
+                    }
+                    if (type == 2) {
+                        for (var i = 0; i < data.length; i++) {
+                            names.push(moment(data[i].closingTime).format('YYYY-MM-DD'));
+                            bs.push(data[i].balance);
+                            es.push(data[i].equity);
+                        }
+                    }
+                    if (type == 3) {
+                        var totallots = 0.00;
+                        for (var i = 0; i < data.length; i++) {
+                            names.push(moment(data[i].closingTime).format('YYYY-MM-DD'));
+                            totallots += data[i].quantity;
+                            bs.push(totallots.toFixed(2));
+                            es.push(data[i].quantity);
+                        }
+                    }
+                    if (type == 4) {
+                        var totalpips = 0.00;
+                        for (var i = 0; i < data.length; i++) {
+                            names.push(moment(data[i].closingTime).format('YYYY-MM-DD'));
+                            totalpips += data[i].pips;
+                            bs.push(totalpips.toFixed(2));
+                            es.push(data[i].pips);
+                        }
+                    }
+                }
+                optionBalance.xAxis.data = names;
+                optionBalance.series[0].data = bs;
+                optionBalance.series[1].data = es;
+                BalanceChart.setOption(optionBalance);
+            };
+
             //月度分析报告
             MonthBaseChart.on('click', function (params) {
                 Render_MonthPieChart(params.dataIndex);
                 Render_BuySellRateChart(params.dataIndex);
-                table_pos.api().clear();
-                table_pos.api().rows.add(MonthBaseData[params.dataIndex].buySellData).draw();
+                table_bs.api().clear();
+                table_bs.api().rows.add(MonthBaseData[params.dataIndex].buySellData).draw();
             });
 
             var optionMonthBase = {
@@ -325,7 +682,7 @@
                     }
                     MonthBaseChart.setOption(optionMonthBase);
                 }
-            }
+            };
 
             //月Pie图表
             var optionMonthPie = {
@@ -385,7 +742,7 @@
                 MonthPieChart.setOption(optionMonthPie);
             };
 
-            //月多空比
+            //月多空比图表
             var optionBuySellRate={
                 tooltip: {
                     trigger: 'axis',
@@ -409,6 +766,8 @@
             },
             yAxis: {
                 type: 'value',
+                min: 0,
+                max: 1,
             },
             series: [
                 {
@@ -460,8 +819,10 @@
                 var idx = parseInt(index);
                 for (var i = 0; i < data[idx].buySellData.length; i++) {
                     var _name = data[idx].buySellData[i].symbolCode;
-                    var _buy = parseFloat(data[idx].buySellData[i].buyRate).toFixed(2);
-                    var _sell = parseFloat(data[idx].buySellData[i].sellRate).toFixed(2);
+                    var _buy = data[idx].buySellData[i].buyRate.toFixed(2);
+                    var _sell = data[idx].buySellData[i].sellRate.toFixed(2);
+                    //if (_buy + _sell != 1)
+                    //    _sell = (1 - _buy.toFixed(2)).toFixed(2);
                     xnamedata.push(_name);
                     buydata.push(_buy);
                     selldata.push(_sell);
@@ -478,28 +839,33 @@
                 BuySellRateChart.setOption(optionBuySellRate);
              };
 
+            //按钮点击事件
             //月份收益率
-            $("#MonthProfitRateBtn").click(function () {
+            $("#BalanceProfitRateBtn,#MonthProfitRateBtn").click(function () {
+                Render_BalanceChart(HistoryData, 1);
                 Render_MonthBaseChart(MonthBaseData, 1);
             });
 
             //月份收益
-            $("#MonthProfitBtn").click(function () {
+            $("#BalanceProfitBtn,#MonthProfitBtn").click(function () {
+                Render_BalanceChart(HistoryData, 2);
                 Render_MonthBaseChart(MonthBaseData, 2);
             });
 
             //月份手数
-            $("#MonthHandBtn").click(function () {
+            $("#BalanceHandBtn,#MonthHandBtn").click(function () {
+                Render_BalanceChart(HistoryData, 3);
                 Render_MonthBaseChart(MonthBaseData, 3);
             });
 
             //月份点数
-            $("#MonthPointBtn").click(function () {
+            $("#BalancePointBtn,#MonthPointBtn").click(function () {
+                Render_BalanceChart(HistoryData, 4);
                 Render_MonthBaseChart(MonthBaseData, 4);
             });
 
             //For DataTables
-            var table_pos = $('#example_pos').dataTable(
+            var table_bs = $('#example_bs').dataTable(
                 {
                     'dom':
                         "<'row'<'col-sm-6'><'col-sm-6'f>>" +
@@ -562,6 +928,213 @@
                         },
                         ],
                 });
+            var table_his = $('#example_his').dataTable(
+                {
+                    'dom':
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    'processing': true,
+                    'data': [],
+                    'columns': [
+                        { "data": "closingDealId" },
+                        { "data": "symbolCode" },
+                        { "data": "tradeType" },
+                        { "data": "entryTime" },
+                        { "data": "closingTime" },
+                        { "data": "entryPrice" },
+                        { "data": "closingPrice" },
+                        { "data": "volume" },
+                        { "data": "commissions" },
+                        { "data": "swap" },
+                        { "data": "pips" },
+                        { "data": "netProfit" }
+                    ],
+                    "columnDefs": [
+                        {
+                            "targets": 0,
+                            render: function (data, type, row, meta) {
+                                return '<span title="' + row.label + '/' + row.comment + '">' + data + '</span>';
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            render: function (data, type, row, meta) {
+                                var tradetype = data;
+                                if (tradetype == 0)
+                                    return "BUY";
+                                if (tradetype == 1)
+                                    return "SELL";
+                            }
+                        },
+                        {
+                            "targets": [3, 4],
+                            render: function (data, type, row, meta) {
+                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
+                                return result;
+                            }
+                        },
+                        {
+                            "targets": [5, 6],
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                if (result > 50)
+                                    return result.toFixed(2);
+                                else
+                                    return result.toFixed(5);
+                            }
+                        },
+                        {
+                            "targets": -2,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                return Math.round(result);
+                            }
+                        },
+                        {
+                            "targets": -1,
+                            render: function (data, type, row, meta) {
+                                var result = parseFloat(data);
+                                return result.toFixed(2);
+                            }
+                        }
+                    ],
+                    "footerCallback": function (tfoot, data, start, end, display) {
+                        var api = this.api(), data;
+
+                        // Remove the formatting to get integer data for summation
+                        var intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
+
+                        // Total over all pages
+                        total = api.column(11).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                        // Total over this page
+                        pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                        // Update footer
+                        $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
+                    }
+                });
+
+            $("#date_beg,#date_end").keyup(function () { table_his.api().draw(); });
+            $("#date_beg,#date_end").change(function () { table_his.api().draw(); });
+            $("#search").keyup(function () { table_his.api().search($("#search").val()).draw(); });
+
+            //$("#hehe").click(RefrashChart());
+            //function RefrashChart() {
+            //    $("#date_beg,#date_end").keyup(function () { table_his.api().draw(); });
+            //    table_his.api().search($("#search").val()).draw();
+            //};
+
+            var now = new Date();
+            var nowDayOfWeek = now.getDay();
+            var nowDay = now.getDate();
+            var nowMonth = now.getMonth();
+            var nowYear = now.getYear();
+            nowYear += (nowYear < 2000) ? 1900 : 0;
+            var getCurrentDate = new Date(nowYear, nowMonth, nowDay + 1);
+            var getCurrentDate = formatDate(getCurrentDate)
+            var getTodayDate = new Date(nowYear, nowMonth, nowDay);
+            var getTodayDate = formatDate(getTodayDate);
+            var getYesterdayDate = new Date(nowYear, nowMonth, nowDay-1);
+            var getYesterdayDate = formatDate(getYesterdayDate);
+
+            var getMonthStartDate = new Date(nowYear, nowMonth, 1);
+            var getMonthStartDate = formatDate(getMonthStartDate);
+
+            var getWeekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek);
+            var getWeekStartDate = formatDate(getWeekStartDate);
+
+            var getWeekEndDate = new Date(nowYear, nowMonth, nowDay + (6 - nowDayOfWeek));
+            var getWeekEndDate = formatDate(getWeekEndDate);
+
+            var getPreMonthStartDate = new Date(nowYear, nowMonth - 1, 1);
+            var getPreMonthStartDate = formatDate(getPreMonthStartDate);
+
+            var getFirMonthStartDate = new Date(nowYear, nowMonth - 1, nowDay);
+            var getFirMonthStartDate = formatDate(getFirMonthStartDate);
+
+            var getTreeMonthStartDate = new Date(nowYear, nowMonth - 3, nowDay);
+            var getTreeMonthStartDate = formatDate(getTreeMonthStartDate);
+
+            var getYearStartDate = new Date(nowYear, nowMonth - 12, nowDay);
+            var getYearStartDate = formatDate(getYearStartDate);
+
+            function formatDate(date) {
+                var myyear = date.getFullYear();
+                var mymonth = date.getMonth() + 1;
+                var myweekday = date.getDate();
+
+                if (mymonth < 10) {
+                    mymonth = "0" + mymonth;
+                }
+                if (myweekday < 10) {
+                    myweekday = "0" + myweekday;
+                }
+                return (myyear + "-" + mymonth + "-" + myweekday);
+            }
+
+            $("#date_select").change(function () {
+                var flag = parseInt($("#date_select").val());
+                switch (flag) {
+                    // 当天
+                    case 0:
+                        $('#date_beg').val(getTodayDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    // 昨天
+                    case 1:
+                        $('#date_beg').val(getYesterdayDate);
+                        $('#date_end').val(getTodayDate);
+                        break;
+                    // 本周
+                    case 2:
+                        $('#date_beg').val(getWeekStartDate);
+                        $('#date_end').val(getWeekEndDate);
+                        break;
+                    // 当月
+                    case 3:
+                        $('#date_beg').val(getMonthStartDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    // 上个月
+                    case 4:
+                        $('#date_beg').val(getPreMonthStartDate);
+                        $('#date_end').val(getMonthStartDate);
+                        break;
+                    // 最近三月
+                    case 5:
+                        $('#date_beg').val(getTreeMonthStartDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    // 最近一年
+                    case 6:
+                        $('#date_beg').val(getYearStartDate);
+                        $('#date_end').val(getCurrentDate);
+                        break;
+                    default:
+                        $('#date_beg').val("");
+                        $('#date_end').val("");
+                        break;
+                }
+                table_his.api().draw();
+            });
+
+            $('.datepickertemp').datepicker({
+                autoclose: true,
+                format: 'yyyy-mm-dd',
+            });
+        //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            });
+
+        //Select2
+            $('.select2').select2();
         });
     </script>
 }

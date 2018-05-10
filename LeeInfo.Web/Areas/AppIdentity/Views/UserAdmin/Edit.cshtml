@@ -40,6 +40,15 @@
     </div>
 
     <div class="form-group">
+        <label class="control-label">
+            ConnectAPI
+        </label>
+        <div class="checkbox icheck">
+            <input type="checkbox" class="flat-blue" asp-for="ConnectAPI"/>
+        </div>
+    </div>
+
+    <div class="form-group">
         @Html.LabelFor(model => model.ClientId, "ClientId", htmlAttributes: new { @class = "control-label" })
         @Html.EditorFor(model => model.ClientId, new { htmlAttributes = new { @class = "form-control" } })
         @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
@@ -63,3 +72,9 @@
         @Html.ValidationMessageFor(model => model.RefreshToken, "", new { @class = "text-danger" })
     </div>
 </div>
+<script>
+    $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+        checkboxClass: 'icheckbox_flat-blue',
+        radioClass: 'iradio_flat-blue'
+    });
+</script>

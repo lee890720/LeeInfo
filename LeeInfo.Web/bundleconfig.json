@@ -18,6 +18,8 @@
       "wwwroot/lib/font-awesome/css/font-awesome.css",
       "wwwroot/lib/ionicons/css/ionicons.css",
       "wwwroot/lib/select/css/select2.css",
+      "wwwroot/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css",
+      "wwwroot/lib/timepicker/bootstrap-timepicker.css",
       "wwwroot/lib/adminlte/dist/css/AdminLTE.css",
       "wwwroot/lib/adminlte/dist/css/skins/_all-skins.css"
     ]
@@ -53,6 +55,8 @@
       "wwwroot/lib/select/js/select2.full.js",
       "wwwroot/lib/moment/moment.js",
       "wwwroot/lib/echart/echarts.js",
+      "wwwroot/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js",
+      "wwwroot/lib/timepicker/bootstrap-timepicker.js",
       "wwwroot/lib/adminlte/dist/js/adminlte.js"
     ],
     "minify": {

@@ -15,10 +15,11 @@ namespace LeeInfo.Data
         public virtual DbSet<CcdPerson> CcdPerson { get; set; }
         public virtual DbSet<CcdPos> CcdPos { get; set; }
         public virtual DbSet<CcdRecord> CcdRecord { get; set; }
-        public virtual DbSet<FrxAccount> FrxAccount { get; set; }
         public virtual DbSet<FrxCbotset> FrxCbotset { get; set; }
-        public virtual DbSet<FrxHistory> FrxHistory { get; set; }
+        public virtual DbSet<FrxAccount> FrxAccount { get; set; }
         public virtual DbSet<FrxPosition> FrxPosition { get; set; }
+        public virtual DbSet<FrxHistory> FrxHistory { get; set; }
+        public virtual DbSet<FrxCashflow> FrxCashflow { get; set; }
         public virtual DbSet<FrxServer> FrxServer { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -174,6 +175,13 @@ namespace LeeInfo.Data
                     .HasConstraintName("FK_dbo.Ccd_Record_dbo.Ccd_Pos_PosId");
             });
 
+            modelBuilder.Entity<FrxCbotset>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.ToTable("Frx_Cbotset");
+            });
+
             modelBuilder.Entity<FrxAccount>(entity =>
             {
                 entity.HasKey(e => e.AccountId);
@@ -181,11 +189,19 @@ namespace LeeInfo.Data
                 entity.ToTable("Frx_Account");
             });
 
-            modelBuilder.Entity<FrxCbotset>(entity =>
+            modelBuilder.Entity<FrxPosition>(entity =>
             {
                 entity.HasKey(e => e.Id);
 
-                entity.ToTable("Frx_Cbotset");
+                entity.ToTable("Frx_Position");
+
+                entity.HasIndex(e => e.AccountId);
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.HasOne(d => d.FrxAccount)
+                    .WithMany(p => p.FrxPosition)
+                    .HasForeignKey(d => d.AccountId);
             });
 
             modelBuilder.Entity<FrxHistory>(entity =>
@@ -203,18 +219,18 @@ namespace LeeInfo.Data
                     .HasForeignKey(d => d.AccountId);
             });
 
-            modelBuilder.Entity<FrxPosition>(entity =>
+            modelBuilder.Entity<FrxCashflow>(entity =>
             {
                 entity.HasKey(e => e.Id);
 
-                entity.ToTable("Frx_Position");
+                entity.ToTable("Frx_Cashflow");
 
                 entity.HasIndex(e => e.AccountId);
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.HasOne(d => d.FrxAccount)
-                    .WithMany(p => p.FrxPosition)
+                    .WithMany(p => p.FrxCashflow)
                     .HasForeignKey(d => d.AccountId);
             });
 

@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using LeeInfo.Data.AppIdentity;
+using Connect_API.Accounts;
+using LeeInfo.Lib;
 
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {
@@ -18,20 +20,50 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
     [Authorize(Roles = "Admins,Forex")]
     public class FrxUserAccountController : Controller
     {
-        private readonly AppIdentityDbContext _context;
+        private readonly AppIdentityDbContext _identitycontext;
         private UserManager<AppIdentityUser> _userManager;
+        private readonly AppDbContext _context;
 
-        public FrxUserAccountController(AppIdentityDbContext context, UserManager<AppIdentityUser> userMgr)
+        public FrxUserAccountController(AppIdentityDbContext identitycontext, UserManager<AppIdentityUser> usermgr, AppDbContext context)
         {
+            _identitycontext = identitycontext;
+            _userManager = usermgr;
             _context = context;
-            _userManager = userMgr;
         }
 
         // GET: Forex/FrxUserAccount
         public async Task<IActionResult> Index()
         {
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
-            return View(await _context.AspNetUserForexAccount.Where(x => x.AppIdentityUserId==_user.Id).ToListAsync());
+            if (User.Identity.Name == "lee890720")
+            {
+                string _accessToken = "";
+                string _apiUrl = "https://api.spotware.com/";
+                _accessToken = _user.AccessToken;
+                #region GetAccount
+                var accounts = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken);
+                foreach (var a in accounts)
+                {
+                    var result = _context.FrxAccount.SingleOrDefault(x=>x.AccountId== a.AccountId);
+                    if(result==null)
+                    {
+                        var temp = new FrxAccount();
+                        temp.AccountId = a.AccountId;
+                        temp.AccountNumber = a.AccountNumber;
+                        temp.BrokerName = a.BrokerTitle;
+                        temp.Currency = a.DepositCurrency;
+                        temp.TraderRegistrationTime = ConvertJson.StampToDateTime(a.TraderRegistrationTimestamp);
+                        temp.IsLive = a.Live;
+                        temp.Balance = a.Balance;
+                        temp.PreciseLeverage = a.Leverage;
+                        _context.Add(temp);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                #endregion
+            }
+
+            return View(await _identitycontext.AspNetUserForexAccount.Where(x => x.AppIdentityUserId==_user.Id).ToListAsync());
         }
 
         // GET: Forex/FrxCbotset/Create
@@ -51,17 +83,17 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             {
                 AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
                 frxUserAccount.AppIdentityUserId = _user.Id;
-                _context.Add(frxUserAccount);
-                await _context.SaveChangesAsync();
+                _identitycontext.Add(frxUserAccount);
+                await _identitycontext.SaveChangesAsync();
                 if(frxUserAccount.Alive==true)
                 {
-                    var temp = _context.AspNetUserForexAccount.Where(x => x.AppIdentityUserId == _user.Id && x.AccountNumber != frxUserAccount.AccountNumber).ToList();
+                    var temp = _identitycontext.AspNetUserForexAccount.Where(x => x.AppIdentityUserId == _user.Id && x.AccountNumber != frxUserAccount.AccountNumber).ToList();
                     foreach(var t in temp)
                     {
                         t.Alive = false;
                     }
-                    _context.UpdateRange(temp);
-                    await _context.SaveChangesAsync();
+                    _identitycontext.UpdateRange(temp);
+                    await _identitycontext.SaveChangesAsync();
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -76,7 +108,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 return NotFound();
             }
 
-            var frxUserAccount = await _context.AspNetUserForexAccount.SingleOrDefaultAsync(m => m.Id == id);
+            var frxUserAccount = await _identitycontext.AspNetUserForexAccount.SingleOrDefaultAsync(m => m.Id == id);
             if (frxUserAccount == null)
             {
                 return NotFound();
@@ -102,17 +134,17 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 {
                     AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
                     frxUserAccount.AppIdentityUserId = _user.Id;
-                    _context.Update(frxUserAccount);
-                    await _context.SaveChangesAsync();
+                    _identitycontext.Update(frxUserAccount);
+                    await _identitycontext.SaveChangesAsync();
                     if (frxUserAccount.Alive == true)
                     {
-                        var temp = _context.AspNetUserForexAccount.Where(x => x.AppIdentityUserId == _user.Id && x.AccountNumber != frxUserAccount.AccountNumber).ToList();
+                        var temp = _identitycontext.AspNetUserForexAccount.Where(x => x.AppIdentityUserId == _user.Id && x.AccountNumber != frxUserAccount.AccountNumber).ToList();
                         foreach (var t in temp)
                         {
                             t.Alive = false;
                         }
-                        _context.UpdateRange(temp);
-                        await _context.SaveChangesAsync();
+                        _identitycontext.UpdateRange(temp);
+                        await _identitycontext.SaveChangesAsync();
                     }
                 }
                 catch (DbUpdateConcurrencyException)
@@ -139,7 +171,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 return NotFound();
             }
 
-            var frxUserAccount = await _context.AspNetUserForexAccount.SingleOrDefaultAsync(m => m.Id == id);
+            var frxUserAccount = await _identitycontext.AspNetUserForexAccount.SingleOrDefaultAsync(m => m.Id == id);
             if (frxUserAccount == null)
             {
                 return NotFound();
@@ -153,15 +185,15 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id, IFormCollection form)
         {
-            var frxUserAccount = await _context.AspNetUserForexAccount.SingleOrDefaultAsync(m => m.Id == id);
-            _context.AspNetUserForexAccount.Remove(frxUserAccount);
-            await _context.SaveChangesAsync();
+            var frxUserAccount = await _identitycontext.AspNetUserForexAccount.SingleOrDefaultAsync(m => m.Id == id);
+            _identitycontext.AspNetUserForexAccount.Remove(frxUserAccount);
+            await _identitycontext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool FrxUserAccountExists(int id)
         {
-            return _context.AspNetUserForexAccount.Any(e => e.Id == id);
+            return _identitycontext.AspNetUserForexAccount.Any(e => e.Id == id);
         }
     }
 }

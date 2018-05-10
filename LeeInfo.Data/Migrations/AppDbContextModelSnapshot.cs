@@ -282,6 +282,31 @@ namespace LeeInfo.Data.Migrations
                     b.ToTable("Frx_Account");
                 });
 
+            modelBuilder.Entity("LeeInfo.Data.Forex.FrxCashflow", b =>
+                {
+                    b.Property<int>("Id");
+
+                    b.Property<int>("AccountId");
+
+                    b.Property<double>("Balance");
+
+                    b.Property<long>("BalanceVersion");
+
+                    b.Property<DateTime>("ChangeTime");
+
+                    b.Property<double>("Delta");
+
+                    b.Property<double>("Equity");
+
+                    b.Property<string>("Type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("Frx_Cashflow");
+                });
+
             modelBuilder.Entity("LeeInfo.Data.Forex.FrxCbotset", b =>
                 {
                     b.Property<int>("Id")
@@ -506,6 +531,14 @@ namespace LeeInfo.Data.Migrations
                         .WithMany("CcdRecord")
                         .HasForeignKey("PosId")
                         .HasConstraintName("FK_dbo.Ccd_Record_dbo.Ccd_Pos_PosId");
+                });
+
+            modelBuilder.Entity("LeeInfo.Data.Forex.FrxCashflow", b =>
+                {
+                    b.HasOne("LeeInfo.Data.Forex.FrxAccount", "FrxAccount")
+                        .WithMany("FrxCashflow")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("LeeInfo.Data.Forex.FrxHistory", b =>

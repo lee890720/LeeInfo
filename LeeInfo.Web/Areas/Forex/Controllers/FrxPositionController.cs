@@ -43,41 +43,39 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             string _accessToken = "";
             string _apiUrl = "https://api.spotware.com/";
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
-            _accessToken = _user.AccessToken;
+            AppIdentityUser _admin = await _userManager.FindByNameAsync("lee890720");
+            if (_user.ConnectAPI)
+                _accessToken = _user.AccessToken;
+            else
+                _accessToken = _admin.AccessToken;
             #endregion
             #region GetAccount
             var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == _user.Id).ToList();
-            //var useraccounts = _user.AspNetUserForexAccount;
-            var temp = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
-            if (temp.Count == 0)
-                return Redirect("/");
-            var accounts = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken);
-            foreach (var a in accounts)
-            {
-                var temp_ac = temp.SingleOrDefault(x => x.AccountNumber == a.AccountNumber);
-                if (temp_ac != null)
-                {
-                    temp_ac.Balance = a.Balance / 100;
-                    temp_ac.BrokerName = a.BrokerTitle;
-                    temp_ac.Currency = a.DepositCurrency;
-                    temp_ac.IsLive = a.Live;
-                    temp_ac.PreciseLeverage = a.Leverage;
-                    temp_ac.TraderRegistrationTime = ConvertJson.StampToDateTime(a.TraderRegistrationTimestamp);
-                    _context.Update(temp_ac);
-                    await _context.SaveChangesAsync();
-                }
-            }
             var frxaccounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
+            if (frxaccounts.Count == 0)
+                return Redirect("/");
             var frxaccount = new FrxAccount();
             if (acId == null)
             {
-                var tempuserac = useraccounts.SingleOrDefault(x => x.Alive == true);
-                if (tempuserac == null)
-                    tempuserac = useraccounts[0];
-                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == tempuserac.AccountNumber && x.Password == tempuserac.Password);
+                var TAC = new AspNetUserForexAccount();
+                var tempAC = useraccounts.SingleOrDefault(x => x.Alive == true);
+                if (tempAC == null)
+                    TAC = useraccounts[0];
+                else
+                    TAC = tempAC;
+                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber==TAC.AccountNumber);
             }
             else
                 frxaccount = frxaccounts.SingleOrDefault(x => x.AccountId == acId);
+            var account = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken).SingleOrDefault(x=>x.AccountId==frxaccount.AccountId);
+            if (account != null)
+            {
+                frxaccount.Balance = account.Balance/100;
+                _context.Update(frxaccount);
+                await _context.SaveChangesAsync();
+            }
+            else
+                return Redirect("/");
             #endregion
             #region GetPosition
             var temppositions = _context.FrxPosition.Where(x => x.AccountId == frxaccount.AccountId);

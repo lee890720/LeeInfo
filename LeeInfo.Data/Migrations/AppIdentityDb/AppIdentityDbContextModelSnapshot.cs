@@ -36,6 +36,8 @@ namespace LeeInfo.Data.Migrations.AppIdentityDb
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
+                    b.Property<bool>("ConnectAPI");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
