@@ -35,7 +35,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public async Task<IActionResult> Index()
         {
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
-            if (User.Identity.Name == "lee890720")
+            if (User.Identity.Name == "lee890720"||_user.ConnectAPI)
             {
                 string _accessToken = "";
                 string _apiUrl = "https://api.spotware.com/";

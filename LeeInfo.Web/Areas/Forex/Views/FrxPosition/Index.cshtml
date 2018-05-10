@@ -56,17 +56,17 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="table-responsive">
-                                <table class="table table-hover" width="100%">
+                                <table id="posgroup" class="table table-hover" width="100%">
                                     <thead>
                                         <tr>
-                                            <th>Symbol</th>
-                                            <th>TradeType</th>
-                                            <th>Price</th>
-                                            <th>Quantity</th>
-                                            <th>Swap</th>
-                                            <th>Pips</th>
-                                            <th>Net</th>
-                                            <th>Gain</th>
+                                            <th>品种</th>
+                                            <th>多空</th>
+                                            <th>均价</th>
+                                            <th>手数</th>
+                                            <th>利息</th>
+                                            <th>点数</th>
+                                            <th>利润</th>
+                                            <th>收益率</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -98,37 +98,37 @@
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
                                 <h5 class="description-header">$@Model.Item1.Balance</h5>
-                                <span class="description-text">BALANCE</span>
+                                <span class="description-text">账户余额</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
                                 <h5 class="description-header">$@Model.Item1.Equity</h5>
-                                <span class="description-text">EQUITY</span>
+                                <span class="description-text">账户净值</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
                                 <h5 class="description-header">$@Model.Item1.UnrealizedNetProfit</h5>
-                                <span class="description-text">UNR.NET</span>
+                                <span class="description-text">账户净浮动</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
                                 <h5 class="description-header">$@Model.Item1.MarginUsed</h5>
-                                <span class="description-text">MARGIN USED</span>
+                                <span class="description-text">已用保证金</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
                                 <h5 class="description-header">$@Model.Item1.FreeMargin</h5>
-                                <span class="description-text">FREE MARGIN</span>
+                                <span class="description-text">可用保证金</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block">
                                 <h5 class="description-header">@Model.Item1.MarginLevel %</h5>
-                                <span class="description-text">MARGIN LEVEL</span>
+                                <span class="description-text">保证金水平</span>
                             </div>
                         </div>
                     </div>
@@ -162,7 +162,7 @@
                 <div class="box-body table-responsive">
                     <div class="form-group col-md-12">
                         <div class="col-md-3">
-                            <input type="text" placeholder="Search" id="search" class="form-control">
+                            <input type="text" placeholder="搜索" id="search" class="form-control">
                         </div>
                         <div class="col-md-3">
                             <select id="date_select" class="form-control select2" style="width: 100%;">
@@ -177,10 +177,10 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <input type="text" placeholder="StartDate" id="date_beg" class="form-control datepickertemp">
+                            <input type="text" placeholder="开始日期" id="date_beg" class="form-control datepickertemp">
                         </div>
                         <div class="col-md-3">
-                            <input type="text" placeholder="EndDate" id="date_end" class="form-control datepickertemp">
+                            <input type="text" placeholder="结束日期" id="date_end" class="form-control datepickertemp">
                         </div>
                         @*<div class="col-lg-2">
                                 <button id="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
@@ -190,47 +190,47 @@
                         <thead>
                             <tr>
                                 <th>
-                                    ID(Label/Comment)
+                                    ID(标签/注释)
                                 </th>
                                 <th>
-                                    Symbol
+                                    品种
                                 </th>
                                 <th>
-                                    Volume
+                                    手数
                                 </th>
                                 <th>
-                                    TradeType
+                                    多空
                                 </th>
                                 <th>
-                                    EntryTime
+                                    开仓时间
                                 </th>
                                 <th>
-                                    EntryPrice
+                                    开仓价
                                 </th>
                                 <th>
-                                    CurrentPrice
+                                    当前价
                                 </th>
                                 <th>
-                                    Swap
+                                    利息
                                 </th>
                                 <th>
-                                    Commission
+                                    佣金
                                 </th>
                                 <th>
-                                    Channel
+                                    平台
                                 </th>
                                 <th>
-                                    Pips
+                                    点数
                                 </th>
                                 <th>
-                                    NetProfit
+                                    利润
                                 </th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="11" style="text-align:right !important">Total:</th>
+                                <th colspan="11" style="text-align:right !important">合计:</th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -343,10 +343,34 @@
                         'contentType': "application/json; charset=utf-8",
                         'url': "@Url.Action("GetPosition","FrxPosition",new { acId=Model.Item1.AccountId})"
                     },
+                    "language": {
+                        "processing": "加载中...",
+                        "lengthMenu": "每页显示 _MENU_ 条数据",
+                        "zeroRecords": "没有匹配结果",
+                        "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                        "infoFiltered": "(由 _MAX_ 项结果过滤)",
+                        "infoPostFix": "",
+                        "search": "搜索:",
+                        "url": "",
+                        "emptyTable": "没有匹配结果",
+                        "loadingRecords": "载入中...",
+                        "thousands": ",",
+                        "paginate": {
+                            "first": "首页",
+                            "previous": "上一页",
+                            "next": "下一页",
+                            "last": "末页"
+                        },
+                        "aria": {
+                            "sortAscending": ": 以升序排列此列",
+                            "sortDescending": ": 以降序排列此列"
+                        }
+                    },
                     'columns': [
                         { "data": "id" },
                         { "data": "symbolCode" },
-                        { "data": "volume" },
+                        { "data": "quantity" },
                         { "data": "tradeType" },
                         { "data": "entryTime" },
                         { "data": "entryPrice" },
@@ -388,7 +412,7 @@
                                 if (result > 50)
                                     return result.toFixed(2);
                                 else
-                                    return result.toFixed(5);
+                                    return result.toFixed(4);
                             }
                         },
                         {
@@ -404,7 +428,16 @@
                                 var result = parseFloat(data);
                                 return result.toFixed(2);
                             }
-                        }
+                        },
+                        {
+                            "targets": [7,10, 11],
+                            "createdCell": function (td, cellData, rowData, row, col) {
+                                if (cellData > 0)
+                                    $(td).css('color', '#4cae05');
+                                else
+                                    $(td).css('color', '#ff5256');
+                            },
+                        },
                     ],
                     "footerCallback": function (tfoot, data, start, end, display) {
                         var api = this.api(), data;
@@ -430,6 +463,19 @@
             $("#date_beg,#date_end").keyup(function () { table_pos.api().draw(); });
             $("#date_beg,#date_end").change(function () { table_pos.api().draw(); });
             $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
+
+                var table = document.getElementById("posgroup")
+                var rowObj = null;
+                var cellObj = null;
+
+                for (var i = 1; i < table.rows.length; i++) {
+                    rowObj = table.rows[i];
+                    var s = rowObj.cells[6].innerHTML;
+                    if (s > 0)
+                        rowObj.cells[6].style.color = "#4cae05";
+                    else
+                        rowObj.cells[6].style.color = "#ff5256";
+                }
 
             var now = new Date();
             var nowDayOfWeek = now.getDay();

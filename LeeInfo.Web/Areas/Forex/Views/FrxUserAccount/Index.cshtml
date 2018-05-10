@@ -32,10 +32,10 @@
                         <thead>
                             <tr>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.AccountNumber)
+                                    账号
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Alive)
+                                    默认值
                                 </th>
                                 <th></th>
                             </tr>
@@ -52,10 +52,10 @@
                                 </td>
                                 <td style="min-width:150px">
                                     <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">
-                                        <i class="glyphicon glyphicon-pencil"></i> Edit
+                                        <i class="glyphicon glyphicon-pencil"></i> 编辑
                                     </a>
                                     <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-warning" style="width:70px;margin-right:5px; min-width:50px;">
-                                        <i class="glyphicon glyphicon-trash"></i> Delete
+                                        <i class="glyphicon glyphicon-trash"></i> 删除
                                     </a>
                                 </td>
                             </tr>
@@ -70,15 +70,17 @@
 </section>
 @section Scripts{
     <script>
-    $(function () {
-        $('#example1').DataTable(
-            {
-            'order': [[0, "asc"]],
-            'pageLength':10,
-            initComplete: function () {
-                $("#mytool").append('<a id="createModal" data-toggle="modal" data-target="#modal-action" class="btn btn-primary" href="@path/Create"><i class="glyphicon glyphicon-plus"></i> Create</a>');
-            }
-        })
-    })
+        $(function () {
+            $('#example1').DataTable(
+                {
+                    'order': [[0, "asc"]],
+                    'searching': false,
+                    'paging': false,
+                    'info': false,
+                    initComplete: function () {
+                        $("#mytool").append('<a id="createModal" data-toggle="modal" data-target="#modal-action" class="btn btn-primary" href="@path/Create"><i class="glyphicon glyphicon-plus"></i> 新增</a>');
+                    },
+                })
+        });
     </script>
 }

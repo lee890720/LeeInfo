@@ -224,40 +224,40 @@
                             </tr>
                             <tr>
                                 <th>
-                                    货币
+                                    品种
                                 </th>
                                 <th>
-                                    交易
+                                    次数
                                 </th>
                                 <th>
-                                    手
+                                    手数
                                 </th>
                                 <th>
-                                    点
-                                </th>
-                                <th>
-                                    利润
-                                </th>
-                                <th>
-                                    交易
-                                </th>
-                                <th>
-                                    手
-                                </th>
-                                <th>
-                                    点
+                                    点数
                                 </th>
                                 <th>
                                     利润
                                 </th>
                                 <th>
-                                    交易
+                                    次数
                                 </th>
                                 <th>
-                                    手
+                                    手数
                                 </th>
                                 <th>
-                                    点
+                                    点数
+                                </th>
+                                <th>
+                                    利润
+                                </th>
+                                <th>
+                                    次数
+                                </th>
+                                <th>
+                                    手数
+                                </th>
+                                <th>
+                                    点数
                                 </th>
                                 <th>
                                     利润
@@ -301,7 +301,7 @@
                 <div class="box-body table-responsive">
                     <div class="form-group col-md-12">
                         <div class="col-md-3">
-                            <input type="text" placeholder="Search" id="search" class="form-control">
+                            <input type="text" placeholder="搜索" id="search" class="form-control">
                         </div>
                         <div class="col-md-3">
                             <select id="date_select" class="form-control select2" style="width: 100%;">
@@ -316,10 +316,10 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <input type="text" placeholder="StartDate" id="date_beg" class="form-control datepickertemp">
+                            <input type="text" placeholder="开始日期" id="date_beg" class="form-control datepickertemp">
                         </div>
                         <div class="col-md-3">
-                            <input type="text" placeholder="EndDate" id="date_end" class="form-control datepickertemp">
+                            <input type="text" placeholder="结束日期" id="date_end" class="form-control datepickertemp">
                         </div>
                         @*<div class="col-md-2">
                             <button id="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
@@ -329,48 +329,48 @@
                         <thead>
                             <tr>
                                 <th>
-                                    ID(Label/Comment)
+                                    ID(标签/注释)
                                 </th>
                                 <th>
-                                    Symbol
+                                    品种
                                 </th>
                                 <th>
-                                    Direction
+                                    多空
                                 </th>
                                 <th>
-                                    OpeningTime
+                                    开仓时间
                                 </th>
                                 <th>
-                                    ClosingTime
+                                    闭仓时间
                                 </th>
 
                                 <th>
-                                    EntryPrice
+                                    开仓价
                                 </th>
                                 <th>
-                                    ClosingPrice
+                                    闭仓价
                                 </th>
                                 <th>
-                                    Volume
+                                    手数
                                 </th>
                                 <th>
-                                    Commission
+                                    佣金
                                 </th>
                                 <th>
-                                    Swap
+                                    利息
                                 </th>
                                 <th>
-                                    Pips
+                                    点数
                                 </th>
                                 <th>
-                                    NetProfit
+                                    利润
                                 </th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="11" style="text-align:right !important">Total:</th>
+                                <th colspan="11" style="text-align:right !important">合计:</th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -505,23 +505,24 @@
                     var series1Name = "";
 
                     if (type == 1) {
-                        var series0Name = "ROI";
-                        var series1Name = "EROI";
+                        var series0Name = "总计";
+                        var series1Name = "收益率";
                     }
                     else if (type == 2) {
-                        var series0Name = "Balance";
-                        var series1Name = "Equity";
+                        var series0Name = "余额";
+                        var series1Name = "净值";
                     }
                     else if (type == 3) {
-                        var series0Name = "Total";
-                        var series1Name = "Lots";
+                        var series0Name = "总计";
+                        var series1Name = "手数";
                     }
                     else if (type == 4) {
-                        var series0Name = "Total";
-                        var series1Name = "Pips";
+                        var series0Name = "总计";
+                        var series1Name = "点数";
                     }
                     optionBalance.series[0].name = series0Name;
-                    optionBalance.series[1].name = series1Name;                    optionBalance.legend.data.push(series0Name);
+                    optionBalance.series[1].name = series1Name;
+                    optionBalance.legend.data.push(series0Name);
                     optionBalance.legend.data.push(series1Name);
 
                     if (type == 1) {
@@ -872,7 +873,31 @@
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
                     'processing': true,
-                    'data':[],
+                    'data': [],
+                    "language": {
+                        "processing": "加载中...",
+                        "lengthMenu": "每页显示 _MENU_ 条数据",
+                        "zeroRecords": "没有匹配结果",
+                        "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                        "infoFiltered": "(由 _MAX_ 项结果过滤)",
+                        "infoPostFix": "",
+                        "search": "搜 索 ",
+                        "url": "",
+                        "emptyTable": "没有匹配结果",
+                        "loadingRecords": "载入中...",
+                        "thousands": ",",
+                        "paginate": {
+                            "first": "首页",
+                            "previous": "上一页",
+                            "next": "下一页",
+                            "last": "末页"
+                        },
+                        "aria": {
+                            "sortAscending": ": 以升序排列此列",
+                            "sortDescending": ": 以降序排列此列"
+                        }
+                    },
                     'columns': [
                         { "data": "symbolCode" },
                         { "data": "buyCount" },
@@ -936,6 +961,30 @@
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
                     'processing': true,
                     'data': [],
+                    "language": {
+                        "processing": "加载中...",
+                        "lengthMenu": "每页显示 _MENU_ 条数据",
+                        "zeroRecords": "没有匹配结果",
+                        "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                        "infoFiltered": "(由 _MAX_ 项结果过滤)",
+                        "infoPostFix": "",
+                        "search": "搜索:",
+                        "url": "",
+                        "emptyTable": "没有匹配结果",
+                        "loadingRecords": "载入中...",
+                        "thousands": ",",
+                        "paginate": {
+                            "first": "首页",
+                            "previous": "上一页",
+                            "next": "下一页",
+                            "last": "末页"
+                        },
+                        "aria": {
+                            "sortAscending": ": 以升序排列此列",
+                            "sortDescending": ": 以降序排列此列"
+                        }
+                    },
                     'columns': [
                         { "data": "closingDealId" },
                         { "data": "symbolCode" },
@@ -944,7 +993,7 @@
                         { "data": "closingTime" },
                         { "data": "entryPrice" },
                         { "data": "closingPrice" },
-                        { "data": "volume" },
+                        { "data": "quantity" },
                         { "data": "commissions" },
                         { "data": "swap" },
                         { "data": "pips" },
@@ -981,7 +1030,7 @@
                                 if (result > 50)
                                     return result.toFixed(2);
                                 else
-                                    return result.toFixed(5);
+                                    return result.toFixed(4);
                             }
                         },
                         {
@@ -997,7 +1046,16 @@
                                 var result = parseFloat(data);
                                 return result.toFixed(2);
                             }
-                        }
+                        },
+                        {
+                            "targets": [-1, -2, -3],
+                            "createdCell": function (td, cellData, rowData, row, col) {
+                                if (cellData > 0)
+                                    $(td).css('color', '#4cae05');
+                                else
+                                    $(td).css('color', '#ff5256');
+                            },
+                        },
                     ],
                     "footerCallback": function (tfoot, data, start, end, display) {
                         var api = this.api(), data;

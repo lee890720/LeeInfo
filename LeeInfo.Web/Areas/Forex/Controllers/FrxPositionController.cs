@@ -63,14 +63,14 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     TAC = useraccounts[0];
                 else
                     TAC = tempAC;
-                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber==TAC.AccountNumber);
+                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == TAC.AccountNumber);
             }
             else
                 frxaccount = frxaccounts.SingleOrDefault(x => x.AccountId == acId);
-            var account = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken).SingleOrDefault(x=>x.AccountId==frxaccount.AccountId);
+            var account = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken).SingleOrDefault(x => x.AccountId == frxaccount.AccountId);
             if (account != null)
             {
-                frxaccount.Balance = account.Balance/100;
+                frxaccount.Balance = account.Balance / 100;
                 _context.Update(frxaccount);
                 await _context.SaveChangesAsync();
             }
@@ -138,36 +138,21 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             #endregion
             #region GetPosGroup
             List<PosGroup> poss = new List<PosGroup>();
-            foreach (var p in frxpositions)
-            {
-                var temp_poss = poss.Where(x => x.SymbolCode == p.SymbolCode && x.TradeType == p.TradeType);
-                if (temp_poss.Count() == 0)
+            poss = frxpositions.GroupBy(g => new { g.SymbolCode, g.TradeType })
+                .Select(s => new PosGroup
                 {
-                    var pos = new PosGroup();
-                    pos.SymbolCode = p.SymbolCode;
-                    pos.TradeType = p.TradeType;
-                    pos.Quantity = p.Quantity;
-                    pos.EntryPrice = p.EntryPrice;
-                    pos.Swap = p.Swap;
-                    pos.NetProfit = p.NetProfit;
-                    pos.Pips = p.Pips;
-                    pos.Gain = p.NetProfit / frxaccount.Balance;
-                    poss.Add(pos);
-                }
-                else
-                {
-                    var pos = poss.First(x => x.SymbolCode == p.SymbolCode && x.TradeType == p.TradeType);
-                    pos.EntryPrice = (pos.EntryPrice * pos.Quantity + p.EntryPrice * p.Quantity) / (pos.Quantity + p.Quantity);
-                    pos.Pips = (pos.Pips * pos.Quantity + p.Pips * p.Quantity) / (pos.Quantity + p.Quantity);
-                    pos.Quantity += p.Quantity;
-                    pos.Swap += p.Swap;
-                    pos.NetProfit += p.NetProfit;
-                    pos.Gain = pos.NetProfit / frxaccount.Balance;
-                }
-            }
+                    SymbolCode = s.Key.SymbolCode,
+                    TradeType = s.Key.TradeType,
+                    Quantity = s.Sum(a => a.Quantity),
+                    EntryPrice = s.Sum(a => a.EntryPrice * a.Quantity) / s.Sum(b => b.Quantity),
+                    Swap = s.Sum(a => a.Swap),
+                    NetProfit = s.Sum(a => a.NetProfit),
+                    Pips = s.Sum(a => a.Pips * a.Quantity) / s.Sum(b => b.Quantity),
+                    Gain = s.Sum(a => a.NetProfit) / frxaccount.Balance
+                }).OrderBy(o=>o.NetProfit).ToList();
             #endregion
 
-            return View(Tuple.Create<FrxAccount, List<FrxAccount > ,List<PosGroup>> (frxaccount, frxaccounts.ToList(), poss));
+            return View(Tuple.Create<FrxAccount, List<FrxAccount>, List<PosGroup>>(frxaccount, frxaccounts.ToList(), poss));
         }
 
         public JsonResult GetPosition(int? acId)
@@ -180,33 +165,18 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         {
             var frxpositions = _context.FrxPosition.Where(x => x.AccountId == acId).ToList();
             List<PosGroup> poss = new List<PosGroup>();
-            foreach (var p in frxpositions)
-            {
-                var temp_poss = poss.Where(x => x.SymbolCode == p.SymbolCode && x.TradeType == p.TradeType);
-                if (temp_poss.Count() == 0)
+            poss = frxpositions.GroupBy(g => new { g.SymbolCode, g.TradeType })
+                .Select(s => new PosGroup
                 {
-                    var pos = new PosGroup();
-                    pos.SymbolCode = p.SymbolCode;
-                    pos.TradeType = p.TradeType;
-                    pos.Quantity = p.Quantity;
-                    pos.EntryPrice = p.EntryPrice;
-                    pos.Swap = p.Swap;
-                    pos.NetProfit = p.NetProfit;
-                    pos.Pips = p.Pips;
-                    pos.Gain = 0;
-                    poss.Add(pos);
-                }
-                else
-                {
-                    var pos = poss.First(x => x.SymbolCode == p.SymbolCode && x.TradeType == p.TradeType);
-                    pos.EntryPrice = (pos.EntryPrice * pos.Quantity + p.EntryPrice * p.Quantity) / (pos.Quantity + p.Quantity);
-                    pos.Pips = (pos.Pips * pos.Quantity + p.Pips * p.Quantity) / (pos.Quantity + p.Quantity);
-                    pos.Quantity += p.Quantity;
-                    pos.Swap += p.Swap;
-                    pos.NetProfit += p.NetProfit;
-                    pos.Gain = 0;
-                }
-            }
+                    SymbolCode = s.Key.SymbolCode,
+                    TradeType = s.Key.TradeType,
+                    Quantity = s.Sum(a => a.Quantity),
+                    EntryPrice = 0,
+                    Swap = 0,
+                    NetProfit = 0,
+                    Pips = 0,
+                    Gain = 0
+                }).OrderByDescending(o=>o.Quantity).ToList();
             var data = poss;
             return Json(new { data, data.Count });
         }
