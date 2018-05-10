@@ -45,7 +45,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index", "FrxPosition", new { acId = f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -98,37 +98,46 @@
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
                                 <h5 class="description-header">$@Model.Item1.Balance</h5>
-                                <span class="description-text">账户余额</span>
+                                <span class="description-text" style="color:darkgray">账户余额</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
                                 <h5 class="description-header">$@Model.Item1.Equity</h5>
-                                <span class="description-text">账户净值</span>
+                                <span class="description-text" style="color:darkgray">账户净值</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
-                                <h5 class="description-header">$@Model.Item1.UnrealizedNetProfit</h5>
-                                <span class="description-text">账户净浮动</span>
+                                @{
+                                    if (Model.Item1.UnrealizedNetProfit > 0)
+                                    {
+                                        <h5 class="description-header" style="color:#4cae05">$@Model.Item1.UnrealizedNetProfit</h5>
+                                    }
+                                    else
+                                    {
+                                        <h5 class="description-header" style="color:#ff5256">$@Model.Item1.UnrealizedNetProfit</h5>
+                                    }
+                                }
+                                <span class="description-text" style="color:darkgray">账户净浮动</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
                                 <h5 class="description-header">$@Model.Item1.MarginUsed</h5>
-                                <span class="description-text">已用保证金</span>
+                                <span class="description-text" style="color:darkgray">已用保证金</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
                                 <h5 class="description-header">$@Model.Item1.FreeMargin</h5>
-                                <span class="description-text">可用保证金</span>
+                                <span class="description-text" style="color:darkgray">可用保证金</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block">
                                 <h5 class="description-header">@Model.Item1.MarginLevel %</h5>
-                                <span class="description-text">保证金水平</span>
+                                <span class="description-text" style="color:darkgray">保证金水平</span>
                             </div>
                         </div>
                     </div>
