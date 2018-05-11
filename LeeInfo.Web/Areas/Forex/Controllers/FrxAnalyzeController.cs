@@ -272,7 +272,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 if (i < 12)
                     endTime = mdata.XData.XTime.AddMonths(1);
                 else
-                    endTime = lastHisTime.AddDays(2);
+                    endTime = lastHisTime;
                 tempHis = histories.Where(x => x.ClosingTime > mdata.XData.XTime && x.ClosingTime < endTime).OrderBy(y => y.ClosingTime).ToList();
                 if (tempHis.Count() != 0)
                 {
