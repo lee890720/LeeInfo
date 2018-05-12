@@ -26,6 +26,7 @@
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="2.6.375" />
     <PackageReference Include="ChartJSCore" Version="1.2.3" />
+    <PackageReference Include="Google.ProtocolBuffers" Version="2.4.1.555" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
@@ -78,6 +79,12 @@
     <None Include="Areas\Forex\Views\_ViewStart.cshtml" />
     <None Include="wwwroot\lib\icheck\icheck.js" />
     <None Include="wwwroot\lib\icheck\icheck.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Google.ProtocolBuffers">
+      <HintPath>..\LeeInfo.Lib\Proto\Google.ProtocolBuffers.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

@@ -17,6 +17,10 @@
     .table td {
         text-align: center !important;
     }
+
+    .description-text {
+        color: darkgray !important;
+    }
 </style>
 <section class="content-header">
     <h1>
@@ -39,13 +43,13 @@
                             <i class="fa fa-minus"></i>
                         </button>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="切换账号">
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -109,7 +113,7 @@
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
-                                <h5 class="description-header">$@Model.Item1.UnrealizedNetProfit</h5>
+                                <h5 id="unrnet" class="description-header">$@Model.Item1.UnrealizedNetProfit</h5>
                                 <span class="description-text">账户净浮动</span>
                             </div>
                         </div>
@@ -146,13 +150,13 @@
                             <i class="fa fa-minus"></i>
                         </button>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="切换账号">
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -462,19 +466,6 @@
             $("#date_beg,#date_end").change(function () { table_pos.api().draw(); });
             $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
 
-                var table = document.getElementById("posgroup")
-                var rowObj = null;
-                var cellObj = null;
-
-                for (var i = 1; i < table.rows.length; i++) {
-                    rowObj = table.rows[i];
-                    var s = rowObj.cells[6].innerHTML;
-                    if (s > 0)
-                        rowObj.cells[6].style.color = "#4cae05";
-                    else
-                        rowObj.cells[6].style.color = "#ff5256";
-                }
-
             var now = new Date();
             var nowDayOfWeek = now.getDay();
             var nowDay = now.getDate();
@@ -568,6 +559,26 @@
                 }
                 table_pos.api().draw();
             });
+
+            if ($("#unrnet").innerHTML > 0) {
+                $("#unrnet").css('color', '#4cae05');
+            }
+            else {
+                $("#unrnet").css('color', '#ff5256');
+            }
+
+            var table = document.getElementById("posgroup");
+            var rowObj = null;
+            var cellObj = null;
+
+            for (var i = 1; i < table.rows.length; i++) {
+                rowObj = table.rows[i];
+                var s = rowObj.cells[6].innerHTML;
+                if (s > 0)
+                    rowObj.cells[6].style.color = "#4cae05";
+                else
+                    rowObj.cells[6].style.color = "#ff5256";
+            }
 
             $('.datepickertemp').datepicker({
                 autoclose: true,

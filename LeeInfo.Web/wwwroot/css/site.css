@@ -4,8 +4,9 @@
 }
 
 .dataTable td{
-    white-space:nowrap!important;
-    text-align:center!important;
+    white-space:nowrap !important;
+    text-align:center !important;
+    vertical-align:middle !important;
 }
 
 /*BootStrap:#f5f5f5*/

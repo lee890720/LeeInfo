@@ -27,7 +27,7 @@
                 <div class="box-header">
                 </div>
                 <div class="box-body table-responsive">
-                    <table id="example1" class="table  table-bordered table-striped table-hover">
+                    <table id="example1" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
                                 <th>
@@ -93,10 +93,10 @@
                                     <td>
                                         @Html.DisplayFor(modelItem => item.TickSize)
                                     </td>
-                                    <td>
+                                    <td name="swaplong">
                                         @Html.DisplayFor(modelItem => item.SwapLong)
                                     </td>
-                                    <td>
+                                    <td name="swapshort">
                                         @Html.DisplayFor(modelItem => item.SwapShort)
                                     </td>
                                     <td>
@@ -120,12 +120,23 @@
 </section>
 @section Scripts{
     <script>
-    $(function () {
-        $('#example1').DataTable(
-            {
-            'order': [[0, "asc"]],
-            'pageLength':10,
-        })
-    })
+        $(function () {
+            $('#example1').DataTable(
+                {
+                    'order': [[0, "asc"]],
+                    'pageLength': 10,
+                    "columnDefs": [
+                        {
+                            "targets": [7,8],
+                            "createdCell": function (td, cellData, rowData, row, col) {
+                                if (cellData > 0)
+                                    $(td).css('color', '#4cae05');
+                                else
+                                    $(td).css('color', '#ff5256');
+                            },
+                        },
+                        ]
+                });
+        });
     </script>
 }

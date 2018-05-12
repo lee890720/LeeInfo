@@ -27,7 +27,7 @@
                     @*<h3 class="box-title">Data Table With Full Features</h3>*@
                 </div>
                 <div class="box-body table-responsive">
-                    <table id="example1" class="table  table-bordered table-striped table-hover" onmouseover="eFresh();" onmouseout="sFresh();">
+                    <table id="example1" class="table  table-bordered table-striped table-hover" onmouseover="eFresh();" onmouseout="sFresh();" width="100%">
                         <thead>
                             <tr>
                                 <th>
@@ -172,7 +172,7 @@
     $(function () {
         $('#example1').DataTable(
             {
-            'order': [[14, "desc"]],
+            'order': [[14, "desc"],[15,"desc"]],
             'pageLength':10,
             initComplete: function () {
                 $("#mytool").append('<a id="createModal" data-toggle="modal" data-target="#modal-action" class="btn btn-primary" href="@path/Create"><i class="glyphicon glyphicon-plus"></i> Create</a>');

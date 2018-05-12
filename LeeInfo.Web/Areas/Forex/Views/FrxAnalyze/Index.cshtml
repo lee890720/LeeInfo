@@ -43,21 +43,21 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">基本信息</h3>
                     <div class="box-tools pull-right">
-                        <button id="BalanceProfitBtn" type="button" class="btn btn-box-tool">NET</button>
-                        <button id="BalanceHandBtn" type="button" class="btn btn-box-tool">LOT</button>
-                        <button id="BalancePointBtn" type="button" class="btn btn-box-tool">PIP</button>
-                        <button id="BalanceProfitRateBtn" type="button" class="btn btn-box-tool">ROI</button>
+                        <button id="BalanceProfitBtn" title="余额与净值" type="button" class="btn btn-box-tool">NET</button>
+                        <button id="BalanceHandBtn" title="手数" type="button" class="btn btn-box-tool">LOT</button>
+                        <button id="BalancePointBtn" title="点数" type="button" class="btn btn-box-tool">PIP</button>
+                        <button id="BalanceProfitRateBtn" title="收益率和利润" type="button" class="btn btn-box-tool">ROI</button>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
                         </button>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="切换账号">
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -121,21 +121,21 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">月度分析报告</h3>
                     <div class="box-tools pull-right">
-                        <button id="MonthProfitBtn" type="button" class="btn btn-box-tool">NET</button>
-                        <button id="MonthHandBtn" type="button" class="btn btn-box-tool">LOT</button>
-                        <button id="MonthPointBtn" type="button" class="btn btn-box-tool">PIP</button>
-                        <button id="MonthProfitRateBtn" type="button" class="btn btn-box-tool">ROI</button>
+                        <button id="MonthProfitBtn" title="利润" type="button" class="btn btn-box-tool">NET</button>
+                        <button id="MonthHandBtn" title="手数" type="button" class="btn btn-box-tool">LOT</button>
+                        <button id="MonthPointBtn" title="点数" type="button" class="btn btn-box-tool">PIP</button>
+                        <button id="MonthProfitRateBtn" title="收益率" type="button" class="btn btn-box-tool">ROI</button>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
                         </button>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="切换账号">
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -162,13 +162,13 @@
                             <i class="fa fa-minus"></i>
                         </button>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="切换账号">
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -200,13 +200,13 @@
                             <i class="fa fa-minus"></i>
                         </button>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="切换账号">
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -285,13 +285,13 @@
                             <i class="fa fa-minus"></i>
                         </button>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="切换账号">
                                 <i class="fa fa-wrench"></i>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o" style="color:skyblue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -322,8 +322,8 @@
                             <input type="text" placeholder="结束日期" id="date_end" class="form-control datepickertemp">
                         </div>
                         @*<div class="col-md-2">
-                            <button id="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
-                        </div>*@
+                                <button id="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
+                            </div>*@
                     </div>
                     <table id="example_his" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
@@ -482,7 +482,18 @@
                 xAxis: {
                     data: []
                 },
-                yAxis: {},
+                yAxis: [
+                    {
+                        type: "value",
+                        name:""
+                    },
+                    {
+                        type: 'value',
+                        name: "",
+                        position:"right",
+                        show:false
+                    }
+                    ],
                 series: [
                     {
                         name: '',
@@ -492,8 +503,8 @@
                     {
                         name: '',
                         type: 'line',
-                        data: []
-                    }
+                        data: [],
+                        }
                 ]
             };
             function Render_BalanceChart(data,type) {
@@ -505,8 +516,8 @@
                     var series1Name = "";
 
                     if (type == 1) {
-                        var series0Name = "总计";
-                        var series1Name = "收益率";
+                        var series0Name = "收益率";
+                        var series1Name = "利润";
                     }
                     else if (type == 2) {
                         var series0Name = "余额";
@@ -524,12 +535,23 @@
                     optionBalance.series[1].name = series1Name;
                     optionBalance.legend.data.push(series0Name);
                     optionBalance.legend.data.push(series1Name);
-
                     if (type == 1) {
+                        optionBalance.yAxis[0].name = series0Name;
+                        optionBalance.yAxis[1].name = series1Name;
+                        optionBalance.yAxis[1].show = true;
+                        optionBalance.series[1].yAxisIndex = 1;
+                    }
+                    else {
+                        optionBalance.yAxis[1].show = false;
+                        optionBalance.series[1].yAxisIndex = 0;
+                    }
+                    if (type == 1) {
+                        var totalnet = 0.00;
                         for (var i = 0; i < data.length; i++) {
                             names.push(moment(data[i].closingTime).format('YYYY-MM-DD'));
+                            totalnet += data[i].netProfit;
                             bs.push((data[i].roi * 100).toFixed(2));
-                            es.push((data[i].equityBaseRoi*100).toFixed(2));
+                            es.push(totalnet.toFixed(2));
                         }
                     }
                     if (type == 2) {
@@ -786,9 +808,9 @@
                         }
                     },
                     data:[],
-                    itemStyle: {
-                        normal: { color: '#eecb71' }
-                    }
+                    //itemStyle: {
+                    //    normal: { color: '#98FB98' }
+                    //}
                 },
                 {
                     name: '空头',
@@ -805,9 +827,9 @@
                         }
                     },
                     data: [],
-                    itemStyle: {
-                        normal: { color: '#cbe2f3' }
-                    }
+                    //itemStyle: {
+                    //    normal: { color: '#EE82EE' }
+                    //}
                 }
             ]
         };
