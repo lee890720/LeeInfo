@@ -166,37 +166,23 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     Pips = s.Sum(a => a.Pips * a.Quantity) / s.Sum(b => b.Quantity),
                     Gain = s.Sum(a => a.NetProfit) / frxaccount.Balance,
                     Digits = s.Key.Digits,
-                }).OrderBy(o=>o.NetProfit).ToList();
+                }).OrderBy(o => o.NetProfit).ToList();
             #endregion
 
             return View(Tuple.Create<FrxAccount, List<FrxAccount>, List<PosGroup>>(frxaccount, frxaccounts.ToList(), poss));
         }
 
-        public JsonResult GetPosition(int? acId)
+        public JsonResult GetPosition([FromBody]Params param)
         {
-            var data = _context.FrxPosition.Where(x => x.AccountId == acId).ToList();
+            var data = _context.FrxPosition.Where(x => x.AccountId == param.acId).ToList();
             return Json(new { data, data.Count });
         }
 
-        public JsonResult GetPosGroup(int? acId)
+        public JsonResult GetSymbol()
         {
-            var frxpositions = _context.FrxPosition.Where(x => x.AccountId == acId).ToList();
-            List<PosGroup> poss = new List<PosGroup>();
-            poss = frxpositions.GroupBy(g => new { g.SymbolCode, g.TradeType })
-                .Select(s => new PosGroup
-                {
-                    SymbolCode = s.Key.SymbolCode,
-                    TradeType = s.Key.TradeType,
-                    Quantity = s.Sum(a => a.Quantity),
-                    EntryPrice = 0,
-                    Swap = 0,
-                    NetProfit = 0,
-                    Pips = 0,
-                    Gain = 0,
-                    Digits=0
-                }).OrderByDescending(o=>o.Quantity).ToList();
-            var data = poss;
-            return Json(new { data, data.Count });
+            string[] bases = { "XAU", "XAG", "XBR", "XTI" };
+            var data = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
+            return Json(new { data,data.Count });
         }
 
         private void SendMarketOrderRequest(int acId, string accesstoken, long accountId, string accessToken, string symbolName, ProtoTradeSide tradeSide, long volume)
@@ -512,5 +498,10 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
             return false;
         }
+    }
+    
+    public class Params
+    {
+        public int acId { get; set; }
     }
 }

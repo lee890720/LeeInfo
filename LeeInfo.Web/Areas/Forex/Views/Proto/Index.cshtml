@@ -11,12 +11,12 @@
 }
 <style>
     .table th {
-        text-align: center !important;       
+        text-align: center !important;
     }
 
     .table td {
         text-align: center !important;
-        vertical-align:middle !important;
+        vertical-align: middle !important;
     }
 
     .description-text {
@@ -36,7 +36,8 @@
 <section class="content">
     <div class="row">
         <div class="col-md-3">
-            <div class="box box-solid collapsed-box">
+            <!--新建订单-->
+            <div id="new-box" class="box box-solid collapsed-box">
                 <div class="box-header with-border">
                     <h3 class="box-title">新建订单</h3>
                     <div class="box-tools">
@@ -48,8 +49,16 @@
                 <div class="box-body">
                     <div class="form-group">
                         <div class="input-group">
+                            <span class="input-group-addon">买多价</span>
+                            <input type="text" class="form-control" placeholder="1.02451" disabled="disabled">
+                            <span class="input-group-addon">卖空价</span>
+                            <input type="text" class="form-control" placeholder="1.04578" disabled="disabled">
+                        </div>
+                        <br>
+                        <div class="input-group">
                             <span class="input-group-addon">品种</span>
-                            <input id="new-symbol" type="text" class="form-control" placeholder="必填">
+                            <select id="new-symbol" class="form-control select2" style="width: 100%;">
+                            </select>
                             <span title="是否可以从持仓明细中选择，默认为不可以" class="input-group-addon"><input type="checkbox" id="symbolcheck" class="flat-blue" /></span>
                         </div>
                         <br>
@@ -114,7 +123,8 @@
                     </div>
                 </div>
             </div>
-            <div class="box box-solid collapsed-box">
+            <!--修改订单-->
+            <div id="amend-box" class="box box-solid collapsed-box">
                 <div class="box-header with-border">
                     <h3 class="box-title">修改订单</h3>
                     <div class="box-tools">
@@ -165,6 +175,7 @@
             </div>
         </div>
         <div class="col-md-9">
+            <!--持仓明细-->
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">持仓明细</h3>
@@ -176,7 +187,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="box-body"  style="padding:0px 5px;">
+                <div class="box-body" style="padding:0px 5px;">
                     <div class="mailbox-controls">
                         <button title="全选" type="button" class="btn btn-default btn-sm checkbox-toggle">
                             <i class="fa fa-square-o"></i>
@@ -189,7 +200,7 @@
                             <ul class="dropdown-menu dropdown-menu-left" role="menu">
                                 @foreach (var f in Model.Item2)
                                 {
-                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
+                                    <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
                                 }
                             </ul>
                         </div>
@@ -258,7 +269,7 @@
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
-                                        <h5 id="unrnet" class="description-header" style="color:#4cae05">$@Model.Item1.UnrealizedNetProfit</h5>
+                                <h5 id="unrnet" class="description-header" style="color:#4cae05">$@Model.Item1.UnrealizedNetProfit</h5>
                                 <span class="description-text">账户净浮动</span>
                             </div>
                         </div>
@@ -288,7 +299,60 @@
 </section>
 @section Scripts{
     <script>
-        $(document).ready(function () {
+        $(function () {
+            //初始化参数
+            var _accountId =@Model.Item1.AccountId;
+            var _getPositionUrl = "/Forex/Proto/GetPosition";
+            var _getSymbolUrl = "/Forex/Proto/GetSymbol";
+            var _positions = [];
+            var _symbols = [];
+            GetPosition();
+            GetSymbol();
+
+            //#region GetPosition
+            function GetPosition() {
+                var tempdata = {acId:_accountId};
+                $.ajax({
+                    type: "post",
+                    async: true,
+                    url: _getPositionUrl,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(tempdata),
+                    success: function (result) {
+                        _positions = result.data;
+                        table_pos.api().clear();
+                        table_pos.api().rows.add(result.data).draw();
+                    },
+                    error: function (errorMsg) {
+                        alert("Position请求数据失败!");
+                    }
+                })
+            };
+            //#endregion
+
+            //#region GetSymbol
+            function GetSymbol() {
+                var tempdata = {};
+                $.ajax({
+                    type: "post",
+                    async: true,
+                    url: _getSymbolUrl,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(tempdata),
+                    success: function (result) {
+                        _symbols = result.data;
+                        GetSymbolList();
+                    },
+                    error: function (errorMsg) {
+                        alert("Symbol请求数据失败!");
+                    }
+                })
+            };
+            //#endregion
+
+            //#region 初始化table_pos
             var table_pos = $('#example_pos').dataTable(
                 {
                     'order': [[5, "desc"]],
@@ -299,11 +363,7 @@
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
                     'processing': true,
-                    'ajax': {
-                        'type': "POST",
-                        'contentType': "application/json; charset=utf-8",
-                        'url': "@Url.Action("GetPosition","Proto",new { acId=Model.Item1.AccountId})"
-                    },
+                    'data':[],
                     "language": {
                         "processing": "加载中...",
                         "lengthMenu": "每页显示 _MENU_ 条数据",
@@ -419,23 +479,16 @@
                         $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
                     }
                 });
-
             $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
-            $("#refrash").click(function () {
-                $.ajax({
-                    type: "post",
-                    async: true,
-                    url:"@Url.Action("GetPosition","Proto",new { acId=Model.Item1.AccountId})",
-                    dataType: "json",
-                    success: function (result) {
-                        table_pos.api().clear().rows.add(result.data).draw();
-                    },
-                    error: function (errorMsg) {
-                        alert("请求数据失败!");
-                    }
-                });
-            });
+            $("#refrash").click(function () { GetPosition(); alert("Refrashed");});
+            //#endregion
 
+            //#region 设置新建订单和修改订单的值
+            $("#symbolcheck").on("ifUnchecked", function () {
+                $("#new-box .form-control").val("");
+                $("#new-symbol").val(1);
+                $("#new-symbol").select2().val(1).trigger("change");
+            });
             $("#example_pos tbody").on("click", 'tr', function () {
                 //var $tr = $(this).parents('tr');
                 var row = table_pos.api().row($(this));
@@ -452,7 +505,16 @@
 
                 if ($("#symbolcheck").is(':checked')) {
                     var radio = GetRadioValue("tradetype");
-                    $("#new-symbol").val(data.symbolCode);
+                    var selectvalue = 1;
+                    $.each(_symbols, function () {
+                        if (this.symbolName == data.symbolCode) {
+                            selectvalue = this.symbolId;
+                            return false;
+                        }
+                    });
+                    $("#new-symbol").val(selectvalue);
+                    var showsymbol = $("#new-symbol").find("option:selected").text();
+                    $("#new-symbol").select2().val(selectvalue).trigger("change");
                     $("#new-volume").val(data.volume);
                     if (data.tradeType == 0 && radio == "sell") {
                         $("#tradetypesell").iCheck("uncheck");
@@ -475,9 +537,25 @@
                         $("#new-comment").val(data.comment);
                     }
                 }
-            });
+        });
 
-            //Select2
+            function GetRadioValue(RadioName) {
+            var obj;
+            obj = document.getElementsByName(RadioName);
+            if (obj != null) {
+                var i;
+                for (i = 0; i < obj.length; i++) {
+                    if (obj[i].checked) {
+                        return obj[i].value;
+                    }
+                }
+            }
+            return null;
+        };
+            //#endregion
+
+            //#region 设置一些细节
+            //初始化Select2
             $('.select2').select2();
 
             //Enable check and uncheck all functionality
@@ -495,26 +573,22 @@
                 $(this).data("clicks", !clicks);
             });
 
-            function GetRadioValue(RadioName) {
-                var obj;
-                obj = document.getElementsByName(RadioName);
-                if (obj != null) {
-                    var i;
-                    for (i = 0; i < obj.length; i++) {
-                        if (obj[i].checked) {
-                            return obj[i].value;
-                        }
-                    }
-                }
-                return null;
-            };
-
+            //设置unrnet的颜色
             if ($("#unrnet").innerHTML > 0) {
                 $("#unrnet").css('color', '#4cae05');
             }
             else {
                 $("#unrnet").css('color', '#ff5256');
             }
+            //#endregion
+
+            //#region 设置select(new-symbol)
+            function GetSymbolList(){
+                $.each(_symbols, function () {
+                    $("#new-symbol").append("<option value='" + this.symbolId + "'>" + this.symbolName + "</option>");
+                });
+            }
+            //#endregion
         });
     </script>
 }
