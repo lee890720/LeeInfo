@@ -354,11 +354,6 @@
             var _accountId =@Model.Item1.AccountId;
             var _balance =@Model.Item1.Balance;
             var _level =@Model.Item1.PreciseLeverage;
-            var _equity = 0.00;
-            var _unrnet = 0.00;
-            var _freeMargin = 0.00;
-            var _marginUsed = 0.00;
-            var _marginLevel = 0.00;
             var _getPositionUrl = "/Forex/Proto/GetPosition";
             var _getSymbolUrl = "/Forex/Proto/GetSymbol";
             var _account = [];
@@ -410,7 +405,7 @@
                     CalculateAccount(result.data);
                     table_pos.api().clear();
                     table_pos.api().rows.add(result.data).draw();
-                    alert("刷新成功！");
+                    //alert("刷新成功！");
                 };
 
                 $.ajax(optionAjax);
@@ -432,7 +427,12 @@
 
             //#region 计算显示账号的数据
             function CalculateAccount(data) {
-                if (true) {
+                if (data != null) {
+                    var _equity = 0.00;
+                    var _unrnet = 0.00;
+                    var _freeMargin = 0.00;
+                    var _marginUsed = 0.00;
+                    var _marginLevel = 0.00;
                     $.each(data, function () {
                         _unrnet += (this.commission * 2 + this.swap + this.profit) / 100;
                         _marginUsed += this.volume / 100 * this.marginRate / _level;
