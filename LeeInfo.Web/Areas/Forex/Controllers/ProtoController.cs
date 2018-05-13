@@ -17,6 +17,8 @@ using System.Threading;
 using LeeInfo.Data.Forex;
 using LeeInfo.Lib;
 using Newtonsoft.Json;
+using RestSharp;
+using Newtonsoft.Json.Linq;
 
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {
@@ -49,21 +51,26 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             #region Parameters
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
             AppIdentityUser _admin = await _userManager.FindByNameAsync("lee890720");
-            _clientId = _user.ClientId;
-            _clientSecret = _user.ClientSecret;
-            _accessToken = _user.AccessToken;
-            _refreshToken = _user.RefreshToken;
-            var profile = Profile.GetProfile(_apiUrl, _accessToken);
-            var accounts = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken);
-            _tcpClient = new TcpClient(_apiHost, _apiPort);
-            _apiSocket = new SslStream(_tcpClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
-            _apiSocket.AuthenticateAsClient(_apiHost);
-            var symbols = _context.FrxSymbol;
             if (_user.ConnectAPI)
+            {
+                _clientId = _user.ClientId;
+                _clientSecret = _user.ClientSecret;
                 _accessToken = _user.AccessToken;
+                _refreshToken = _user.RefreshToken;
+            }
             else
+            {
+                _clientId = _admin.ClientId;
+                _clientSecret = _admin.ClientSecret;
                 _accessToken = _admin.AccessToken;
+                _refreshToken = _admin.RefreshToken;
+            }
+            //var accounts = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken);
+            //_tcpClient = new TcpClient(_apiHost, _apiPort);
+            //_apiSocket = new SslStream(_tcpClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+            //_apiSocket.AuthenticateAsClient(_apiHost);
             #endregion
+
             #region GetAccount
             var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == _user.Id).ToList();
             var frxaccounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
@@ -72,13 +79,13 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             var frxaccount = new FrxAccount();
             if (acId == null)
             {
-                var TAC = new AspNetUserForexAccount();
-                var tempAC = useraccounts.SingleOrDefault(x => x.Alive == true);
-                if (tempAC == null)
-                    TAC = useraccounts[0];
+                var tempac1 = new AspNetUserForexAccount();
+                var tempac2 = useraccounts.SingleOrDefault(x => x.Alive == true);
+                if (tempac2 == null)
+                    tempac1 = useraccounts[0];
                 else
-                    TAC = tempAC;
-                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == TAC.AccountNumber);
+                    tempac1 = tempac2;
+                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == tempac1.AccountNumber);
             }
             else
                 frxaccount = frxaccounts.SingleOrDefault(x => x.AccountId == acId);
@@ -91,103 +98,29 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             }
             else
                 return Redirect("/");
-            #endregion
-            #region GetPosition
-            var temppositions = _context.FrxPosition.Where(x => x.AccountId == frxaccount.AccountId);
-            _context.RemoveRange(temppositions);
-            await _context.SaveChangesAsync();
-            var position = Position.GetPositions(_apiUrl, frxaccount.AccountId.ToString(), _accessToken);
-            foreach (var p in position)
-            {
-                FrxPosition fp = new FrxPosition();
-                fp.Id = p.PositionID;
-                fp.AccountId = frxaccount.AccountId;
-                fp.Channel = p.Channel;
-                fp.Comment = p.Comment;
-                fp.Commissions = p.Commission * 2 / 100;
-                fp.CurrentPrice = p.CurrentPrice;
-                fp.EntryPrice = p.EntryPrice;
-                fp.EntryTime = ConvertJson.StampToDateTime(p.EntryTimestamp);
-                fp.GrossProfit = p.Profit / 100;
-                fp.Label = p.Label;
-                fp.MarginRate = p.MarginRate;
-                fp.Swap = p.Swap / 100;
-                fp.NetProfit = fp.GrossProfit + fp.Swap + fp.Commissions;
-                fp.Pips = p.ProfitInPips;
-                fp.Volume = p.Volume / 100;
-
-                var tempvolume = Convert.ToDouble(fp.Volume);
-                double tempsub = 100000;
-                if (fp.SymbolCode == "XBRUSD" || fp.SymbolCode == "XTIUSD")
-                    tempsub = 100;
-                if (fp.SymbolCode == "XAGUSD" || fp.SymbolCode == "XAGEUR")
-                    tempsub = 1000;
-                if (fp.SymbolCode == "XAUUSD" || fp.SymbolCode == "XAUEUR")
-                    tempsub = 100;
-                fp.Quantity = tempvolume / tempsub;
-                fp.StopLoss = p.StopLoss;
-                fp.TakeProfit = p.TakeProfit;
-                fp.SymbolCode = p.SymbolName;
-                fp.TradeType = p.TradeSide == "BUY" ? TradeType.Buy : TradeType.Sell;
-                fp.Margin = fp.MarginRate * fp.Volume / frxaccount.PreciseLeverage;
-                fp.Digits = symbols.SingleOrDefault(x => x.SymbolName == fp.SymbolCode).PipPosition;
-                _context.Add(fp);
-                await _context.SaveChangesAsync();
-            }
-            var frxpositions = _context.FrxPosition.Where(x => x.AccountId == frxaccount.AccountId);
-            #endregion
-            #region UpdateAccount
-            double unrnet = 0;
-            double marginused = 0;
-            foreach (var p in frxpositions)
-            {
-                unrnet += p.NetProfit;
-                marginused += p.Margin;
-            }
-            frxaccount.Equity = frxaccount.Balance + unrnet;
-            frxaccount.UnrealizedNetProfit = unrnet;
-            frxaccount.MarginUsed = Math.Round(marginused, 2);
-            frxaccount.FreeMargin = Math.Round(frxaccount.Equity - marginused, 2);
-            frxaccount.MarginLevel = Math.Round(frxaccount.Equity / marginused * 100, 2);
-            _context.Update(frxaccount);
-            await _context.SaveChangesAsync();
-            #endregion
-            #region GetPosGroup
-            List<PosGroup> poss = new List<PosGroup>();
-            poss = frxpositions.GroupBy(g => new { g.SymbolCode, g.TradeType, g.Digits })
-                .Select(s => new PosGroup
-                {
-                    SymbolCode = s.Key.SymbolCode,
-                    TradeType = s.Key.TradeType,
-                    Quantity = s.Sum(a => a.Quantity),
-                    EntryPrice = s.Sum(a => a.EntryPrice * a.Quantity) / s.Sum(b => b.Quantity),
-                    Swap = s.Sum(a => a.Swap),
-                    NetProfit = s.Sum(a => a.NetProfit),
-                    Pips = s.Sum(a => a.Pips * a.Quantity) / s.Sum(b => b.Quantity),
-                    Gain = s.Sum(a => a.NetProfit) / frxaccount.Balance,
-                    Digits = s.Key.Digits,
-                }).OrderBy(o => o.NetProfit).ToList();
-            #endregion
-
-            return View(Tuple.Create<FrxAccount, List<FrxAccount>, List<PosGroup>>(frxaccount, frxaccounts.ToList(), poss));
+            #endregion                      
+            return View(Tuple.Create<FrxAccount, List<FrxAccount>>(frxaccount, frxaccounts));
         }
 
         public JsonResult GetPosition([FromBody]Params param)
         {
-            var data = _context.FrxPosition.Where(x => x.AccountId == param.acId).ToList();
-            return Json(new { data, data.Count });
+            var client = new RestClient(_apiUrl);
+            var request = new RestRequest(@"connect/tradingaccounts/" + param.AcId.ToString() + "/positions?oauth_token=" + _accessToken);
+            var responsePosition = client.Execute<Position>(request);
+            return Json(JObject.Parse(responsePosition.Content));
         }
 
         public JsonResult GetSymbol()
         {
             string[] bases = { "XAU", "XAG", "XBR", "XTI" };
             var data = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
-            return Json(new { data,data.Count });
+            return Json(new { data, data.Count });
         }
 
+        #region Proto
         private void SendMarketOrderRequest(int acId, string accesstoken, long accountId, string accessToken, string symbolName, ProtoTradeSide tradeSide, long volume)
         {
-            var auth=SendAuthorizationRequest();
+            var auth = SendAuthorizationRequest();
             var accountID = acId;
             var token = accesstoken;
             var msgFactory = new OpenApiMessagesFactory();
@@ -283,23 +216,23 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
 
         private void RefreshToken()
         {
-            var token =_refreshToken;
+            var token = _refreshToken;
             var newToken = AccessToken.RefreshAccessToken(_connectUrl, token, _clientId, _clientSecret);
 
         }
 
-        public JsonResult AmendPosition(int acId,int positionId,double? stopLoss,double? takeProfit)
+        public JsonResult AmendPosition(int acId, int positionId, double? stopLoss, double? takeProfit)
         {
             AppIdentityUser _user = _identitycontext.Users.SingleOrDefault(x => x.UserName == "lee890720");
             _clientId = _user.ClientId;
             _clientSecret = _user.ClientSecret;
             _accessToken = _user.AccessToken;
             _refreshToken = _user.RefreshToken;
-            var auth=SendAuthorizationRequest();
-            var accountID =acId;
+            var auth = SendAuthorizationRequest();
+            var accountID = acId;
             var token = _accessToken;
             var PositionId = positionId;
-            var StopLoss =0.00;
+            var StopLoss = 0.00;
             var TakeProfit = 0.00;
             if (stopLoss.HasValue)
                 StopLoss = (double)stopLoss;
@@ -322,7 +255,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             List<string> data = new List<string>();
             data.Add(auth);
             data.Add(amend);
-            return Json(new {data,data.Count});
+            return Json(new { data, data.Count });
         }
 
         private void SendPingRequest()
@@ -385,51 +318,51 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
 
         private void TradingAccountDetails()
         {
-                var accountID = "1960408";
-                var token = _accessToken;
+            var accountID = "1960408";
+            var token = _accessToken;
 
-                var date = new DateTime(2017, 01, 12);
-                var tickDataBid = TickData.GetTickData(_apiUrl, accountID, token, "EURUSD", TickData.TickDataType.Bid, date, 07, 13, 46, 07, 15, 26);
-                var tickDataAsk = TickData.GetTickData(_apiUrl, accountID, token, "EURUSD", TickData.TickDataType.Ask, date, 07, 13, 46, 07, 15, 26);
-                foreach (var td in tickDataBid)
-                {
-                    var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(td.Timestamp) / 1000d));
-                    //chrTickData.Series[0].Points.Add(new DataPoint(dt.ToOADate(), Convert.ToDouble(td.Tick)));
-                }
+            var date = new DateTime(2017, 01, 12);
+            var tickDataBid = TickData.GetTickData(_apiUrl, accountID, token, "EURUSD", TickData.TickDataType.Bid, date, 07, 13, 46, 07, 15, 26);
+            var tickDataAsk = TickData.GetTickData(_apiUrl, accountID, token, "EURUSD", TickData.TickDataType.Ask, date, 07, 13, 46, 07, 15, 26);
+            foreach (var td in tickDataBid)
+            {
+                var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(td.Timestamp) / 1000d));
+                //chrTickData.Series[0].Points.Add(new DataPoint(dt.ToOADate(), Convert.ToDouble(td.Tick)));
+            }
 
-                foreach (var td in tickDataAsk)
-                {
-                    var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(td.Timestamp) / 1000d));
-                    //chrTickData.Series[1].Points.Add(new DataPoint(dt.ToOADate(), Convert.ToDouble(td.Tick)));
-                }
-                //chrTickData.ChartAreas[0].AxisY.Minimum = chrTickData.Series[0].Points.Min(x => x.YValues[0]);
-                //chrTickData.ChartAreas[0].AxisY.Maximum = chrTickData.Series[0].Points.Max(x => x.YValues[0]);
+            foreach (var td in tickDataAsk)
+            {
+                var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(td.Timestamp) / 1000d));
+                //chrTickData.Series[1].Points.Add(new DataPoint(dt.ToOADate(), Convert.ToDouble(td.Tick)));
+            }
+            //chrTickData.ChartAreas[0].AxisY.Minimum = chrTickData.Series[0].Points.Min(x => x.YValues[0]);
+            //chrTickData.ChartAreas[0].AxisY.Maximum = chrTickData.Series[0].Points.Max(x => x.YValues[0]);
 
-                var dateFrom = new DateTime(2017, 01, 11, 00, 00, 00);
-                var dateTo = new DateTime(2017, 01, 13, 00, 00, 00);
-                var trendBarH1 = TrendBar.GetTrendBar(_apiUrl, accountID, token, "EURUSD", TrendBar.TrendBarType.Hour, dateFrom, dateTo);
+            var dateFrom = new DateTime(2017, 01, 11, 00, 00, 00);
+            var dateTo = new DateTime(2017, 01, 13, 00, 00, 00);
+            var trendBarH1 = TrendBar.GetTrendBar(_apiUrl, accountID, token, "EURUSD", TrendBar.TrendBarType.Hour, dateFrom, dateTo);
 
-                dateFrom = new DateTime(2017, 01, 12, 23, 00, 00);
-                dateTo = new DateTime(2017, 01, 13, 00, 00, 00);
-                var trendBarM1 = TrendBar.GetTrendBar(_apiUrl, accountID, token, "EURUSD", TrendBar.TrendBarType.Minute, dateFrom, dateTo);
+            dateFrom = new DateTime(2017, 01, 12, 23, 00, 00);
+            dateTo = new DateTime(2017, 01, 13, 00, 00, 00);
+            var trendBarM1 = TrendBar.GetTrendBar(_apiUrl, accountID, token, "EURUSD", TrendBar.TrendBarType.Minute, dateFrom, dateTo);
 
-                //chrTrendChartH1.Series[0].Points.Clear();
-                foreach (var tb in trendBarH1)
-                {
-                    var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(tb.Timestamp) / 1000d));
-                    //chrTrendChartH1.Series[0].Points.Add(new DataPoint(dt.ToOADate(), new double[] { Convert.ToDouble(tb.High), Convert.ToDouble(tb.Low), Convert.ToDouble(tb.Open), Convert.ToDouble(tb.Close) }));
-                }
-                //chrTrendChartH1.ChartAreas[0].AxisY.Minimum = chrTrendChartH1.Series[0].Points.Min(x => x.YValues.Min());
-                //chrTrendChartH1.ChartAreas[0].AxisY.Maximum = chrTrendChartH1.Series[0].Points.Max(x => x.YValues.Max());
+            //chrTrendChartH1.Series[0].Points.Clear();
+            foreach (var tb in trendBarH1)
+            {
+                var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(tb.Timestamp) / 1000d));
+                //chrTrendChartH1.Series[0].Points.Add(new DataPoint(dt.ToOADate(), new double[] { Convert.ToDouble(tb.High), Convert.ToDouble(tb.Low), Convert.ToDouble(tb.Open), Convert.ToDouble(tb.Close) }));
+            }
+            //chrTrendChartH1.ChartAreas[0].AxisY.Minimum = chrTrendChartH1.Series[0].Points.Min(x => x.YValues.Min());
+            //chrTrendChartH1.ChartAreas[0].AxisY.Maximum = chrTrendChartH1.Series[0].Points.Max(x => x.YValues.Max());
 
-                //chrTrendChartM1.Series[0].Points.Clear();
-                foreach (var tb in trendBarM1)
-                {
-                    var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(tb.Timestamp) / 1000d));
-                    //chrTrendChartM1.Series[0].Points.Add(new DataPoint(dt.ToOADate(), new double[] { Convert.ToDouble(tb.High), Convert.ToDouble(tb.Low), Convert.ToDouble(tb.Open), Convert.ToDouble(tb.Close) }));
-                }
-                //chrTrendChartM1.ChartAreas[0].AxisY.Minimum = chrTrendChartM1.Series[0].Points.Min(x => x.YValues.Min());
-                //chrTrendChartM1.ChartAreas[0].AxisY.Maximum = chrTrendChartM1.Series[0].Points.Max(x => x.YValues.Max());
+            //chrTrendChartM1.Series[0].Points.Clear();
+            foreach (var tb in trendBarM1)
+            {
+                var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(tb.Timestamp) / 1000d));
+                //chrTrendChartM1.Series[0].Points.Add(new DataPoint(dt.ToOADate(), new double[] { Convert.ToDouble(tb.High), Convert.ToDouble(tb.Low), Convert.ToDouble(tb.Open), Convert.ToDouble(tb.Close) }));
+            }
+            //chrTrendChartM1.ChartAreas[0].AxisY.Minimum = chrTrendChartM1.Series[0].Points.Min(x => x.YValues.Min());
+            //chrTrendChartM1.ChartAreas[0].AxisY.Maximum = chrTrendChartM1.Series[0].Points.Max(x => x.YValues.Max());
         }
 
         private string SendAuthorizationRequest()
@@ -498,10 +431,11 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
             return false;
         }
+        #endregion
     }
-    
+
     public class Params
     {
-        public int acId { get; set; }
+        public int AcId { get; set; }
     }
 }

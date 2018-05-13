@@ -1,0 +1,48 @@
+﻿@model LeeInfo.Data.CreditCard.CcdRecord
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CcdRecord</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.RecordDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RecordDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Deposit)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Deposit)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Expend)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Expend)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CcdData)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CcdData.CreditCardNumber)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CcdPos)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CcdPos.PosName)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.RecordId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
