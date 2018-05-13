@@ -244,18 +244,18 @@
                             <i class="fa fa-square-o"></i>
                         </button>
                         <button title="关闭选中的订单" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="切换账号">
-                                <i class="fa fa-wrench"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
-                                @foreach (var f in Model.Item2)
-                                {
-                                    <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
-                                }
-                            </ul>
-                        </div>
                         <div class="pull-right">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="切换账号">
+                                    <i class="fa fa-wrench"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                                    @foreach (var f in Model.Item2)
+                                    {
+                                        <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
+                                    }
+                                </ul>
+                            </div>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
                                     <i class="fa fa-th-list"></i>
@@ -392,9 +392,9 @@
                 optionAjax.data = JSON.stringify({ acId: _accountId });
                 optionAjax.success = function (result) {
                     _positions = result.data;
-                    CalculateAccount(result.data);
                     table_pos.api().clear();
                     table_pos.api().rows.add(result.data).draw();
+                    CalculateAccount(result.data);
                 };
 
                 $.ajax(optionAjax);
@@ -432,7 +432,7 @@
 
             //#region 计算显示账号的数据
             function CalculateAccount(data) {
-                if (data != null) {
+                if (true) {
                     $.each(data, function () {
                         _unrnet += (this.commission * 2 + this.swap + this.profit) / 100;
                         _marginUsed += this.volume / 100 * this.marginRate / _level;
@@ -440,12 +440,12 @@
                     _equity = _balance + _unrnet;
                     _freeMargin = _equity - _marginUsed;
                     _marginLevel = _equity / _marginUsed * 100;
-                    $("#blance").innerHTML = _balance.toFixed(2);
-                    $("#equity").innerHTML = _equity.toFixed(2);
-                    $("#unrnet").innerHTML = _unrnet.toFixed(2);
-                    $("#marginUsed").innerHTML = _marginUsed.toFixed(2);
-                    $("#freeMargin").innerHTML = _freeMargin.toFixed(2);
-                    $("marginLevel").innerHTML = _marginLevel.toFixed(2) + " %";
+                    $("#balance").text(_balance.toFixed(2));
+                    $("#equity").text( _equity.toFixed(2));
+                    $("#unrnet").text(_unrnet.toFixed(2));
+                    $("#marginUsed").text( _marginUsed.toFixed(2));
+                    $("#freeMargin").text( _freeMargin.toFixed(2));
+                    $("#marginLevel").text( _marginLevel.toFixed(2) + " %");
                     if (_unrnet > 0) {
                         $("#unrnet").css('color', '#4cae05');
                     }
