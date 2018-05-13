@@ -1,4 +1,4 @@
-﻿@model Tuple<FrxAccount, List<FrxAccount>, List<PosGroup>>
+﻿@model Tuple<FrxAccount, List<FrxAccount>>
 @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
@@ -9,6 +9,7 @@
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
 }
+<!--Style-->
 <style>
     .table th {
         text-align: center !important;
@@ -22,6 +23,7 @@
         color: darkgray !important;
     }
 </style>
+<!---Content-Header-->
 <section class="content-header">
     <h1>
         @ViewData["action"]
@@ -32,7 +34,9 @@
         <li class="active"> @ViewData["controller"]</li>
     </ol>
 </section>
+<!--Content-->
 <section class="content">
+    <!--基本信息-->
     <div class="row">
         <div class="col-md-12">
             <div class="box box-info">
@@ -48,9 +52,9 @@
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
-                {
-                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
-}
+                                {
+                                    <li><a href="@Url.Action("Index","FrxPosition",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
+                                }
                             </ul>
                         </div>
                         <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -60,40 +64,29 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="table-responsive">
-                                <table id="posgroup" class="table table-hover" width="100%">
+                                <table id="table-posGroup" class="table table-hover" width="100%">
                                     <thead>
                                         <tr>
+                                            <th class="col2-visible">品种ID</th>
                                             <th>品种</th>
                                             <th>多空</th>
                                             <th>均价</th>
+                                            <th class="col2-visible">数量</th>
                                             <th>手数</th>
-                                            <th>利息</th>
-                                            <th>点数</th>
-                                            <th>利润</th>
-                                            <th>收益率</th>
+                                            <th class="col2-color">利息</th>
+                                            <th class="col2-color">点数</th>
+                                            <th class="col2-color">利润</th>
+                                            <th class="col2-color">收益率</th>
+                                            <th class="col2-visible">位数</th>
+                                            <th class="col2-visible">类别</th>
+                                            <th class="col2-visible">最小数量</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @foreach (var p in Model.Item3)
-                                        {
-                                            <tr>
-                                                <td>@p.SymbolCode</td>
-                                                <td>@p.TradeType</td>
-                                                <td>@Math.Round(p.EntryPrice, (int)p.Digits)</td>
-                                                <td>@p.Quantity</td>
-                                                <td>@p.Swap</td>
-                                                <td>@Math.Round(p.Pips)</td>
-                                                <td>@Math.Round(p.NetProfit)</td>
-                                                <td>@Math.Round(p.Gain * 100, 2) %</td>
-                                            </tr>
-
-                                        }
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div id="pieChart" style="height:300px"></div>
+                            <div id="PosGroupChart" style="height:300px"></div>
                         </div>
                     </div>
                 </div>
@@ -101,37 +94,37 @@
                     <div class="row">
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
-                                <h5 class="description-header">$@Model.Item1.Balance</h5>
+                                <h5 id="balance" class="description-header"></h5>
                                 <span class="description-text">账户余额</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
-                                <h5 class="description-header">$@Model.Item1.Equity</h5>
+                                <h5 id="equity" class="description-header"></h5>
                                 <span class="description-text">账户净值</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
-                                <h5 id="unrnet" class="description-header">$@Model.Item1.UnrealizedNetProfit</h5>
+                                <h5 id="unrnet" class="description-header"></h5>
                                 <span class="description-text">账户净浮动</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
-                                <h5 class="description-header">$@Model.Item1.MarginUsed</h5>
+                                <h5 id="marginUsed" class="description-header"></h5>
                                 <span class="description-text">已用保证金</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block border-right">
-                                <h5 class="description-header">$@Model.Item1.FreeMargin</h5>
+                                <h5 id="freeMargin" class="description-header"></h5>
                                 <span class="description-text">可用保证金</span>
                             </div>
                         </div>
                         <div class="col-sm-2 col-xs-4">
                             <div class="description-block">
-                                <h5 class="description-header">@Model.Item1.MarginLevel %</h5>
+                                <h5 id="marginLevel" class="description-header"></h5>
                                 <span class="description-text">保证金水平</span>
                             </div>
                         </div>
@@ -140,6 +133,7 @@
             </div>
         </div>
     </div>
+    <!--持仓明细-->
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-info collapsed-box">
@@ -149,6 +143,21 @@
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
                         </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
+                                <i class="fa fa-table"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                                <li><input type="checkbox" class="toggle-vis" data-column="1" />&emsp;<small>品种ID</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="2" />&emsp;<small>标签</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="3" />&emsp;<small>注释</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="4" />&emsp;<small>平台</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="7" />&emsp;<small>数量</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="10" />&emsp;<small>修改时间</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="15" />&emsp;<small>保证金</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="16" />&emsp;<small>佣金</small></li>
+                            </ul>
+                        </div>
                         <div class="btn-group">
                             <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="切换账号">
                                 <i class="fa fa-wrench"></i>
@@ -186,55 +195,36 @@
                         <div class="col-md-3">
                             <input type="text" placeholder="结束日期" id="date_end" class="form-control datepickertemp">
                         </div>
-                        @*<div class="col-lg-2">
-                                <button id="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
-                            </div>*@
                     </div>
-                    <table id="example_pos" class="table  table-bordered table-striped table-hover" width="100%">
+                    <table id="table-pos" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
-                                <th>
-                                    ID(标签/注释)
-                                </th>
-                                <th>
-                                    品种
-                                </th>
-                                <th>
-                                    手数
-                                </th>
-                                <th>
-                                    多空
-                                </th>
-                                <th>
-                                    开仓时间
-                                </th>
-                                <th>
-                                    开仓价
-                                </th>
-                                <th>
-                                    当前价
-                                </th>
-                                <th>
-                                    利息
-                                </th>
-                                <th>
-                                    佣金
-                                </th>
-                                <th>
-                                    平台
-                                </th>
-                                <th>
-                                    点数
-                                </th>
-                                <th>
-                                    利润
-                                </th>
+                                <th>ID(标签/注释)</th>
+                                <th class="col-visible">品种ID</th>
+                                <th class="col-visible">标签</th>
+                                <th class="col-visible">注释</th>
+                                <th class="col-visible">平台</th>
+                                <th>品种</th>
+                                <th>多空</th>
+                                <th class="col-visible">数量</th>
+                                <th>手数</th>
+                                <th>开仓时间</th>
+                                <th class="col-visible">修改时间</th>
+                                <th>开仓价</th>
+                                <th>当前价</th>
+                                <th>止赢</th>
+                                <th>止损</th>
+                                <th class="col-visible">保证金</th>
+                                <th class="col-visible">佣金</th>
+                                <th class="col-color">利息</th>
+                                <th class="col-color">点数</th>
+                                <th class="col-color">利润</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="11" style="text-align:right !important">合计:</th>
+                                <th colspan="19" style="text-align:right !important">合计:</th>
                                 <th></th>
                             </tr>
                         </tfoot>
@@ -245,13 +235,110 @@
     </div>
 </section>
 @section Scripts{
-    //For Chart
+    <script src="~/js/range-pos.js"></script>
     <script>
-        $(document).ready(function () {
-            var myChart = echarts.init(document.getElementById('pieChart'));
+        $(function () {
+            //初始化参数
+            var _accountId =@Model.Item1.AccountId;
+            var _balance =@Model.Item1.Balance;
+            var _level =@Model.Item1.PreciseLeverage;
+            var _getPositionUrl = "/Forex/FrxPosition/GetPosition";
+            var _getPosGroupUrl = "/Forex/FrxPosition/GetPosGroup";
+            var _getSymbolUrl = "/Forex/FrxPosition/GetSymbol";
+            var PosGroupChart = echarts.init(document.getElementById('PosGroupChart'));
             var legendData = [];
             var seriesData = [];
-            myChart.setOption({
+            var _positions = [];
+            var _posGroup = [];
+            var _symbols = [];
+
+            //#region Ajax optionAjax
+            var optionAjax = {
+                type: "post",
+                async: true,
+                url: "",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {},
+                success: function (result) {
+                },
+                error: function (errorMsg) {
+                    alert("请求数据失败!");
+                }
+            };
+            //#endregion
+
+            //#region Ajax GetPosition
+            function GetPosition() {
+                optionAjax.url = _getPositionUrl;
+                optionAjax.data = JSON.stringify({ acId: _accountId });
+                optionAjax.success = function (result) {
+                    _positions = result.data;
+                    table_pos.api().clear();
+                    table_pos.api().rows.add(result.data).draw();
+                    CalculateAccount(result.data);
+                };
+
+                $.ajax(optionAjax);
+            };
+            //#endregion
+
+            //#region Ajax GetPosGroup
+            function GetPosGroup() {
+                optionAjax.url = _getPosGroupUrl;
+                optionAjax.data = JSON.stringify({ acId: _accountId });
+                optionAjax.success = function (result) {
+                    //获取数据
+                    _posGroup = result.data;
+                    for (var i = 0; i < _posGroup.length; i++) {
+                        var minlot = 0.00;
+                        if (_posGroup[i].assetClass == 1 || _posGroup[i].assetClass == 2)
+                            minlot = 0.01;
+                        else
+                            minlot = 1;
+                        _posGroup[i].lot = _posGroup[i].volume / _posGroup[i].minOrderVolume * minlot * 100;
+
+                        var _name = _posGroup[i].symbolName;
+                        var _value = parseFloat(_posGroup[i].lot).toFixed(2);
+                        legendData.push(_name);
+                        seriesData.push({ name: _name, value: _value });
+                    }
+                    //初始化图表
+                    PosGroupChart.hideLoading();
+                    PosGroupChart.setOption({
+                        legend: {
+                            data: legendData
+                        },
+                        series: [
+                            {
+                                name: 'SymbolCode',
+                                data: seriesData
+                            }
+                        ]
+                    });
+                    //初始化表
+                    table_posGroup.api().clear();
+                    table_posGroup.api().rows.add(_posGroup).draw();
+                };
+
+                $.ajax(optionAjax);
+            };
+            //#endregion
+
+            //#region Ajax GetSymbol
+            function GetSymbol() {
+                optionAjax.url = _getSymbolUrl;
+                optionAjax.data = JSON.stringify({});
+                optionAjax.success = function (result) {
+                    _symbols = result.data;
+                };
+
+                $.ajax(optionAjax);
+            };
+            //#endregion
+
+            //#region PosGroupChart设置
+            PosGroupChart.setOption({
                 title: {
                     text: 'Positions',
                     show: false
@@ -291,181 +378,338 @@
                     }
                 ]
             });
+            PosGroupChart.showLoading();
+            //#endregion
 
-            myChart.showLoading();
-
-            $.ajax({
-                type: "post",
-                async: true,
-                url: "@Url.Action("GetPosGroup", "FrxPosition", new { acId = Model.Item1.AccountId })",
-                data: {},
-                dataType: "json",
-                success: function (result) {
-                    if (result) {
-                        for (var i = 0; i < result.data.length; i++) {
-                            var _name = result.data[i].symbolCode;
-                            var _value = parseFloat(result.data[i].quantity).toFixed(2);
-                            legendData.push(_name);
-                            seriesData.push({ name: _name, value: _value });
-                        }
-                        myChart.hideLoading();
-                        myChart.setOption({
-                            legend: {
-                                data: legendData
-                            },
-                            series: [
-                                {
-                                    name: 'SymbolCode',
-                                    data: seriesData
-                                }
-                            ]
-                        });
-                    }
-                },
-                error: function (errorMsg) {
-                    alert("图表请求数据失败!");
-                    myChart.hideLoading();
-                }
-            })
-
-        });
-    </script>
-
-    //For DataTables
-    <script src="~/js/range_dates.js"></script>
-    <script>
-        $(document).ready(function () {
-            var table_pos = $('#example_pos').dataTable(
+            //#region 初始化table_pos
+            var table_pos = $('#table-pos').dataTable(
                 {
-                    'order': [[4, "desc"]],
-                    'dom':
+                    order: [[9, "desc"]],
+                    dom:
                         "<'row'<'col-sm-6'><'col-sm-6'>>" +
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    'processing': true,
-                    'ajax': {
-                        'type': "POST",
-                        'contentType': "application/json; charset=utf-8",
-                        'url': "@Url.Action("GetPosition","FrxPosition",new { acId=Model.Item1.AccountId})"
-                    },
-                    "language": {
-                        "processing": "加载中...",
-                        "lengthMenu": "每页显示 _MENU_ 条数据",
-                        "zeroRecords": "没有匹配结果",
-                        "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
-                        "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
-                        "infoFiltered": "(由 _MAX_ 项结果过滤)",
-                        "infoPostFix": "",
-                        "search": "搜索:",
-                        "url": "",
-                        "emptyTable": "没有匹配结果",
-                        "loadingRecords": "载入中...",
-                        "thousands": ",",
-                        "paginate": {
-                            "first": "首页",
-                            "previous": "上一页",
-                            "next": "下一页",
-                            "last": "末页"
+                    processing: true,
+                    data: [],
+                    language: {
+                        processing: "加载中...",
+                        lengthMenu: "每页显示 _MENU_ 条数据",
+                        zeroRecords: "没有匹配结果",
+                        info: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        infoEmpty: "显示第 0 至 0 项结果，共 0 项",
+                        infoFiltered: "(由 _MAX_ 项结果过滤)",
+                        infoPostFix: "",
+                        search: "搜索:",
+                        url: "",
+                        emptyTable: "没有匹配结果",
+                        loadingRecords: "载入中...",
+                        thousands: ",",
+                        paginate: {
+                            first: "首页",
+                            previous: "上一页",
+                            next: "下一页",
+                            last: "末页"
                         },
-                        "aria": {
-                            "sortAscending": ": 以升序排列此列",
-                            "sortDescending": ": 以降序排列此列"
+                        aria: {
+                            sortAscending: ": 以升序排列此列",
+                            sortDescending: ": 以降序排列此列"
                         }
                     },
-                    'columns': [
-                        { "data": "id" },
-                        { "data": "symbolCode" },
-                        { "data": "quantity" },
-                        { "data": "tradeType" },
-                        { "data": "entryTime" },
-                        { "data": "entryPrice" },
-                        { "data": "currentPrice" },
-                        { "data": "swap" },
-                        { "data": "commissions" },
-                        { "data": "channel" },
-                        { "data": "pips" },
-                        { "data": "netProfit" }
+                    columns: [
+                        { data: "positionId" },
+                        { data: "symbolId" },
+                        { data: "label" },
+                        { data: "comment" },
+                        { data: "channel" },
+                        { data: "symbolName" },
+                        { data: "tradeSide" },
+                        { data: "volume" },
+                        { data: "lot" },
+                        { data: "entryTimestamp" },
+                        { data: "utcLastUpdateTimestamp" },
+                        { data: "entryPrice" },
+                        { data: "currentPrice" },
+                        { data: "takeProfit" },
+                        { data: "stopLoss" },
+                        { data: "marginRate" },
+                        { data: "commission" },
+                        { data: "swap" },
+                        { data: "profitInPips" },
+                        { data: "profit" },
                     ],
-                    "columnDefs": [
+                    columnDefs: [
                         {
-                            "targets": 0,
-                            render: function (data, type, row, meta) {
-                                return '<span title="' + row.label + '/' + row.comment + '">' + data + '</span>';
-                            }
+                            targets: "col-visible",
+                            visible: false,
                         },
                         {
-                            "targets": 3,
-                            render: function (data, type, row, meta) {
-                                var tradetype = data;
-                                if (tradetype == 0)
-                                    return "BUY";
-                                if (tradetype == 1)
-                                    return "SELL";
-                            }
-                        },
-                        {
-                            "targets": 4,
-                            render: function (data, type, row, meta) {
-                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
-                                return result;
-                            }
-                        },
-                        {
-                            "targets": [5, 6],
-                            render: function (data, type, row, meta) {
-                                var result = parseFloat(data);
-                                    return result.toFixed(parseInt(row.digits));
-                            }
-                        },
-                        {
-                            "targets": -2,
-                            render: function (data, type, row, meta) {
-                                var result = parseFloat(data);
-                                return Math.round(result);
-                            }
-                        },
-                        {
-                            "targets": -1,
-                            render: function (data, type, row, meta) {
-                                var result = parseFloat(data);
-                                return result.toFixed(2);
-                            }
-                        },
-                        {
-                            "targets": [7,10, 11],
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            targets: "col-color",
+                            createdCell: function (td, cellData, rowData, row, col) {
                                 if (cellData > 0)
                                     $(td).css('color', '#4cae05');
                                 else
                                     $(td).css('color', '#ff5256');
                             },
                         },
+                        {
+                            targets: 0,
+                            orderable: false,
+                            render: function (data, type, row, meta) {
+                                return '<span title="' + row.label + '/' + row.comment + '">' + data + '</span>';
+                            }
+                        },
+                        {
+                            targets: 8,
+                            render: function (data, type, row, meta) {
+                                if (_symbols != null) {
+                                    var lot = 0.00;
+                                    $.each(_symbols, function () {
+                                        if (this.symbolId == row.symbolId) {
+                                            var minlot = 0.00;
+                                            if (this.assetClass == 1 || this.assetClass == 2)
+                                                minlot = 0.01;
+                                            else {
+                                                minlot = 1;
+                                            }
+                                            lot = row.volume / this.minOrderVolume * minlot;
+                                            return false;
+                                        }
+                                    });
+                                    return lot.toFixed(2);
+                                }
+                                return 0.00;
+                            }
+                        },
+                        {
+
+                        },
+                        {
+                            targets: [9, 10],
+                            render: function (data, type, row, meta) {
+                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
+                                return result;
+                            }
+                        },
+                        {
+                            targets: [11, 12, 13, 14],
+                            render: function (data, type, row, meta) {
+                                if (data != null) {
+                                    if (_symbols != null) {
+                                        var price = 0.00;
+                                        $.each(_symbols, function () {
+                                            if (this.symbolId == row.symbolId) {
+                                                price = data.toFixed(this.pipPosition);
+                                                return false;
+                                            }
+                                        });
+                                        return price;
+                                    }
+                                }
+                                return data;
+                            }
+                        },
+                        {
+                            targets: [15],
+                            render: function (data, type, row, meta) {
+                                return (row.volume / 100 * row.marginRate / _level).toFixed(2);
+                            }
+                        },
+                        {
+                            targets: [16],
+                            render: function (data, type, row, meta) {
+                                return (data / 100 * 2).toFixed(2);
+                            }
+                        },
+                        {
+                            targets: [17],
+                            render: function (data, type, row, meta) {
+                                return (data / 100).toFixed(2);
+                            }
+                        },
+                        {
+                            targets: 19,
+                            render: function (data, type, row, meta) {
+                                var result = row.profit + row.swap + row.commission * 2;
+                                return (result / 100).toFixed(2);
+                            }
+                        },
                     ],
-                    "footerCallback": function (tfoot, data, start, end, display) {
+                    footerCallback: function (tfoot, data, start, end, display) {
                         var api = this.api(), data;
 
-                        // Remove the formatting to get integer data for summation
                         var intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
 
-                        // Total over all pages
-                        total = api.column(11).data().reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                        // Total over this page
-                        pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                        // Update footer
-                        $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
+                        total = api.column(16).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0)*2;
+                        total += api.column(17).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+                        total += api.column(19).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+                        total = total / 100;
+                        pageTotal = api.column(16, { page: 'current' }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0)*2;
+                        pageTotal += api.column(17, { page: 'current' }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+                        pageTotal += api.column(19, { page: 'current' }).data().reduce(function (a, b) { return intVal(a) + intVal(b); }, 0);
+                        pageTotal = pageTotal / 100;
+                        $(api.column(19).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
                     }
                 });
+            $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
+            $("#refrash").click(function () { RefrashPosition(); });
+            //显示隐藏列
+            $('.toggle-vis').on('change', function (e) {
+                e.preventDefault();
+                console.log($(this).attr('data-column'));
+                var column = table_pos.api().column($(this).attr('data-column'));
+                column.visible(!column.visible());
+            });
 
             $("#date_beg,#date_end").keyup(function () { table_pos.api().draw(); });
             $("#date_beg,#date_end").change(function () { table_pos.api().draw(); });
-            $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
+            //#endregion
 
+            //#region 初始化table_posGroup
+            var table_posGroup = $('#table-posGroup').dataTable(
+                {
+                    order: [[8, "desc"]],
+                    info: false,
+                    paging: false,
+                    dom:
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    processing: true,
+                    data: [],
+                    language: {
+                        processing: "加载中...",
+                        lengthMenu: "每页显示 _MENU_ 条数据",
+                        zeroRecords: "没有匹配结果",
+                        info: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        infoEmpty: "显示第 0 至 0 项结果，共 0 项",
+                        infoFiltered: "(由 _MAX_ 项结果过滤)",
+                        infoPostFix: "",
+                        search: "搜索:",
+                        url: "",
+                        emptyTable: "没有匹配结果",
+                        loadingRecords: "载入中...",
+                        thousands: ",",
+                        paginate: {
+                            first: "首页",
+                            previous: "上一页",
+                            next: "下一页",
+                            last: "末页"
+                        },
+                        aria: {
+                            sortAscending: ": 以升序排列此列",
+                            sortDescending: ": 以降序排列此列"
+                        }
+                    },
+                    columns: [
+                        { data: "symbolId" },
+                        { data: "symbolName" },
+                        { data: "tradeSide" },
+                        { data: "entryPrice" },
+                        { data: "volume" },
+                        { data: "lot" },
+                        { data: "swap" },
+                        { data: "pips" },
+                        { data: "profit" },
+                        { data: "gain" },
+                        { data: "pipPosition" },
+                        { data: "assetClass" },
+                        { data: "minOrderVolume" },
+                    ],
+                    columnDefs: [
+                        {
+                            targets: "col2-visible",
+                            visible: false,
+                        },
+                        {
+                            targets: "col2-color",
+                            createdCell: function (td, cellData, rowData, row, col) {
+                                if (cellData > 0)
+                                    $(td).css('color', '#4cae05');
+                                else
+                                    $(td).css('color', '#ff5256');
+                            },
+                        },
+                        {
+                            targets: [3],
+                            render: function (data, type, row, meta) {
+                                return data.toFixed(row.pipPosition);
+                            }
+                        },
+                        {
+                            targets: [5, 6, 7, 8],
+                            render: function (data, type, row, meta) {
+                                return data.toFixed(2);
+                            }
+                        },
+                        {
+                            targets: [9],
+                            render: function (data, type, row, meta) {
+                                return data.toFixed(2)+"%";
+                            }
+                        },
+                    ],
+                });
+            //#endregion
+
+            //#region 计算显示账号的数据
+            function CalculateAccount(data) {
+                if (data != null) {
+                    var _equity = 0.00;
+                    var _unrnet = 0.00;
+                    var _freeMargin = 0.00;
+                    var _marginUsed = 0.00;
+                    var _marginLevel = 0.00;
+                    $.each(data, function () {
+                        _unrnet += (this.commission * 2 + this.swap + this.profit) / 100;
+                        _marginUsed += this.volume / 100 * this.marginRate / _level;
+                    });
+                    _equity = _balance + _unrnet;
+                    _freeMargin = _equity - _marginUsed;
+                    _marginLevel = _equity / _marginUsed * 100;
+                    $("#balance").text(_balance.toFixed(2));
+                    $("#equity").text(_equity.toFixed(2));
+                    $("#unrnet").text(_unrnet.toFixed(2));
+                    $("#marginUsed").text(_marginUsed.toFixed(2));
+                    $("#freeMargin").text(_freeMargin.toFixed(2));
+                    $("#marginLevel").text(_marginLevel.toFixed(2) + " %");
+                    if (_unrnet > 0) {
+                        $("#unrnet").css('color', '#4cae05');
+                    }
+                    else {
+                        $("#unrnet").css('color', '#ff5256');
+                    }
+                }
+            };
+            //#endregion
+
+            //#region 设置一些细节
+            //var table = document.getElementById("posgroup");
+            //var rowObj = null;
+            //var cellObj = null;
+
+            //for (var i = 1; i < table.rows.length; i++) {
+            //    rowObj = table.rows[i];
+            //    var s = rowObj.cells[6].innerHTML;
+            //    if (s > 0)
+            //        rowObj.cells[6].style.color = "#4cae05";
+            //    else
+            //        rowObj.cells[6].style.color = "#ff5256";
+            //}
+
+            $('.datepickertemp').datepicker({
+                autoclose: true,
+                format: 'yyyy-mm-dd',
+            });
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            });
+
+            //Select2
+            $('.select2').select2();
+            //#endregion
+
+            //#region Date-Range选择定义
             var now = new Date();
             var nowDayOfWeek = now.getDay();
             var nowDay = now.getDate();
@@ -559,38 +803,13 @@
                 }
                 table_pos.api().draw();
             });
+            //#endregion
 
-            if ($("#unrnet").innerHTML > 0) {
-                $("#unrnet").css('color', '#4cae05');
-            }
-            else {
-                $("#unrnet").css('color', '#ff5256');
-            }
-
-            var table = document.getElementById("posgroup");
-            var rowObj = null;
-            var cellObj = null;
-
-            for (var i = 1; i < table.rows.length; i++) {
-                rowObj = table.rows[i];
-                var s = rowObj.cells[6].innerHTML;
-                if (s > 0)
-                    rowObj.cells[6].style.color = "#4cae05";
-                else
-                    rowObj.cells[6].style.color = "#ff5256";
-            }
-
-            $('.datepickertemp').datepicker({
-                autoclose: true,
-                format: 'yyyy-mm-dd',
-            });
-            //Timepicker
-            $('.timepicker').timepicker({
-                showInputs: false
-            });
-
-            //Select2
-            $('.select2').select2();
+            //#region 页面加载时执行的方法
+            GetSymbol();
+            GetPosGroup();
+            GetPosition();
+            //#endregion
         });
     </script>
 }

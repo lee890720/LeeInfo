@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Security;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Connect_API.Accounts;
-using Connect_API.Trading;
-using System.Security.Cryptography.X509Certificates;
+﻿using Connect_API.Accounts;
 using LeeInfo.Data;
 using LeeInfo.Data.AppIdentity;
-using Microsoft.AspNetCore.Identity;
-using ChartJSCore.Models;
-using ChartJSCore.Helpers;
-using ChartJSCore.Plugins;
-using LeeInfo.Lib;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using LeeInfo.Data.Forex;
-using System.Drawing;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {
@@ -31,6 +22,11 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         private UserManager<AppIdentityUser> _userManager;
         private readonly AppDbContext _context;
 
+        private string _accessToken = "CMU_aak6k2uQctZ2UOTZdxGBqA-eeOOtf8rfOpfpOV4";
+        private string _apiUrl = "https://api.spotware.com/";
+        AppIdentityUser _user = new AppIdentityUser();
+        AppIdentityUser _admin = new AppIdentityUser();
+
         public FrxPositionController(AppIdentityDbContext identitycontext, UserManager<AppIdentityUser> usermgr, AppDbContext context)
         {
             _identitycontext = identitycontext;
@@ -40,16 +36,15 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public async Task<IActionResult> Index(int? acId)
         {
             #region Parameters
-            string _accessToken = "";
-            string _apiUrl = "https://api.spotware.com/";
-            AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
-            AppIdentityUser _admin = await _userManager.FindByNameAsync("lee890720");
+             _user= await _userManager.FindByNameAsync(User.Identity.Name);
+             _admin= await _userManager.FindByNameAsync("lee890720");
             var symbols = _context.FrxSymbol;
             if (_user.ConnectAPI)
                 _accessToken = _user.AccessToken;
             else
                 _accessToken = _admin.AccessToken;
             #endregion
+
             #region GetAccount
             var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == _user.Id).ToList();
             var frxaccounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
@@ -58,13 +53,13 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             var frxaccount = new FrxAccount();
             if (acId == null)
             {
-                var TAC = new AspNetUserForexAccount();
-                var tempAC = useraccounts.SingleOrDefault(x => x.Alive == true);
-                if (tempAC == null)
-                    TAC = useraccounts[0];
+                var tempac1 = new AspNetUserForexAccount();
+                var tempac2 = useraccounts.SingleOrDefault(x => x.Alive == true);
+                if (tempac2 == null)
+                    tempac1 = useraccounts[0];
                 else
-                    TAC = tempAC;
-                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == TAC.AccountNumber);
+                    tempac1 = tempac2;
+                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == tempac1.AccountNumber);
             }
             else
                 frxaccount = frxaccounts.SingleOrDefault(x => x.AccountId == acId);
@@ -77,125 +72,81 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             }
             else
                 return Redirect("/");
-            #endregion
-            #region GetPosition
-            var temppositions = _context.FrxPosition.Where(x => x.AccountId == frxaccount.AccountId);
-            _context.RemoveRange(temppositions);
-            await _context.SaveChangesAsync();
-            var position = Position.GetPositions(_apiUrl, frxaccount.AccountId.ToString(), _accessToken);
-            foreach (var p in position)
-            {
-                FrxPosition fp = new FrxPosition();
-                fp.Id = p.PositionID;
-                fp.AccountId = frxaccount.AccountId;
-                fp.Channel = p.Channel;
-                fp.Comment = p.Comment;
-                fp.Commissions = p.Commission * 2 / 100;
-                fp.CurrentPrice = p.CurrentPrice;
-                fp.EntryPrice = p.EntryPrice;
-                fp.EntryTime = ConvertJson.StampToDateTime(p.EntryTimestamp);
-                fp.GrossProfit = p.Profit / 100;
-                fp.Label = p.Label;
-                fp.MarginRate = p.MarginRate;
-                fp.Swap = p.Swap / 100;
-                fp.NetProfit = fp.GrossProfit + fp.Swap + fp.Commissions;
-                fp.Pips = p.ProfitInPips;
-                fp.Volume = p.Volume / 100;
+            #endregion                      
 
-                var tempvolume = Convert.ToDouble(fp.Volume);
-                double tempsub = 100000;
-                if (fp.SymbolCode == "XBRUSD" || fp.SymbolCode == "XTIUSD")
-                    tempsub = 100;
-                if (fp.SymbolCode == "XAGUSD" || fp.SymbolCode == "XAGEUR")
-                    tempsub = 1000;
-                if (fp.SymbolCode == "XAUUSD" || fp.SymbolCode == "XAUEUR")
-                    tempsub = 100;
-                fp.Quantity = tempvolume / tempsub;
-                fp.StopLoss = p.StopLoss;
-                fp.TakeProfit = p.TakeProfit;
-                fp.SymbolCode = p.SymbolName;
-                fp.TradeType = p.TradeSide == "BUY" ? TradeType.Buy : TradeType.Sell;
-                fp.Margin = fp.MarginRate * fp.Volume / frxaccount.PreciseLeverage;
-                fp.Digits = symbols.SingleOrDefault(x => x.SymbolName == fp.SymbolCode).PipPosition;
-                _context.Add(fp);
-                await _context.SaveChangesAsync();
-            }
-            var frxpositions = _context.FrxPosition.Where(x => x.AccountId == frxaccount.AccountId);
-            #endregion
-            #region UpdateAccount
-            double unrnet = 0;
-            double marginused = 0;
-            foreach (var p in frxpositions)
-            {
-                unrnet += p.NetProfit;
-                marginused += p.Margin;
-            }
-            frxaccount.Equity = frxaccount.Balance + unrnet;
-            frxaccount.UnrealizedNetProfit = unrnet;
-            frxaccount.MarginUsed = Math.Round(marginused, 2);
-            frxaccount.FreeMargin = Math.Round(frxaccount.Equity - marginused, 2);
-            frxaccount.MarginLevel = Math.Round(frxaccount.Equity / marginused * 100, 2);
-            _context.Update(frxaccount);
-            await _context.SaveChangesAsync();
-            #endregion
-            #region GetPosGroup
-            List<PosGroup> poss = new List<PosGroup>();
-            poss = frxpositions.GroupBy(g => new { g.SymbolCode, g.TradeType, g.Digits })
-                .Select(s => new PosGroup
-                {
-                    SymbolCode = s.Key.SymbolCode,
-                    TradeType = s.Key.TradeType,
-                    Quantity = s.Sum(a => a.Quantity),
-                    EntryPrice = s.Sum(a => a.EntryPrice * a.Quantity) / s.Sum(b => b.Quantity),
-                    Swap = s.Sum(a => a.Swap),
-                    NetProfit = s.Sum(a => a.NetProfit),
-                    Pips = s.Sum(a => a.Pips * a.Quantity) / s.Sum(b => b.Quantity),
-                    Gain = s.Sum(a => a.NetProfit) / frxaccount.Balance,
-                    Digits = s.Key.Digits,
-                }).OrderBy(o=>o.NetProfit).ToList();
-            #endregion
-
-            return View(Tuple.Create<FrxAccount, List<FrxAccount>, List<PosGroup>>(frxaccount, frxaccounts.ToList(), poss));
+            return View(Tuple.Create<FrxAccount, List<FrxAccount>>(frxaccount, frxaccounts));
         }
 
-        public JsonResult GetPosition(int? acId)
+        public JsonResult GetPosition([FromBody]Params param)
         {
-            var data = _context.FrxPosition.Where(x => x.AccountId == acId).ToList();
+            var client = new RestClient(_apiUrl);
+            var request = new RestRequest(@"connect/tradingaccounts/" + param.AcId.ToString() + "/positions?oauth_token=" + _accessToken);
+            var responsePosition = client.Execute<Position>(request);
+            return Json(JObject.Parse(responsePosition.Content));
+        }
+
+        public JsonResult GetPosGroup([FromBody]Params param)
+        {
+            #region Parameters
+            _user =  _identitycontext.Users.SingleOrDefault(x => x.UserName == User.Identity.Name);
+            _admin = _identitycontext.Users.SingleOrDefault(x => x.UserName == "lee890720");
+            if (_user.ConnectAPI)
+                _accessToken = _user.AccessToken;
+            else
+                _accessToken = _admin.AccessToken;
+
+            var positions = Position.GetPositions(_apiUrl, param.AcId.ToString(), _accessToken);
+            var account = _context.FrxAccount.SingleOrDefault(x => x.AccountId == param.AcId);
+            string[] bases = { "XAU", "XAG", "XBR", "XTI" };
+            var symbols = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
+            #endregion
+
+            #region GetPosGroup
+            List<PosGroup> data = new List<PosGroup>();
+            data = positions.GroupBy(g => new { g.SymbolId, g.SymbolName, g.TradeSide })
+                .Select(s => new PosGroup
+                {
+                    SymbolId = s.Key.SymbolId,
+                    SymbolName = s.Key.SymbolName,
+                    TradeSide = s.Key.TradeSide,
+                    Volume = s.Sum(a => a.Volume/100),
+                    Lot = 0.00,
+                    EntryPrice = s.Sum(a => a.EntryPrice * a.Volume) / s.Sum(b => b.Volume),
+                    Swap = s.Sum(a => a.Swap/100),
+                    Profit = s.Sum(a => (a.Profit+a.Swap+a.Commission*2)/100),
+                    Pips = s.Sum(a => (double)a.ProfitInPips * a.Volume) / s.Sum(b => b.Volume),
+                    Gain = s.Sum(a => (double)a.Profit) / account.Balance,
+                    PipPosition = symbols.SingleOrDefault(a => a.SymbolId == s.Key.SymbolId).PipPosition,
+                    AssetClass=symbols.SingleOrDefault(a=>a.SymbolId==s.Key.SymbolId).AssetClass,
+                    MinOrderVolume = symbols.SingleOrDefault(a => a.SymbolId == s.Key.SymbolId).MinOrderVolume,
+                }).OrderBy(o => o.Profit).ToList();
+            #endregion
+
             return Json(new { data, data.Count });
         }
 
-        public JsonResult GetPosGroup(int? acId)
+        public JsonResult GetSymbol()
         {
-            var frxpositions = _context.FrxPosition.Where(x => x.AccountId == acId).ToList();
-            List<PosGroup> poss = new List<PosGroup>();
-            poss = frxpositions.GroupBy(g => new { g.SymbolCode, g.TradeType })
-                .Select(s => new PosGroup
-                {
-                    SymbolCode = s.Key.SymbolCode,
-                    TradeType = s.Key.TradeType,
-                    Quantity = s.Sum(a => a.Quantity),
-                    EntryPrice = 0,
-                    Swap = 0,
-                    NetProfit = 0,
-                    Pips = 0,
-                    Gain = 0,
-                    Digits=0
-                }).OrderByDescending(o=>o.Quantity).ToList();
-            var data = poss;
+            string[] bases = { "XAU", "XAG", "XBR", "XTI" };
+            var data = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
             return Json(new { data, data.Count });
         }
     }
 
     public class PosGroup
     {
-        public string SymbolCode { get; set; }
-        public TradeType TradeType { get; set; }
-        public double Quantity { get; set; }
+        public int SymbolId { get; set; }
+        public string SymbolName { get; set; }
+        public string TradeSide { get; set; }
         public double EntryPrice { get; set; }
+        public long Volume { get; set; }
+        public double? Lot { get; set; }
         public double Swap { get; set; }
-        public double NetProfit { get; set; }
         public double Pips { get; set; }
+        public double? Profit { get; set; }
         public double Gain { get; set; }
-        public int? Digits { get; set; }
+        public int PipPosition { get; set; }
+        public int AssetClass { get; set; }
+        public long MinOrderVolume { get; set; }
     }
 }

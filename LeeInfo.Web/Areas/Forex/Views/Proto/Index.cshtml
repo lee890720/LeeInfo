@@ -376,11 +376,6 @@
             };
             //#endregion
 
-            //#region 页面加载时执行的方法
-            GetSymbol();
-            GetPosition();
-            //#endregion
-
             //#region Ajax GetPosition
             function GetPosition() {
                 optionAjax.url = _getPositionUrl;
@@ -743,6 +738,11 @@
                 }
                 $(this).data("clicks", !clicks);
             });
+            //#endregion
+
+            //#region 页面加载时执行的方法
+            GetSymbol();
+            GetPosition();
             //#endregion
         });
     </script>

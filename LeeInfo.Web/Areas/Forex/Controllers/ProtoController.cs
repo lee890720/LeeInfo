@@ -1,24 +1,21 @@
-﻿using System;
+﻿using Connect_API.Accounts;
+using Connect_API.Trading;
+using LeeInfo.Data;
+using LeeInfo.Data.AppIdentity;
+using LeeInfo.Data.Forex;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Connect_API.Accounts;
-using Connect_API.Trading;
 using System.Security.Cryptography.X509Certificates;
-using LeeInfo.Data;
-using LeeInfo.Data.AppIdentity;
-using Microsoft.AspNetCore.Identity;
-using ChartJSCore.Models;
 using System.Threading;
-using LeeInfo.Data.Forex;
-using LeeInfo.Lib;
-using Newtonsoft.Json;
-using RestSharp;
-using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {
@@ -26,6 +23,10 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
     [Authorize(Roles = "Admins,Forex")]
     public class ProtoController : Controller
     {
+        private readonly AppIdentityDbContext _identitycontext;
+        private UserManager<AppIdentityUser> _userManager;
+        private readonly AppDbContext _context;
+
         private string _clientId = "458_ZXTfD6n0yf9WE3kyrfN5fPhnUkGjH7brIGDHaeezPNHV6GvRQQ";
         private string _clientSecret = "D7s28Opo1obNfsHPL6hY14TBAUs0GcHjX7juH67GhZOU9LeaxE";
         private string _accessToken = "CMU_aak6k2uQctZ2UOTZdxGBqA-eeOOtf8rfOpfpOV4";
@@ -36,9 +37,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         private int _apiPort = 5032;
         private TcpClient _tcpClient = new TcpClient();
         private SslStream _apiSocket;
-        private readonly AppIdentityDbContext _identitycontext;
-        private UserManager<AppIdentityUser> _userManager;
-        private readonly AppDbContext _context;
+        AppIdentityUser _user = new AppIdentityUser();
+        AppIdentityUser _admin = new AppIdentityUser();
 
         public ProtoController(AppIdentityDbContext identitycontext, UserManager<AppIdentityUser> usermgr, AppDbContext context)
         {
@@ -49,8 +49,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public async Task<IActionResult> Index(int? acId)
         {
             #region Parameters
-            AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
-            AppIdentityUser _admin = await _userManager.FindByNameAsync("lee890720");
+             _user = await _userManager.FindByNameAsync(User.Identity.Name);
+             _admin = await _userManager.FindByNameAsync("lee890720");
             if (_user.ConnectAPI)
             {
                 _clientId = _user.ClientId;
@@ -99,6 +99,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             else
                 return Redirect("/");
             #endregion                      
+
             return View(Tuple.Create<FrxAccount, List<FrxAccount>>(frxaccount, frxaccounts));
         }
 
