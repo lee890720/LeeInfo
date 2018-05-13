@@ -9,6 +9,7 @@
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
 }
+<!--样式-->
 <style>
     .table th {
         text-align: center !important;
@@ -37,6 +38,7 @@
     </ol>
 </section>
 <section class="content">
+    <!--账号数据统计分析-->
     <div class="row">
         <div class="col-md-12">
             <div class="box box-info">
@@ -115,6 +117,7 @@
             </div>
         </div>
     </div>
+    <!--月数据分析-->
     <div class="row">
         <div class="col-md-12">
             <div class="box box-info">
@@ -152,6 +155,7 @@
             </div>
         </div>
     </div>
+    <!--多空比-->
     <div class="row">
         <div class="col-md-12">
             <div class="box box-info">
@@ -190,6 +194,7 @@
             </div>
         </div>
     </div>
+    <!--摘要-->
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-info collapsed-box">
@@ -214,7 +219,7 @@
                     </div>
                 </div>
                 <div class="box-body table-responsive" style="height:560px">
-                    <table id="example_bs" class="table  table-bordered table-striped table-hover" width="100%">
+                    <table id="table-balance" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
                                 <th></th>
@@ -275,6 +280,7 @@
             </div>
         </div>
     </div>
+    <!--历史记录-->
     <div class="row">
         <div class="col-md-12">
             <div class="box box-info collapsed-box">
@@ -325,7 +331,7 @@
                                 <button id="hehe" class="btn btn-warning pull-right" type="button"><i class="fa fa-search"></i> 搜 索</button>
                             </div>*@
                     </div>
-                    <table id="example_his" class="table  table-bordered table-striped table-hover" width="100%">
+                    <table id="table-his" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
                                 <th>
@@ -385,6 +391,9 @@
     <script>
         $(document).ready(function () {
             //初始化数据
+            var _accountId =@Model.Item1.AccountId;
+            var _getMonthBaseUrl = "/Forex/FrxAnalyze/GetMonthBase";
+            var _getHistoryUrl = "/Forex/FrxAnalyze/GetHistory";
             var MonthBaseData = [];
             var AccountInfoData;
             var HistoryData = [];
@@ -393,41 +402,55 @@
             var MonthPieChart = echarts.init(document.getElementById("MonthPieChart"));
             var BuySellRateChart = echarts.init(document.getElementById("BuySellRateChart"));
 
-            $.ajax({
+            //#region Ajax optionAjax
+            var optionAjax = {
                 type: "post",
                 async: true,
-                url: '@Url.Action("GetMonthBaseData", "FrxAnalyze", new { acId = Model.Item1.AccountId })',
+                url: "",
+                contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                data: {},
                 success: function (result) {
-                        MonthBaseData = result.monthBaseData;
-                        AccountInfoData = result.accountinfo;
-                        Render_AccountInfo(result.accountinfo);
-                        Render_MonthBaseChart(MonthBaseData, 2);
-                        Render_MonthPieChart(11);
-                        Render_BuySellRateChart(11);
-                        table_bs.api().rows.add(result.monthBaseData[11].buySellData).draw();
                 },
                 error: function (errorMsg) {
-                    alert("MonthBaseData请求数据失败!");
+                    alert("请求数据失败!");
                 }
-            })
+            };
+            //#endregion
 
-            $.ajax({
-                type: "post",
-                async: true,
-                url: '@Url.Action("GetHistoryData", "FrxAnalyze", new { acId = Model.Item1.AccountId })',
-                dataType: "json",
-                success: function (result) {
+            //#region Ajax GetMonthBase
+            function GetMonthBase() {
+                optionAjax.url = _getMonthBaseUrl;
+                optionAjax.data = JSON.stringify({ acId: _accountId });
+                optionAjax.success = function (result) {
+                    MonthBaseData = result.monthBaseData;
+                    AccountInfoData = result.accountinfo;
+                    Render_AccountInfo(result.accountinfo);
+                    Render_MonthBaseChart(MonthBaseData, 2);
+                    Render_MonthPieChart(11);
+                    Render_BuySellRateChart(11);
+                    table_balance.api().rows.add(result.monthBaseData[11].buySellData).draw();
+                };
+
+                $.ajax(optionAjax);
+            };
+            //#endregion
+
+            //#region Ajax GetHistory
+            function GetHistory() {
+                optionAjax.url = _getHistoryUrl;
+                optionAjax.data = JSON.stringify({ acId: _accountId });
+                optionAjax.success = function (result) {
                     HistoryData = result.data;
-                    Render_BalanceChart(result.data,2);
+                    Render_BalanceChart(result.data, 2);
                     table_his.api().rows.add(result.data).draw();
-                },
-                error: function (errorMsg) {
-                    alert("HistoryData请求数据失败!");
-                }
-            })
+                };
 
-            //AccountInfo
+                $.ajax(optionAjax);
+            };
+            //#endregion
+
+            //#region AccountInfo
             function Render_AccountInfo(data) {
                 if (data != null) {
                     $("#accountinfo-gain").html(data.gain.toFixed(2) + "%");
@@ -444,8 +467,9 @@
                     $("#accountinfo-lasttradetime").html(moment(data.lastTradeTime).format('YYYY-MM-DD hh:mm'));
                 }
             };
+            //#endregion
 
-            //Balance图表
+            //#region Balance图表
             var optionBalance = {
                 title: {
                     text: 'BalanceChart',
@@ -585,13 +609,14 @@
                 optionBalance.series[1].data = es;
                 BalanceChart.setOption(optionBalance);
             };
+            //#endregion
 
-            //月度分析报告
+            //#region 月度分析报告
             MonthBaseChart.on('click', function (params) {
                 Render_MonthPieChart(params.dataIndex);
                 Render_BuySellRateChart(params.dataIndex);
-                table_bs.api().clear();
-                table_bs.api().rows.add(MonthBaseData[params.dataIndex].buySellData).draw();
+                table_balance.api().clear();
+                table_balance.api().rows.add(MonthBaseData[params.dataIndex].buySellData).draw();
             });
 
             var optionMonthBase = {
@@ -706,8 +731,9 @@
                     MonthBaseChart.setOption(optionMonthBase);
                 }
             };
+            //#endregion
 
-            //月Pie图表
+            //#region 月Pie图表
             var optionMonthPie = {
                 title: {
                     text: 'MonthPie',
@@ -764,8 +790,9 @@
                 optionMonthPie.series[0].data = seriesData;
                 MonthPieChart.setOption(optionMonthPie);
             };
+            //#endregion
 
-            //月多空比图表
+            //#region 月多空比图表
             var optionBuySellRate={
                 tooltip: {
                     trigger: 'axis',
@@ -861,8 +888,9 @@
                 };
                 BuySellRateChart.setOption(optionBuySellRate);
              };
+            //#endregion
 
-            //按钮点击事件
+            //#region 按钮点击事件
             //月份收益率
             $("#BalanceProfitRateBtn,#MonthProfitRateBtn").click(function () {
                 Render_BalanceChart(HistoryData, 1);
@@ -886,68 +914,69 @@
                 Render_BalanceChart(HistoryData, 4);
                 Render_MonthBaseChart(MonthBaseData, 4);
             });
+            //#endregion
 
-            //For DataTables
-            var table_bs = $('#example_bs').dataTable(
+            //#region 初始化table_balance
+            var table_balance = $('#table-balance').dataTable(
                 {
-                    'order': [[0, "asc"]],
-                    'dom':
-                        "<'row'<'col-sm-6'><'col-sm-6'f>>" +
+                    order: [[0, "asc"]],
+                    dom:
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    'processing': true,
-                    'data': [],
-                    "language": {
-                        "processing": "加载中...",
-                        "lengthMenu": "每页显示 _MENU_ 条数据",
-                        "zeroRecords": "没有匹配结果",
-                        "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
-                        "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
-                        "infoFiltered": "(由 _MAX_ 项结果过滤)",
-                        "infoPostFix": "",
-                        "search": "搜 索 ",
-                        "url": "",
-                        "emptyTable": "没有匹配结果",
-                        "loadingRecords": "载入中...",
-                        "thousands": ",",
-                        "paginate": {
-                            "first": "首页",
-                            "previous": "上一页",
-                            "next": "下一页",
-                            "last": "末页"
+                    processing: true,
+                    data: [],
+                    language: {
+                        processing: "加载中...",
+                        lengthMenu: "每页显示 _MENU_ 条数据",
+                        zeroRecords: "没有匹配结果",
+                        info: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        infoEmpty: "显示第 0 至 0 项结果，共 0 项",
+                        infoFiltered: "(由 _MAX_ 项结果过滤)",
+                        infoPostFix: "",
+                        search: "搜索:",
+                        url: "",
+                        emptyTable: "没有匹配结果",
+                        loadingRecords: "载入中...",
+                        thousands: ",",
+                        paginate: {
+                            first: "首页",
+                            previous: "上一页",
+                            next: "下一页",
+                            last: "末页"
                         },
-                        "aria": {
-                            "sortAscending": ": 以升序排列此列",
-                            "sortDescending": ": 以降序排列此列"
+                        aria: {
+                            sortAscending: ": 以升序排列此列",
+                            sortDescending: ": 以降序排列此列"
                         }
                     },
-                    'columns': [
-                        { "data": "symbolCode" },
-                        { "data": "buyCount" },
-                        { "data": "buyLots" },
-                        { "data": "buyPips" },
-                        { "data": "buyProfit" },
-                        { "data": "sellCount" },
-                        { "data": "sellLots" },
-                        { "data": "sellPips" },
-                        { "data": "sellProfit" },
-                        { "data": "count" },
-                        { "data": "lots" },
-                        { "data": "pips" },
-                        { "data": "profit" },
-                        { "data": "winRate" },
-                        { "data": "lossRate" },
+                    columns: [
+                        { data: "symbolCode" },
+                        { data: "buyCount" },
+                        { data: "buyLots" },
+                        { data: "buyPips" },
+                        { data: "buyProfit" },
+                        { data: "sellCount" },
+                        { data: "sellLots" },
+                        { data: "sellPips" },
+                        { data: "sellProfit" },
+                        { data: "count" },
+                        { data: "lots" },
+                        { data: "pips" },
+                        { data: "profit" },
+                        { data: "winRate" },
+                        { data: "lossRate" },
                     ],
-                    "columnDefs": [
+                    columnDefs: [
                         {
-                            "targets": [2, 3, 4, 6, 7, 8, 10, 11, 12],
+                            targets: [2, 3, 4, 6, 7, 8, 10, 11, 12],
                             render: function (data, type, row, meta) {
                                 return data.toString() == "NaN" ? parseFloat(0).toFixed(2):parseFloat(data).toFixed(2);
                             }
                         },
                         {
-                            "targets": [ 3, 4,  7, 8,  11, 12],
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            targets: [ 3, 4,  7, 8,  11, 12],
+                            createdCell: function (td, cellData, rowData, row, col) {
                                 if (cellData > 0)
                                     $(td).css('color', '#4cae05');
                                 else
@@ -955,9 +984,9 @@
                             },
                         },
                         {
-                            "targets": 13,
-                            "orderable":false,
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            targets: 13,
+                            orderable:false,
+                            createdCell: function (td, cellData, rowData, row, col) {
                                 $(td).css('color', '#4cae05');
                             },
                             render: function (data, type, row, meta) {
@@ -965,9 +994,9 @@
                             }
                         },
                         {
-                            "targets": 14,
-                            "orderable":false,
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            targets: 14,
+                            orderable:false,
+                            createdCell: function (td, cellData, rowData, row, col) {
                                 $(td).css('color', '#ff5256');
                             },
                             render: function (data, type, row, meta) {
@@ -976,62 +1005,65 @@
                         },
                         ],
                 });
-            var table_his = $('#example_his').dataTable(
+            //#endregion
+
+            //#region 初始化table_his
+            var table_his = $('#table-his').dataTable(
                 {
-                    'order': [[4, "desc"]],
-                    'dom':
+                    order: [[4, "desc"]],
+                    dom:
                         "<'row'<'col-sm-6'><'col-sm-6'>>" +
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    'processing': true,
-                    'data': [],
-                    "language": {
-                        "processing": "加载中...",
-                        "lengthMenu": "每页显示 _MENU_ 条数据",
-                        "zeroRecords": "没有匹配结果",
-                        "info": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
-                        "infoEmpty": "显示第 0 至 0 项结果，共 0 项",
-                        "infoFiltered": "(由 _MAX_ 项结果过滤)",
-                        "infoPostFix": "",
-                        "search": "搜索:",
-                        "url": "",
-                        "emptyTable": "没有匹配结果",
-                        "loadingRecords": "载入中...",
-                        "thousands": ",",
-                        "paginate": {
-                            "first": "首页",
-                            "previous": "上一页",
-                            "next": "下一页",
-                            "last": "末页"
+                    processing: true,
+                    data: [],
+                    language: {
+                        processing: "加载中...",
+                        lengthMenu: "每页显示 _MENU_ 条数据",
+                        zeroRecords: "没有匹配结果",
+                        info: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        infoEmpty: "显示第 0 至 0 项结果，共 0 项",
+                        infoFiltered: "(由 _MAX_ 项结果过滤)",
+                        infoPostFix: "",
+                        search: "搜索:",
+                        url: "",
+                        emptyTable: "没有匹配结果",
+                        loadingRecords: "载入中...",
+                        thousands: ",",
+                        paginate: {
+                            first: "首页",
+                            previous: "上一页",
+                            next: "下一页",
+                            last: "末页"
                         },
-                        "aria": {
-                            "sortAscending": ": 以升序排列此列",
-                            "sortDescending": ": 以降序排列此列"
+                        aria: {
+                            sortAscending: ": 以升序排列此列",
+                            sortDescending: ": 以降序排列此列"
                         }
                     },
-                    'columns': [
-                        { "data": "closingDealId" },
-                        { "data": "symbolCode" },
-                        { "data": "tradeType" },
-                        { "data": "entryTime" },
-                        { "data": "closingTime" },
-                        { "data": "entryPrice" },
-                        { "data": "closingPrice" },
-                        { "data": "quantity" },
-                        { "data": "commissions" },
-                        { "data": "swap" },
-                        { "data": "pips" },
-                        { "data": "netProfit" }
+                    columns: [
+                        { data: "closingDealId" },
+                        { data: "symbolCode" },
+                        { data: "tradeType" },
+                        { data: "entryTime" },
+                        { data: "closingTime" },
+                        { data: "entryPrice" },
+                        { data: "closingPrice" },
+                        { data: "quantity" },
+                        { data: "commissions" },
+                        { data: "swap" },
+                        { data: "pips" },
+                        { data: "netProfit" }
                     ],
-                    "columnDefs": [
+                    columnDefs: [
                         {
-                            "targets": 0,
+                            targets: 0,
                             render: function (data, type, row, meta) {
                                 return '<span title="' + row.label + '/' + row.comment + '">' + data + '</span>';
                             }
                         },
                         {
-                            "targets": 2,
+                            targets: 2,
                             render: function (data, type, row, meta) {
                                 var tradetype = data;
                                 if (tradetype == 0)
@@ -1041,36 +1073,36 @@
                             }
                         },
                         {
-                            "targets": [3, 4],
+                            targets: [3, 4],
                             render: function (data, type, row, meta) {
                                 result = moment(data).format('YYYY-MM-DD hh:mm:ss');
                                 return result;
                             }
                         },
                         {
-                            "targets": [5, 6],
+                            targets: [5, 6],
                             render: function (data, type, row, meta) {
                                 var result = parseFloat(data);
                                 return result.toFixed(parseInt(row.digits));
                             }
                         },
                         {
-                            "targets": -2,
+                            targets: -2,
                             render: function (data, type, row, meta) {
                                 var result = parseFloat(data);
                                 return Math.round(result);
                             }
                         },
                         {
-                            "targets": -1,
+                            targets: -1,
                             render: function (data, type, row, meta) {
                                 var result = parseFloat(data);
                                 return result.toFixed(2);
                             }
                         },
                         {
-                            "targets": [-1, -2, -3],
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            targets: [-1, -2, -3],
+                            createdCell: function (td, cellData, rowData, row, col) {
                                 if (cellData > 0)
                                     $(td).css('color', '#4cae05');
                                 else
@@ -1078,7 +1110,7 @@
                             },
                         },
                     ],
-                    "footerCallback": function (tfoot, data, start, end, display) {
+                    footerCallback: function (tfoot, data, start, end, display) {
                         var api = this.api(), data;
 
                         // Remove the formatting to get integer data for summation
@@ -1102,13 +1134,9 @@
             $("#date_beg,#date_end").keyup(function () { table_his.api().draw(); });
             $("#date_beg,#date_end").change(function () { table_his.api().draw(); });
             $("#search").keyup(function () { table_his.api().search($("#search").val()).draw(); });
+            //#endregion
 
-            //$("#hehe").click(RefrashChart());
-            //function RefrashChart() {
-            //    $("#date_beg,#date_end").keyup(function () { table_his.api().draw(); });
-            //    table_his.api().search($("#search").val()).draw();
-            //};
-
+            //#region Date-Range选择定义
             var now = new Date();
             var nowDayOfWeek = now.getDay();
             var nowDay = now.getDate();
@@ -1202,7 +1230,9 @@
                 }
                 table_his.api().draw();
             });
+            //#endregion
 
+            //#region 设置一些细节
             $('.datepickertemp').datepicker({
                 autoclose: true,
                 format: 'yyyy-mm-dd',
@@ -1214,6 +1244,12 @@
 
         //Select2
             $('.select2').select2();
+            //#endregion
+
+            //#region 页面加载时执行的方法
+            GetMonthBase();
+            GetHistory();
+            //#endregion
         });
     </script>
 }

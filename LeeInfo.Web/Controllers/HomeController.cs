@@ -15,7 +15,7 @@ namespace LeeInfo.Web.Controllers
     {
         public IActionResult Index()
         {
-              return View();
+              return Redirect("/Forex/FrxPosition/");
         }
 
         public IActionResult About()
