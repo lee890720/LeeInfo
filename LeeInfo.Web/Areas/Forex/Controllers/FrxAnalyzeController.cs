@@ -51,7 +51,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             foreach (var c in cashflow)
             {
                 var fc = new FrxCashflow();
-                fc.Id = Convert.ToInt32(c.CashflowID);
+                fc.Id = Convert.ToInt32(c.CashflowId);
                 fc.AccountId = connect.AccountId;
                 fc.Balance = c.Balance;
                 fc.BalanceVersion = c.BalanceVersion;
@@ -75,9 +75,9 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             else
                 fromtime = connect.TraderRegistrationTime;
             DateTime utcnow = DateTime.UtcNow;
-            string fromtimestamp = ConvertJson.DateTimeToStamp(fromtime);
-            string totimestamp = ConvertJson.DateTimeToStamp(utcnow.AddDays(1));
-            var deal = Deal.GetDeals(connect.ApiUrl, connect.AccountId.ToString(), connect.AccessToken, fromtimestamp, totimestamp);
+            long fromtimestamp = ConvertJson.DateTimeToStamp(fromtime);
+            long totimestamp = ConvertJson.DateTimeToStamp(utcnow.AddDays(1));
+            var deal = Deal.GetDeals(connect.ApiUrl, connect.AccountId.ToString(), connect.AccessToken, fromtimestamp.ToString(), totimestamp.ToString());
             var deal_history = new List<Deal>();
             foreach (var d in deal)
             {
@@ -87,7 +87,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             foreach (var h in deal_history)
             {
                 FrxHistory fh = new FrxHistory();
-                fh.ClosingDealId = h.DealID;
+                fh.ClosingDealId = h.DealId;
                 fh.AccountId = connect.AccountId;
                 fh.Balance = h.PositionCloseDetails.Balance / 100;
                 fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
@@ -101,13 +101,13 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 long tempstamp = System.Convert.ToInt64(h.ExecutionTimestamp);
                 foreach (var d in deal)
                 {
-                    if (d.PositionID == h.PositionID)
+                    if (d.PositionId == h.PositionId)
                     {
                         if (System.Convert.ToInt64(d.ExecutionTimestamp) < tempstamp)
                             tempstamp = System.Convert.ToInt64(d.ExecutionTimestamp);
                     }
                 }
-                fh.EntryTime = ConvertJson.StampToDateTime(tempstamp.ToString());
+                fh.EntryTime = ConvertJson.StampToDateTime(tempstamp);
                 fh.Equity = h.PositionCloseDetails.Equity / 100;
                 fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi / 100;
                 fh.GrossProfit = h.PositionCloseDetails.Profit / 100;
@@ -116,7 +116,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fh.Swap = h.PositionCloseDetails.Swap / 100;
                 fh.NetProfit = fh.GrossProfit + fh.Swap + fh.Commissions;
                 fh.Pips = h.PositionCloseDetails.ProfitInPips;
-                fh.PositionId = h.PositionID;
+                fh.PositionId = h.PositionId;
                 fh.SymbolCode = h.SymbolName;
                 fh.Volume = h.PositionCloseDetails.ClosedVolume / 100;
 
@@ -140,7 +140,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     await _context.SaveChangesAsync();
                 }
             }
-            var frxhistories = _context.FrxHistory.Where(x => x.AccountId == connect.AccountId);
+            var histories = _context.FrxHistory.Where(x => x.AccountId == connect.AccountId).ToList();
             #endregion
 
             return View(Tuple.Create<ConnectAPI, List<FrxAccount>>(connect, accounts));
@@ -296,7 +296,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 RigistrationTime = account.TraderRegistrationTime
             };
             #endregion
-            return Json(new { monthBaseData, accountinfo });
+            return Json(new { monthBaseData, accountinfo});
         }
 
         public JsonResult GetHistory([FromBody]Params param)

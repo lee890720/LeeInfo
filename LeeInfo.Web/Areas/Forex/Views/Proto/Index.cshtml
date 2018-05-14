@@ -347,16 +347,15 @@
         </div>
     </div>
 </section>
-@section Scripts{   
+@section Scripts{
     <script>
     $(function () {
             //初始化参数
             var _connect =@Html.Raw(Json.Serialize(Model.Item1));
             var _getPositionUrl = "/Forex/Proto/GetPosition";
             var _getSymbolUrl = "/Forex/Proto/GetSymbol";
-            var _account = [];
+            var _getAccountInfoUrl = "/Forex/Proto/GetAccountInfo";
             var _symbols = [];
-            var _positions = [];
 
             //#region Ajax optionAjax
             var optionAjax = {
@@ -374,15 +373,41 @@
             };
             //#endregion
 
+            //#region Ajax GetSymbol
+            function GetSymbol() {
+                optionAjax.url = _getSymbolUrl;
+                optionAjax.data = JSON.stringify({});
+                optionAjax.success = function (result) {
+                _symbols = result.data;
+                GetSymbolList();
+                };
+
+                $.ajax(optionAjax);
+            };
+            //#endregion
+
             //#region Ajax GetPosition
             function GetPosition() {
                 optionAjax.url = _getPositionUrl;
                 optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken});
                 optionAjax.success = function (result) {
-                    _positions = result.data;
                     table_pos.api().clear();
                     table_pos.api().rows.add(result.data).draw();
-                    CalculateAccount(result.data);
+                    //CalculateAccount(result.data);
+                };
+
+                $.ajax(optionAjax);
+            };
+            //#endregion
+
+            //#region Ajax GetAccountInfo
+            function GetAccountInfo() {
+                optionAjax.url = _getAccountInfoUrl;
+                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken ,balance:_connect.balance,preciseLeverage:_connect.preciseLeverage});
+                optionAjax.success = function (result) {
+                    CalculateAccount(result.accountinfo);
+                    table_pos.api().clear();
+                    table_pos.api().rows.add(result.positions).draw();
                 };
 
                 $.ajax(optionAjax);
@@ -394,24 +419,8 @@
                 optionAjax.url = _getPositionUrl;
                 optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
                 optionAjax.success = function (result) {
-                    _positions = result.data;
-                    CalculateAccount(result.data);
                     table_pos.api().clear();
                     table_pos.api().rows.add(result.data).draw();
-                    //alert("刷新成功！");
-                };
-
-                $.ajax(optionAjax);
-            };
-            //#endregion
-
-            //#region Ajax GetSymbol
-            function GetSymbol() {
-                optionAjax.url = _getSymbolUrl;
-                optionAjax.data = JSON.stringify({});
-                optionAjax.success = function (result) {
-                    _symbols = result.data;
-                    GetSymbolList();
                 };
 
                 $.ajax(optionAjax);
@@ -421,25 +430,13 @@
             //#region 计算显示账号的数据
             function CalculateAccount(data) {
                 if (data != null) {
-                    var _equity = 0.00;
-                    var _unrnet = 0.00;
-                    var _freeMargin = 0.00;
-                    var _marginUsed = 0.00;
-                    var _marginLevel = 0.00;
-                    $.each(data, function () {
-                        _unrnet += (this.commission * 2 + this.swap + this.profit) / 100;
-                        _marginUsed += this.volume / 100 * this.marginRate / _connect.preciseLeverage;
-                    });
-                    _equity = _connect.balance + _unrnet;
-                    _freeMargin = _equity - _marginUsed;
-                    _marginLevel = _equity / _marginUsed * 100;
-                    $("#balance").text(_connect.balance.toFixed(2));
-                    $("#equity").text( _equity.toFixed(2));
-                    $("#unrnet").text(_unrnet.toFixed(2));
-                    $("#marginUsed").text( _marginUsed.toFixed(2));
-                    $("#freeMargin").text( _freeMargin.toFixed(2));
-                    $("#marginLevel").text( _marginLevel.toFixed(2) + " %");
-                    if (_unrnet > 0) {
+                    $("#balance").text(data.balance.toFixed(2));
+                    $("#equity").text( data.equity.toFixed(2));
+                    $("#unrnet").text(data.unrNet.toFixed(2));
+                    $("#marginUsed").text( data.marginUsed.toFixed(2));
+                    $("#freeMargin").text( data.freeMargin.toFixed(2));
+                    $("#marginLevel").text( data.marginLevel.toFixed(2) + " %");
+                    if (data.unrNet > 0) {
                         $("#unrnet").css('color', '#4cae05');
                     }
                     else {
@@ -740,7 +737,7 @@
 
             //#region 页面加载时执行的方法
             GetSymbol();
-            GetPosition();
+            GetAccountInfo();
             //#endregion
         });
     </script>

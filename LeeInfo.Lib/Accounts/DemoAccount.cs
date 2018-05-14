@@ -12,7 +12,7 @@ namespace Connect_API.Accounts
         /// The country identifier
         /// </summary>
         [JsonProperty("countryId")]
-        public long CountryID { get; set; }
+        public long CountryId { get; set; }
 
         /// <summary>
         /// The phone number

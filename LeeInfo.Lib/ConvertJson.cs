@@ -14,22 +14,22 @@ namespace LeeInfo.Lib
 {
     public static class ConvertJson
     {
-        public static DateTime StampToDateTime(string timestamp)
+        public static DateTime StampToDateTime(long timestamp)
         {
             //string result = string.Empty;
             DateTime dt = new DateTime(1970, 1, 1);
-            dt = dt.AddMilliseconds(long.Parse(timestamp));
+            dt = dt.AddMilliseconds(timestamp);
             dt = dt.ToUniversalTime();
             //result = dt.ToString("yyyy-MM-dd HH:mm:ss");
             return dt;
         }
 
-        public static string DateTimeToStamp(DateTime dt)
+        public static long DateTimeToStamp(DateTime dt)
         {
-            string result = string.Empty;
+            long result;
             dt = dt.ToUniversalTime();
             TimeSpan ts = dt - DateTime.Parse("1970-01-01");
-            result = ts.TotalMilliseconds.ToString();
+            result = (long)ts.TotalMilliseconds;
             return result;
         }
 

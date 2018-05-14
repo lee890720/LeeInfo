@@ -37,7 +37,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         }
         public IActionResult Index(int? acId)
         {
-            ConnectAPI connect = ConnectAPI.GetConnectAPI(_identitycontext, _context, User.Identity.Name,acId);
+            ConnectAPI connect = ConnectAPI.GetConnectAPI(_identitycontext, _context, User.Identity.Name, acId);
             if (connect.AccountId == 0)
                 return Redirect("/");
             var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == connect.UserId).ToList();
@@ -58,6 +58,31 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             string[] bases = { "XAU", "XAG", "XBR", "XTI" };
             var data = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
             return Json(new { data, data.Count });
+        }
+
+        public JsonResult GetAccountInfo([FromBody]Params param)
+        {
+            var positions = Position.GetPositions(param.ApiUrl, param.AccountId.ToString(), param.AccessToken);
+            var posgroup = positions.GroupBy(g => new { g.SymbolName })
+                .Select(s => new
+                {
+                    Symbol = s.Key.SymbolName,
+                    Margin = s.Where(b => b.TradeSide == "BUY").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
+                    > s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
+                    ? s.Where(b => b.TradeSide == "BUY").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
+                    : s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage),
+                    UnrNet = s.Sum(a => a.Swap + a.Commission + a.Profit) / 100,
+                }).ToList();
+            var accountinfo = new
+            {
+                Balance = param.Balance,
+                Equity = param.Balance + posgroup.Sum(s => s.UnrNet),
+                UnrNet = posgroup.Sum(s => s.UnrNet),
+                MarginUsed = posgroup.Sum(s => s.Margin),
+                FreeMargin = param.Balance + posgroup.Sum(s => s.UnrNet) - posgroup.Sum(s => s.Margin),
+                MarginLevel = (param.Balance + posgroup.Sum(s => s.UnrNet)) / posgroup.Sum(s => s.Margin)*100,
+            };
+            return Json(new {accountinfo,positions});
         }
 
         //#region Proto

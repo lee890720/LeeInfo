@@ -17,7 +17,7 @@ namespace Connect_API.Accounts
         /// The order identifier.
         /// </value>
         [JsonProperty("orderId")]
-        public string OrderID { get; set; }
+        public string OrderId { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the symbol.
@@ -89,7 +89,7 @@ namespace Connect_API.Accounts
         /// The create timestamp.
         /// </value>
         [JsonProperty("createTimestamp")]
-        public string CreateTimestamp { get; set; }
+        public long CreateTimestamp { get; set; }
 
         /// <summary>
         /// Gets or sets the expiration timestamp.
@@ -98,7 +98,7 @@ namespace Connect_API.Accounts
         /// The expiration timestamp.
         /// </value>
         [JsonProperty("expirationTimestamp")]
-        public string ExpirationTimestamp { get; set; }
+        public long ExpirationTimestamp { get; set; }
 
         /// <summary>
         /// Gets or sets the current price.

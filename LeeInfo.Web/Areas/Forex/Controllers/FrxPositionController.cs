@@ -32,20 +32,12 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         }
         public IActionResult Index(int? acId)
         {
-            ConnectAPI connect = ConnectAPI.GetConnectAPI(_identitycontext, _context, User.Identity.Name,acId);
+            ConnectAPI connect = ConnectAPI.GetConnectAPI(_identitycontext, _context, User.Identity.Name, acId);
             if (connect.AccountId == 0)
                 return Redirect("/");
             var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == connect.UserId).ToList();
             var accounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
             return View(Tuple.Create<ConnectAPI, List<FrxAccount>>(connect, accounts));
-        }
-
-        public JsonResult GetPosition([FromBody]Params param)
-        {
-            var client = new RestClient(param.ApiUrl);
-            var request = new RestRequest(@"connect/tradingaccounts/" + param.AccountId.ToString() + "/positions?oauth_token=" + param.AccessToken);
-            var responsePosition = client.Execute<Position>(request);
-            return Json(JObject.Parse(responsePosition.Content));
         }
 
         public JsonResult GetPosGroup([FromBody]Params param)
@@ -57,28 +49,46 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             var symbols = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
             #endregion
 
-            #region GetPosGroup
-            List<PosGroup> data = new List<PosGroup>();
-            data = positions.GroupBy(g => new { g.SymbolId, g.SymbolName, g.TradeSide })
+            List<PosGroup> posgroup = new List<PosGroup>();
+            posgroup = positions.GroupBy(g => new { g.SymbolId, g.SymbolName, g.TradeSide })
                 .Select(s => new PosGroup
                 {
                     SymbolId = s.Key.SymbolId,
                     SymbolName = s.Key.SymbolName,
                     TradeSide = s.Key.TradeSide,
-                    Volume = s.Sum(a => a.Volume/100),
+                    Volume = s.Sum(a => a.Volume / 100),
                     Lot = 0.00,
                     EntryPrice = s.Sum(a => a.EntryPrice * a.Volume) / s.Sum(b => b.Volume),
-                    Swap = s.Sum(a => a.Swap/100),
-                    Profit = s.Sum(a => (a.Profit+a.Swap+a.Commission*2)/100),
+                    Swap = s.Sum(a => a.Swap / 100),
+                    Profit = s.Sum(a => (a.Profit + a.Swap + a.Commission * 2) / 100),
                     Pips = s.Sum(a => (double)a.ProfitInPips * a.Volume) / s.Sum(b => b.Volume),
                     Gain = s.Sum(a => (double)a.Profit) / account.Balance,
                     PipPosition = symbols.SingleOrDefault(a => a.SymbolId == s.Key.SymbolId).PipPosition,
-                    AssetClass=symbols.SingleOrDefault(a=>a.SymbolId==s.Key.SymbolId).AssetClass,
+                    AssetClass = symbols.SingleOrDefault(a => a.SymbolId == s.Key.SymbolId).AssetClass,
                     MinOrderVolume = symbols.SingleOrDefault(a => a.SymbolId == s.Key.SymbolId).MinOrderVolume,
                 }).OrderBy(o => o.Profit).ToList();
-            #endregion
 
-            return Json(new { data, data.Count });
+            var temp = positions.GroupBy(g => new { g.SymbolName })
+                .Select(s => new
+                {
+                    Symbol = s.Key.SymbolName,
+                    Margin = s.Where(b => b.TradeSide == "BUY").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
+                    > s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
+                    ? s.Where(b => b.TradeSide == "BUY").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
+                    : s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage),
+                    UnrNet = s.Sum(a => a.Swap + a.Commission + a.Profit) / 100,
+                }).ToList();
+            var accountinfo = new
+            {
+                Balance = param.Balance,
+                Equity = param.Balance + temp.Sum(s => s.UnrNet),
+                UnrNet = temp.Sum(s => s.UnrNet),
+                MarginUsed = temp.Sum(s => s.Margin),
+                FreeMargin = param.Balance + temp.Sum(s => s.UnrNet) - temp.Sum(s => s.Margin),
+                MarginLevel = (param.Balance + temp.Sum(s => s.UnrNet)) / temp.Sum(s => s.Margin) * 100,
+            };
+
+            return Json(new {positions, posgroup, accountinfo });
         }
 
         public JsonResult GetSymbol()

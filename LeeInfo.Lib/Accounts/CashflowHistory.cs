@@ -17,7 +17,7 @@ namespace Connect_API.Accounts
         /// The cashflow identifier.
         /// </value>
         [JsonProperty("cashflowId")]
-        public long CashflowID { get; set; }
+        public long CashflowId { get; set; }
 
         /// <summary>
         /// Gets or sets the type.
@@ -62,7 +62,7 @@ namespace Connect_API.Accounts
         /// The change timestamp.
         /// </value>
         [JsonProperty("changeTimestamp")]
-        public string ChangeTimestamp { get; set; }
+        public long ChangeTimestamp { get; set; }
 
         /// <summary>
         /// Gets or sets the equity.

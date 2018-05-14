@@ -219,7 +219,7 @@
                     </div>
                 </div>
                 <div class="box-body table-responsive" style="height:560px">
-                    <table id="table-balance" class="table  table-bordered table-striped table-hover" width="100%">
+                    <table id="table-buysell" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
                                 <th></th>
@@ -395,7 +395,6 @@
             var _getMonthBaseUrl = "/Forex/FrxAnalyze/GetMonthBase";
             var _getHistoryUrl = "/Forex/FrxAnalyze/GetHistory";
             var MonthBaseData = [];
-            var AccountInfoData;
             var HistoryData = [];
             var BalanceChart = echarts.init(document.getElementById('BalanceChart'));
             var MonthBaseChart = echarts.init(document.getElementById('MonthBaseChart'));
@@ -424,12 +423,14 @@
                 optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
                 optionAjax.success = function (result) {
                     MonthBaseData = result.monthBaseData;
-                    AccountInfoData = result.accountinfo;
                     Render_AccountInfo(result.accountinfo);
                     Render_MonthBaseChart(MonthBaseData, 2);
                     Render_MonthPieChart(11);
                     Render_BuySellRateChart(11);
-                    table_balance.api().rows.add(result.monthBaseData[11].buySellData).draw();
+                    table_buysell.api().rows.add(result.monthBaseData[11].buySellData).draw();
+
+                    //Render_BalanceChart(result.histories, 2);
+                    //table_his.api().rows.add(result.histories).draw();
                 };
 
                 $.ajax(optionAjax);
@@ -615,8 +616,8 @@
             MonthBaseChart.on('click', function (params) {
                 Render_MonthPieChart(params.dataIndex);
                 Render_BuySellRateChart(params.dataIndex);
-                table_balance.api().clear();
-                table_balance.api().rows.add(MonthBaseData[params.dataIndex].buySellData).draw();
+                table_buysell.api().clear();
+                table_buysell.api().rows.add(MonthBaseData[params.dataIndex].buySellData).draw();
             });
 
             var optionMonthBase = {
@@ -916,8 +917,8 @@
             });
             //#endregion
 
-            //#region 初始化table_balance
-            var table_balance = $('#table-balance').dataTable(
+            //#region 初始化table_buysell
+            var table_buysell = $('#table-buysell').dataTable(
                 {
                     order: [[0, "asc"]],
                     dom:

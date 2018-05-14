@@ -18,7 +18,7 @@ namespace Connect_API.Accounts
         /// The user identifier
         /// </summary>
         [JsonProperty("userId")]
-        public string UserID { get; set; }
+        public string UserId { get; set; }
         /// <summary>
         /// The nickname
         /// </summary>

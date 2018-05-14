@@ -20,7 +20,7 @@ namespace Connect_API.Accounts
         /// <value>
         /// The account identifier.
         /// </value>
-        [JsonProperty("accountID")]
+        [JsonProperty("accountId")]
         public int AccountId { get; set; }
         /// <summary>
         /// Gets or sets the account number.
@@ -69,7 +69,7 @@ namespace Connect_API.Accounts
         /// The trader registration timestamp.
         /// </value>
         [JsonProperty("traderRegistrationTimestamp")]
-        public string TraderRegistrationTimestamp { get; set; }
+        public long TraderRegistrationTimestamp { get; set; }
         /// <summary>
         /// Gets or sets the leverage.
         /// </summary>

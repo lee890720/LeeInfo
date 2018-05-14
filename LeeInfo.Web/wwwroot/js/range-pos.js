@@ -34,10 +34,10 @@ $.fn.dataTable.ext.search.push(
         else if (iStart <= iData && iEnd === "") {
             return true;
         }
-        else if (iEnd >= iData && iStart === "") {
+        else if (iEnd > iData && iStart === "") {
             return true;
         }
-        else if (iStart <= iData && iEnd >= iData) {
+        else if (iStart <= iData && iEnd > iData) {
             return true;
         }
         return false;

@@ -240,13 +240,11 @@
         $(function () {
             //初始化参数
             var _connect =@Html.Raw(Json.Serialize(Model.Item1));
-            var _getPositionUrl = "/Forex/FrxPosition/GetPosition";
-            var _getPosGroupUrl = "/Forex/FrxPosition/GetPosGroup";
             var _getSymbolUrl = "/Forex/FrxPosition/GetSymbol";
+            var _getPosGroupUrl = "/Forex/FrxPosition/GetPosGroup";
             var PosGroupChart = echarts.init(document.getElementById('PosGroupChart'));
             var legendData = [];
             var seriesData = [];
-            var _positions = [];
             var _posGroup = [];
             var _symbols = [];
 
@@ -266,28 +264,25 @@
             };
             //#endregion
 
-            //#region Ajax GetPosition
-            function GetPosition() {
-                optionAjax.url = _getPositionUrl;
-                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
+            //#region Ajax GetSymbol
+            function GetSymbol() {
+                optionAjax.url = _getSymbolUrl;
+                optionAjax.data = JSON.stringify({});
                 optionAjax.success = function (result) {
-                    _positions = result.data;
-                    table_pos.api().clear();
-                    table_pos.api().rows.add(result.data).draw();
-                    CalculateAccount(result.data);
+                    _symbols = result.data;
                 };
 
                 $.ajax(optionAjax);
             };
-            //#endregion
+            //#endregion            
 
             //#region Ajax GetPosGroup
             function GetPosGroup() {
                 optionAjax.url = _getPosGroupUrl;
-                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
+                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken, balance: _connect.balance, preciseLeverage: _connect.preciseLeverage });
                 optionAjax.success = function (result) {
                     //获取数据
-                    _posGroup = result.data;
+                    _posGroup = result.posgroup;
                     for (var i = 0; i < _posGroup.length; i++) {
                         var minlot = 0.00;
                         if (_posGroup[i].assetClass == 1 || _posGroup[i].assetClass == 2)
@@ -317,18 +312,9 @@
                     //初始化表
                     table_posGroup.api().clear();
                     table_posGroup.api().rows.add(_posGroup).draw();
-                };
-
-                $.ajax(optionAjax);
-            };
-            //#endregion
-
-            //#region Ajax GetSymbol
-            function GetSymbol() {
-                optionAjax.url = _getSymbolUrl;
-                optionAjax.data = JSON.stringify({});
-                optionAjax.success = function (result) {
-                    _symbols = result.data;
+                    CalculateAccount(result.accountinfo);
+                    table_pos.api().clear();
+                    table_pos.api().rows.add(result.positions).draw();
                 };
 
                 $.ajax(optionAjax);
@@ -652,25 +638,13 @@
             //#region 计算显示账号的数据
             function CalculateAccount(data) {
                 if (data != null) {
-                    var _equity = 0.00;
-                    var _unrnet = 0.00;
-                    var _freeMargin = 0.00;
-                    var _marginUsed = 0.00;
-                    var _marginLevel = 0.00;
-                    $.each(data, function () {
-                        _unrnet += (this.commission * 2 + this.swap + this.profit) / 100;
-                        _marginUsed += this.volume / 100 * this.marginRate / _connect.preciseLeverage;
-                    });
-                    _equity = _connect.balance + _unrnet;
-                    _freeMargin = _equity - _marginUsed;
-                    _marginLevel = _equity / _marginUsed * 100;
-                    $("#balance").text(_connect.balance.toFixed(2));
-                    $("#equity").text(_equity.toFixed(2));
-                    $("#unrnet").text(_unrnet.toFixed(2));
-                    $("#marginUsed").text(_marginUsed.toFixed(2));
-                    $("#freeMargin").text(_freeMargin.toFixed(2));
-                    $("#marginLevel").text(_marginLevel.toFixed(2) + " %");
-                    if (_unrnet > 0) {
+                    $("#balance").text(data.balance.toFixed(2));
+                    $("#equity").text(data.equity.toFixed(2));
+                    $("#unrnet").text(data.unrNet.toFixed(2));
+                    $("#marginUsed").text(data.marginUsed.toFixed(2));
+                    $("#freeMargin").text(data.freeMargin.toFixed(2));
+                    $("#marginLevel").text(data.marginLevel.toFixed(2) + " %");
+                    if (data.unrNet > 0) {
                         $("#unrnet").css('color', '#4cae05');
                     }
                     else {
@@ -806,7 +780,6 @@
             //#region 页面加载时执行的方法
             GetSymbol();
             GetPosGroup();
-            GetPosition();
             //#endregion
         });
     </script>

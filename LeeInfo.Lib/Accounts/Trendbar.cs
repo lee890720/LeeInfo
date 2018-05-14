@@ -24,7 +24,7 @@ namespace Connect_API.Accounts
         /// The timestamp
         /// </summary>
         [JsonProperty("timestamp")]
-        public string Timestamp { get; set; }
+        public long Timestamp { get; set; }
 
         /// <summary>
         /// The high price

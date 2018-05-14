@@ -7,8 +7,8 @@ namespace Connect_API.Accounts
 {
     public class Position
     {
-        [JsonProperty("positionID")]
-        public long PositionID { get; set; }
+        [JsonProperty("positionId")]
+        public long PositionId { get; set; }
         [JsonProperty("symbolId")]
         public int SymbolId { get; set; }
         [JsonProperty("label")]
@@ -26,9 +26,9 @@ namespace Connect_API.Accounts
         [JsonProperty("lot")]
         public double? Lot { get; set; }
         [JsonProperty("entryTimestamp")]
-        public string EntryTimestamp { get; set; }
+        public long EntryTimestamp { get; set; }
         [JsonProperty("utcLastUpdateTimestamp")]
-        public string UtcLastUpdateTimestamp { get; set; }
+        public long UtcLastUpdateTimestamp { get; set; }
         [JsonProperty("entryPrice")]
         public double EntryPrice { get; set; }
         [JsonProperty("currentPrice")]
