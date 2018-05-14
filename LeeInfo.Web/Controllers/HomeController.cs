@@ -7,15 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 using LeeInfo.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using ChartJSCore.Models;
+using LeeInfo.Data;
+using LeeInfo.Data.AppIdentity;
 
 namespace LeeInfo.Web.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
+        private readonly AppIdentityDbContext _context;
+        public HomeController(AppIdentityDbContext context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
-              return Redirect("/Forex/FrxPosition/");
+            //return Redirect("/Forex/FrxCbotset");
+            return View();
         }
 
         public IActionResult About()

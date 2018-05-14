@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using LeeInfo.Data.Forex;
 using System.Drawing;
 using Microsoft.AspNetCore.Http;
+using LeeInfo.Web.Areas.Forex.Models;
 
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {
@@ -31,11 +32,6 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         private UserManager<AppIdentityUser> _userManager;
         private readonly AppDbContext _context;
 
-        private string _accessToken = "CMU_aak6k2uQctZ2UOTZdxGBqA-eeOOtf8rfOpfpOV4";
-        private string _apiUrl = "https://api.spotware.com/";
-        AppIdentityUser _user = new AppIdentityUser();
-        AppIdentityUser _admin = new AppIdentityUser();
-
         public FrxAnalyzeController(AppIdentityDbContext identitycontext, UserManager<AppIdentityUser> usermgr, AppDbContext context)
         {
             _identitycontext = identitycontext;
@@ -44,52 +40,19 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         }
         public async Task<IActionResult> Index(int? acId)
         {
-            #region Parameters
-             _user= await _userManager.FindByNameAsync(User.Identity.Name);
-             _admin= await _userManager.FindByNameAsync("lee890720");
-            var symbols = _context.FrxSymbol;
-            if (_user.ConnectAPI)
-                _accessToken = _user.AccessToken;
-            else
-                _accessToken = _admin.AccessToken;
-            #endregion
-
-            #region GetAccount
-            var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == _user.Id).ToList();
-            var frxaccounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
-            if (frxaccounts.Count == 0)
+            ConnectAPI connect = ConnectAPI.GetConnectAPI(_identitycontext, _context, User.Identity.Name,acId);
+            if (connect.AccountId == 0)
                 return Redirect("/");
-            var frxaccount = new FrxAccount();
-            if (acId == null)
-            {
-                var tempac1 = new AspNetUserForexAccount();
-                var tempac2 = useraccounts.SingleOrDefault(x => x.Alive == true);
-                if (tempac2 == null)
-                    tempac1 = useraccounts[0];
-                else
-                    tempac1 = tempac2;
-                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == tempac1.AccountNumber);
-            }
-            else
-                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountId == acId);
-            var account = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken).SingleOrDefault(x => x.AccountId == frxaccount.AccountId);
-            if (account != null)
-            {
-                frxaccount.Balance = account.Balance / 100;
-                _context.Update(frxaccount);
-                await _context.SaveChangesAsync();
-            }
-            else
-                return Redirect("/");
-            #endregion
-
+            var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == connect.UserId).ToList();
+            var accounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
+            var symbols = _context.FrxSymbol.ToList();
             #region GetCashflow
-            var cashflow = CashflowHistory.GetCashflowHistory(_apiUrl, frxaccount.AccountId.ToString(), _accessToken);
+            var cashflow = CashflowHistory.GetCashflowHistory(connect.ApiUrl, connect.AccountId.ToString(), connect.AccessToken);
             foreach (var c in cashflow)
             {
                 var fc = new FrxCashflow();
                 fc.Id = Convert.ToInt32(c.CashflowID);
-                fc.AccountId = frxaccount.AccountId;
+                fc.AccountId = connect.AccountId;
                 fc.Balance = c.Balance;
                 fc.BalanceVersion = c.BalanceVersion;
                 fc.ChangeTime = ConvertJson.StampToDateTime(c.ChangeTimestamp);
@@ -110,11 +73,11 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             if (_context.FrxHistory.Count() != 0)
                 fromtime = _context.FrxHistory.OrderByDescending(x => x.ClosingTime).ToList()[0].ClosingTime.AddDays(-1) ;
             else
-                fromtime = frxaccount.TraderRegistrationTime;
+                fromtime = connect.TraderRegistrationTime;
             DateTime utcnow = DateTime.UtcNow;
             string fromtimestamp = ConvertJson.DateTimeToStamp(fromtime);
             string totimestamp = ConvertJson.DateTimeToStamp(utcnow.AddDays(1));
-            var deal = Deal.GetDeals(_apiUrl, frxaccount.AccountId.ToString(), _accessToken, fromtimestamp, totimestamp);
+            var deal = Deal.GetDeals(connect.ApiUrl, connect.AccountId.ToString(), connect.AccessToken, fromtimestamp, totimestamp);
             var deal_history = new List<Deal>();
             foreach (var d in deal)
             {
@@ -125,7 +88,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             {
                 FrxHistory fh = new FrxHistory();
                 fh.ClosingDealId = h.DealID;
-                fh.AccountId = frxaccount.AccountId;
+                fh.AccountId = connect.AccountId;
                 fh.Balance = h.PositionCloseDetails.Balance / 100;
                 fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
                 fh.BaseToUSDConversionRate = h.BaseToUSDConversionRate;
@@ -177,19 +140,19 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     await _context.SaveChangesAsync();
                 }
             }
-            var frxhistories = _context.FrxHistory.Where(x => x.AccountId == frxaccount.AccountId);
+            var frxhistories = _context.FrxHistory.Where(x => x.AccountId == connect.AccountId);
             #endregion
 
-            return View(Tuple.Create<FrxAccount, List<FrxAccount>>(frxaccount, frxaccounts.ToList()));
+            return View(Tuple.Create<ConnectAPI, List<FrxAccount>>(connect, accounts));
         }
 
         public JsonResult GetMonthBase([FromBody]Params param)
         {
             //Get History,Account
-            var account = _context.FrxAccount.SingleOrDefault(x => x.AccountId == param.AcId);
-            var positions = Position.GetPositions(_apiUrl, param.AcId.ToString(), _accessToken);
-            var histories = _context.FrxHistory.Where(x => x.AccountId == param.AcId).OrderByDescending(x => x.ClosingTime).ToList();
-            var cashflow = _context.FrxCashflow.Where(x => x.AccountId == param.AcId);
+            var account = _context.FrxAccount.SingleOrDefault(x => x.AccountId == param.AccountId);
+            var positions = Position.GetPositions(param.ApiUrl, param.AccountId.ToString(), param.AccessToken);
+            var histories = _context.FrxHistory.Where(x => x.AccountId == param.AccountId).OrderByDescending(x => x.ClosingTime).ToList();
+            var cashflow = _context.FrxCashflow.Where(x => x.AccountId == param.AccountId);
             #region Get MonthBaseData
             //Get XData
             var lastHistory = histories[0];
@@ -338,71 +301,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
 
         public JsonResult GetHistory([FromBody]Params param)
         {
-            var data = _context.FrxHistory.Where(x => x.AccountId == param.AcId).ToList();
+            var data = _context.FrxHistory.Where(x => x.AccountId == param.AccountId).ToList();
             return Json(new { data, data.Count });
         }
-    }
-
-    public class XData
-    {
-        public XData(string xn, DateTime xt)
-        {
-            XName = xn;
-            XTime = xt;
-        }
-        public string XName { get; set; }
-        public DateTime XTime { get; set; }
-    }
-
-    public class MonthBaseData
-    {
-        public XData XData { get; set; }
-        public List<BuySellData> BuySellData { get; set; }
-        public double Net { get; set; }
-        public double Gain { get; set; }
-        public double Swap { get; set; }
-        public double Pips { get; set; }
-        public double Lots { get; set; }
-    }
-
-    public class BuySellData
-    {
-        public string SymbolCode { get; set; }
-        public int Count { get; set; }
-        public double Lots { get; set; }
-        public double Pips { get; set; }
-        public double Profit { get; set; }
-        public int BuyCount { get; set; }
-        public double BuyLots { get; set; }
-        public double BuyPips { get; set; }
-        public double BuyProfit { get; set; }
-        public double BuyRate { get; set; }
-        public int SellCount { get; set; }
-        public double SellLots { get; set; }
-        public double SellPips { get; set; }
-        public double SellProfit { get; set; }
-        public double SellRate { get; set; }
-        public int WinCount { get; set; }
-        public int LossCount { get; set; }
-        public double WinRate { get; set; }
-        public double LossRate { get; set; }
-    }
-
-    public class AccountInfo
-    {
-        public double Gain { get; set; }
-        public double AbsGain { get; set; }
-        public double MaxDraw { get; set; }
-        public DateTime MaxDrawTime { get; set; }
-        public double Deposit { get; set; }
-        public double Withdraw { get; set; }
-        public double Balance { get; set; }
-        public double Equity { get; set; }
-        public double MaxBalance { get; set; }
-        public DateTime MaxBalanceTime { get; set; }
-        public double TotalProfit { get; set; }
-        public double TotalSwap { get; set; }
-        public DateTime LastTradeTime { get; set; }
-        public DateTime RigistrationTime { get; set; }
     }
 }

@@ -13,9 +13,10 @@ using System;
 namespace LeeInfo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180514055320_amend-frxaccount")]
+    partial class amendfrxaccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,12 +256,6 @@ namespace LeeInfo.Data.Migrations
 
                     b.Property<int>("AccountNumber");
 
-                    b.Property<string>("ApiHost");
-
-                    b.Property<int>("ApiPort");
-
-                    b.Property<string>("ApiUrl");
-
                     b.Property<double>("Balance");
 
                     b.Property<string>("BrokerName");
@@ -268,8 +263,6 @@ namespace LeeInfo.Data.Migrations
                     b.Property<string>("ClientId");
 
                     b.Property<string>("ClientSecret");
-
-                    b.Property<string>("ConnectUrl");
 
                     b.Property<string>("Currency");
 

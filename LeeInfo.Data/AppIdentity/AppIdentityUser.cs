@@ -25,6 +25,10 @@ namespace LeeInfo.Data.AppIdentity
         public string ClientSecret { get; set; }
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
+        public string ConnectUrl { get; set; }
+        public string ApiUrl { get; set; }
+        public string ApiHost { get; set; }
+        public int ApiPort { get; set; }
 
         public ICollection<AspNetUserForexAccount> AspNetUserForexAccount { get; set; }
     }

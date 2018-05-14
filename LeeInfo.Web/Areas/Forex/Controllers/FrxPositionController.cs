@@ -2,6 +2,7 @@
 using LeeInfo.Data;
 using LeeInfo.Data.AppIdentity;
 using LeeInfo.Data.Forex;
+using LeeInfo.Web.Areas.Forex.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LeeInfo.Web.Areas.Forex.Models;
 
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {
@@ -22,65 +24,26 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         private UserManager<AppIdentityUser> _userManager;
         private readonly AppDbContext _context;
 
-        private string _accessToken = "CMU_aak6k2uQctZ2UOTZdxGBqA-eeOOtf8rfOpfpOV4";
-        private string _apiUrl = "https://api.spotware.com/";
-        AppIdentityUser _user = new AppIdentityUser();
-        AppIdentityUser _admin = new AppIdentityUser();
-
         public FrxPositionController(AppIdentityDbContext identitycontext, UserManager<AppIdentityUser> usermgr, AppDbContext context)
         {
             _identitycontext = identitycontext;
             _userManager = usermgr;
             _context = context;
         }
-        public async Task<IActionResult> Index(int? acId)
+        public IActionResult Index(int? acId)
         {
-            #region Parameters
-             _user= await _userManager.FindByNameAsync(User.Identity.Name);
-             _admin= await _userManager.FindByNameAsync("lee890720");
-            var symbols = _context.FrxSymbol;
-            if (_user.ConnectAPI)
-                _accessToken = _user.AccessToken;
-            else
-                _accessToken = _admin.AccessToken;
-            #endregion
-
-            #region GetAccount
-            var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == _user.Id).ToList();
-            var frxaccounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
-            if (frxaccounts.Count == 0)
+            ConnectAPI connect = ConnectAPI.GetConnectAPI(_identitycontext, _context, User.Identity.Name,acId);
+            if (connect.AccountId == 0)
                 return Redirect("/");
-            var frxaccount = new FrxAccount();
-            if (acId == null)
-            {
-                var tempac1 = new AspNetUserForexAccount();
-                var tempac2 = useraccounts.SingleOrDefault(x => x.Alive == true);
-                if (tempac2 == null)
-                    tempac1 = useraccounts[0];
-                else
-                    tempac1 = tempac2;
-                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountNumber == tempac1.AccountNumber);
-            }
-            else
-                frxaccount = frxaccounts.SingleOrDefault(x => x.AccountId == acId);
-            var account = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken).SingleOrDefault(x => x.AccountId == frxaccount.AccountId);
-            if (account != null)
-            {
-                frxaccount.Balance = account.Balance / 100;
-                _context.Update(frxaccount);
-                await _context.SaveChangesAsync();
-            }
-            else
-                return Redirect("/");
-            #endregion                      
-
-            return View(Tuple.Create<FrxAccount, List<FrxAccount>>(frxaccount, frxaccounts));
+            var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == connect.UserId).ToList();
+            var accounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
+            return View(Tuple.Create<ConnectAPI, List<FrxAccount>>(connect, accounts));
         }
 
         public JsonResult GetPosition([FromBody]Params param)
         {
-            var client = new RestClient(_apiUrl);
-            var request = new RestRequest(@"connect/tradingaccounts/" + param.AcId.ToString() + "/positions?oauth_token=" + _accessToken);
+            var client = new RestClient(param.ApiUrl);
+            var request = new RestRequest(@"connect/tradingaccounts/" + param.AccountId.ToString() + "/positions?oauth_token=" + param.AccessToken);
             var responsePosition = client.Execute<Position>(request);
             return Json(JObject.Parse(responsePosition.Content));
         }
@@ -88,15 +51,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public JsonResult GetPosGroup([FromBody]Params param)
         {
             #region Parameters
-            _user =  _identitycontext.Users.SingleOrDefault(x => x.UserName == User.Identity.Name);
-            _admin = _identitycontext.Users.SingleOrDefault(x => x.UserName == "lee890720");
-            if (_user.ConnectAPI)
-                _accessToken = _user.AccessToken;
-            else
-                _accessToken = _admin.AccessToken;
-
-            var positions = Position.GetPositions(_apiUrl, param.AcId.ToString(), _accessToken);
-            var account = _context.FrxAccount.SingleOrDefault(x => x.AccountId == param.AcId);
+            var positions = Position.GetPositions(param.ApiUrl, param.AccountId.ToString(), param.AccessToken);
+            var account = _context.FrxAccount.SingleOrDefault(x => x.AccountId == param.AccountId);
             string[] bases = { "XAU", "XAG", "XBR", "XTI" };
             var symbols = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
             #endregion

@@ -30,6 +30,14 @@ namespace LeeInfo.Data.Forex
         public double MarginLevel { get; set; }
         public double PreciseLeverage { get; set; }
         public double UnrealizedNetProfit { get; set; }
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
+        public string ConnectUrl { get; set; }
+        public string ApiUrl { get; set; }
+        public string ApiHost { get; set; }
+        public int ApiPort { get; set; }
         public ICollection<FrxPosition> FrxPosition { get; set; }
         public ICollection<FrxHistory> FrxHistory { get; set; }
         public ICollection<FrxCashflow> FrxCashflow { get; set; }

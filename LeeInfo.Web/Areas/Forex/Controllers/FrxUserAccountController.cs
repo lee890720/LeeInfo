@@ -35,7 +35,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public async Task<IActionResult> Index()
         {
             AppIdentityUser _user = await _userManager.FindByNameAsync(User.Identity.Name);
-            if (User.Identity.Name == "lee890720"||_user.ConnectAPI)
+            if (User.Identity.Name == "lee890720" || _user.ConnectAPI)
             {
                 string _accessToken = "";
                 string _apiUrl = "https://api.spotware.com/";
@@ -44,8 +44,8 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 var accounts = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken);
                 foreach (var a in accounts)
                 {
-                    var result = _context.FrxAccount.SingleOrDefault(x=>x.AccountId== a.AccountId);
-                    if(result==null)
+                    var result = _context.FrxAccount.SingleOrDefault(x => x.AccountId == a.AccountId);
+                    if (result == null)
                     {
                         var temp = new FrxAccount();
                         temp.AccountId = a.AccountId;
@@ -56,14 +56,41 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                         temp.IsLive = a.Live;
                         temp.Balance = a.Balance;
                         temp.PreciseLeverage = a.Leverage;
+                        temp.ClientId = _user.ClientId;
+                        temp.ClientSecret = _user.ClientSecret;
+                        temp.AccessToken = _user.AccessToken;
+                        temp.RefreshToken = _user.RefreshToken;
+                        temp.ConnectUrl = _user.ConnectUrl;
+                        temp.ApiUrl = _user.ApiUrl;
+                        temp.ApiHost = _user.ApiHost;
+                        temp.ApiPort = _user.ApiPort;
                         _context.Add(temp);
                         await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(_user.ClientId) && !string.IsNullOrEmpty(_user.ClientSecret))
+                            if (!string.IsNullOrEmpty(_user.AccessToken) && !string.IsNullOrEmpty(_user.RefreshToken))
+                                if (!string.IsNullOrEmpty(_user.ConnectUrl) && !string.IsNullOrEmpty(_user.ApiUrl))
+                                    if (!string.IsNullOrEmpty(_user.ApiHost) && _user.ApiPort!=0)
+                                    {
+                                        result.ClientId = _user.ClientId;
+                                        result.ClientSecret = _user.ClientSecret;
+                                        result.AccessToken = _user.AccessToken;
+                                        result.RefreshToken = _user.RefreshToken;
+                                        result.ConnectUrl = _user.ConnectUrl;
+                                        result.ApiUrl = _user.ApiUrl;
+                                        result.ApiHost = _user.ApiHost;
+                                        result.ApiPort = _user.ApiPort;
+                                        _context.Update(result);
+                                        await _context.SaveChangesAsync();
+                                    }
                     }
                 }
                 #endregion
             }
 
-            return View(await _identitycontext.AspNetUserForexAccount.Where(x => x.AppIdentityUserId==_user.Id).ToListAsync());
+            return View(await _identitycontext.AspNetUserForexAccount.Where(x => x.AppIdentityUserId == _user.Id).ToListAsync());
         }
 
         // GET: Forex/FrxCbotset/Create
@@ -85,10 +112,10 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 frxUserAccount.AppIdentityUserId = _user.Id;
                 _identitycontext.Add(frxUserAccount);
                 await _identitycontext.SaveChangesAsync();
-                if(frxUserAccount.Alive==true)
+                if (frxUserAccount.Alive == true)
                 {
                     var temp = _identitycontext.AspNetUserForexAccount.Where(x => x.AppIdentityUserId == _user.Id && x.AccountNumber != frxUserAccount.AccountNumber).ToList();
-                    foreach(var t in temp)
+                    foreach (var t in temp)
                     {
                         t.Alive = false;
                     }

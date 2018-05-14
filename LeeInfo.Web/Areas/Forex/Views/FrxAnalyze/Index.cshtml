@@ -1,4 +1,4 @@
-﻿@model Tuple<FrxAccount, List<FrxAccount>>
+﻿@model Tuple<ConnectAPI, List<FrxAccount>>
 @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
@@ -391,7 +391,7 @@
     <script>
         $(document).ready(function () {
             //初始化数据
-            var _accountId =@Model.Item1.AccountId;
+            var _connect =@Html.Raw(Json.Serialize(Model.Item1));
             var _getMonthBaseUrl = "/Forex/FrxAnalyze/GetMonthBase";
             var _getHistoryUrl = "/Forex/FrxAnalyze/GetHistory";
             var MonthBaseData = [];
@@ -421,7 +421,7 @@
             //#region Ajax GetMonthBase
             function GetMonthBase() {
                 optionAjax.url = _getMonthBaseUrl;
-                optionAjax.data = JSON.stringify({ acId: _accountId });
+                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
                 optionAjax.success = function (result) {
                     MonthBaseData = result.monthBaseData;
                     AccountInfoData = result.accountinfo;
@@ -439,7 +439,7 @@
             //#region Ajax GetHistory
             function GetHistory() {
                 optionAjax.url = _getHistoryUrl;
-                optionAjax.data = JSON.stringify({ acId: _accountId });
+                optionAjax.data = JSON.stringify({ accountId: _connect.accountId });
                 optionAjax.success = function (result) {
                     HistoryData = result.data;
                     Render_BalanceChart(result.data, 2);

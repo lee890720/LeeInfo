@@ -1,4 +1,4 @@
-﻿@model Tuple<FrxAccount, List<FrxAccount>>
+﻿@model Tuple<ConnectAPI, List<FrxAccount>>
 @{
     var actionName = ViewContext.RouteData.Values["action"].ToString();
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
@@ -347,13 +347,11 @@
         </div>
     </div>
 </section>
-@section Scripts{
+@section Scripts{   
     <script>
-        $(function () {
+    $(function () {
             //初始化参数
-            var _accountId =@Model.Item1.AccountId;
-            var _balance =@Model.Item1.Balance;
-            var _level =@Model.Item1.PreciseLeverage;
+            var _connect =@Html.Raw(Json.Serialize(Model.Item1));
             var _getPositionUrl = "/Forex/Proto/GetPosition";
             var _getSymbolUrl = "/Forex/Proto/GetSymbol";
             var _account = [];
@@ -379,7 +377,7 @@
             //#region Ajax GetPosition
             function GetPosition() {
                 optionAjax.url = _getPositionUrl;
-                optionAjax.data = JSON.stringify({ acId: _accountId });
+                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken});
                 optionAjax.success = function (result) {
                     _positions = result.data;
                     table_pos.api().clear();
@@ -394,7 +392,7 @@
             //#region Ajax RefrashPosition
             function RefrashPosition() {
                 optionAjax.url = _getPositionUrl;
-                optionAjax.data = JSON.stringify({ acId: _accountId });
+                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
                 optionAjax.success = function (result) {
                     _positions = result.data;
                     CalculateAccount(result.data);
@@ -430,12 +428,12 @@
                     var _marginLevel = 0.00;
                     $.each(data, function () {
                         _unrnet += (this.commission * 2 + this.swap + this.profit) / 100;
-                        _marginUsed += this.volume / 100 * this.marginRate / _level;
+                        _marginUsed += this.volume / 100 * this.marginRate / _connect.preciseLeverage;
                     });
-                    _equity = _balance + _unrnet;
+                    _equity = _connect.balance + _unrnet;
                     _freeMargin = _equity - _marginUsed;
                     _marginLevel = _equity / _marginUsed * 100;
-                    $("#balance").text(_balance.toFixed(2));
+                    $("#balance").text(_connect.balance.toFixed(2));
                     $("#equity").text( _equity.toFixed(2));
                     $("#unrnet").text(_unrnet.toFixed(2));
                     $("#marginUsed").text( _marginUsed.toFixed(2));
@@ -583,7 +581,7 @@
                         {
                             targets: [15],
                             render: function (data, type, row, meta) {
-                                return (row.volume / 100 * row.marginRate / _level).toFixed(2);
+                                return (row.volume / 100 * row.marginRate / _connect.preciseLeverage).toFixed(2);
                             }
                         },
                         {
