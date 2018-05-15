@@ -6,13 +6,9 @@ using LeeInfo.Web.Areas.Forex.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using LeeInfo.Web.Areas.Forex.Models;
 
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {

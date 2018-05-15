@@ -26,6 +26,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         private readonly AppIdentityDbContext _identitycontext;
         private UserManager<AppIdentityUser> _userManager;
         private readonly AppDbContext _context;
+
         private TcpClient _tcpClient = new TcpClient();
         private SslStream _apiSocket;
 
@@ -40,6 +41,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             ConnectAPI connect = ConnectAPI.GetConnectAPI(_identitycontext, _context, User.Identity.Name, acId);
             if (connect.AccountId == 0)
                 return Redirect("/");
+
             var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == connect.UserId).ToList();
             var accounts = _context.FrxAccount.Where(x => useraccounts.SingleOrDefault(s => s.AccountNumber == x.AccountNumber && s.Password == x.Password) != null).ToList();
             return View(Tuple.Create<ConnectAPI, List<FrxAccount>>(connect, accounts));
@@ -86,36 +88,57 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         }
 
         //#region Proto
-        //private void SendMarketOrderRequest(int acId, string accesstoken, long accountId, string accessToken, string symbolName, ProtoTradeSide tradeSide, long volume)
-        //{
-        //    var auth = SendAuthorizationRequest();
-        //    var accountID = acId;
-        //    var token = accesstoken;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateMarketOrderRequest(accountID, token, symbolName, tradeSide, volume);
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //    //lblResponse.Text += "<br/>";
-        //    Thread.Sleep(1000);
-        //    _message = Listen(_apiSocket);
-        //    protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text += OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
+        public JsonResult SendMarketOrder([FromBody]Params param)
+        {
+            _tcpClient = new TcpClient(param.ApiHost, param.ApiPort); ;
+            _apiSocket = new SslStream(_tcpClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+            _apiSocket.AuthenticateAsClient(param.ApiHost);
+            SendAuthorizationRequest(param);
+            List<string> data = new List<string>();
 
-        //private void SendMarketRangeOrderRequest()
-        //{
-        //    SendAuthorizationRequest();
-        //    var accountID = "1960408";
-        //    var token = _accessToken;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateMarketRangeOrderRequest(Convert.ToInt32(accountID), token, "EURUSD", ProtoTradeSide.BUY, 100000, 1.18, 10);
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
+            ProtoTradeSide tradeType=new ProtoTradeSide();
+            if (param.TradeSide.ToUpper() == "BUY")
+                tradeType = ProtoTradeSide.BUY;
+            if (param.TradeSide.ToUpper() == "SELL")
+                tradeType = ProtoTradeSide.SELL;
+            var msgFactory = new OpenApiMessagesFactory();
+            var msg = msgFactory.CreateMarketOrderRequest(param.AccountId, param.AccessToken, param.SymbolName, tradeType, param.Volume*100,
+                param.StopLossInPips,param.TakeProfitInPips,param.Comment);
+            Transmit(msg);
+            byte[]  _message = Listen(_apiSocket);
+            var protoMessage = msgFactory.GetMessage(_message);
+            data.Add(OpenApiMessagesPresentation.ToString(protoMessage));
+
+            Thread.Sleep(1000);
+            _message = Listen(_apiSocket);
+            protoMessage = msgFactory.GetMessage(_message);
+            data.Add(OpenApiMessagesPresentation.ToString(protoMessage));
+            return Json(new { data });
+        }
+
+        public JsonResult SendClosePosition([FromBody]Params param)
+        {
+            _tcpClient = new TcpClient(param.ApiHost, param.ApiPort); ;
+            _apiSocket = new SslStream(_tcpClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+            _apiSocket.AuthenticateAsClient(param.ApiHost);
+            SendAuthorizationRequest(param);
+            List<string> data = new List<string>();
+
+            var msgFactory = new OpenApiMessagesFactory();
+
+            if (!string.IsNullOrEmpty(param.SelectedType))
+            {
+                foreach (var p in param.SelectedPositions)
+                {
+                    var msg = msgFactory.CreateClosePositionRequest(param.AccountId, param.AccessToken, p.PositionId, p.Volume);
+                    Transmit(msg);
+                }
+            }
+            byte[] _message = Listen(_apiSocket);
+            var protoMessage = msgFactory.GetMessage(_message);
+            data.Add(OpenApiMessagesPresentation.ToString(protoMessage));
+            return Json(new { data });
+        }
 
         //private void SendLimitOrderRequest()
         //{
@@ -150,19 +173,6 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         //    var token = _accessToken;
         //    var msgFactory = new OpenApiMessagesFactory();
         //    var msg = msgFactory.CreateStopOrderRequest(Convert.ToInt32(accountID), token, "EURUSD", ProtoTradeSide.BUY, 400000, 1.3);
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
-
-        //private void SendClosePositionRequest()
-        //{
-        //    SendAuthorizationRequest();
-        //    var accountID = "1960408";
-        //    var token = _accessToken;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateClosePositionRequest(Convert.ToInt32(accountID), token, 43901148, 100000);
         //    Transmit(msg);
         //    byte[] _message = Listen(_apiSocket);
         //    var protoMessage = msgFactory.GetMessage(_message);
@@ -226,27 +236,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         //    return Json(new { data, data.Count });
         //}
 
-        //private void SendPingRequest()
-        //{
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreatePingRequest(DateTime.Now.Ticks);
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
 
-        //private void SubscribeForTradingEvents()
-        //{
-        //    SendAuthorizationRequest();
-        //    var token = _accessToken;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateSubscribeForTradingEventsRequest(89214, token);
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
 
         //private void UnsubscribeForTradingEvents()
         //{
@@ -332,73 +322,59 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         //    //chrTrendChartM1.ChartAreas[0].AxisY.Minimum = chrTrendChartM1.Series[0].Points.Min(x => x.YValues.Min());
         //    //chrTrendChartM1.ChartAreas[0].AxisY.Maximum = chrTrendChartM1.Series[0].Points.Max(x => x.YValues.Max());
         //}
+        private void SendAuthorizationRequest(Params param)
+        {
+            var msgFactory = new OpenApiMessagesFactory();
+            var msg = msgFactory.CreateAuthorizationRequest(param.ClientId, param.ClientSecret);
+            Transmit(msg);
+            byte[] _message = Listen(_apiSocket);
+            var protoMessage = msgFactory.GetMessage(_message);
+        }
 
-        //private string SendAuthorizationRequest()
-        //{
-        //    AppIdentityUser _user = _identitycontext.Users.SingleOrDefault(x => x.UserName == "lee890720");
-        //    _clientId = _user.ClientId;
-        //    _clientSecret = _user.ClientSecret;
-        //    _accessToken = _user.AccessToken;
-        //    _refreshToken = _user.RefreshToken;
-        //    var profile = Profile.GetProfile(_apiUrl, _accessToken);
-        //    var accounts = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken);
-        //    _tcpClient = new TcpClient(_apiHost, _apiPort);
-        //    _apiSocket = new SslStream(_tcpClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
-        //    _apiSocket.AuthenticateAsClient(_apiHost);
+        private byte[] Listen(SslStream apiSocket)
+        {
+            byte[] _length = new byte[sizeof(int)];
+            bool cont = true;
+            byte[] _message = new byte[0];
+            while (cont)
+            {
+                int readBytes = 0;
+                do
+                {
+                    readBytes += _apiSocket.Read(_length, readBytes, _length.Length - readBytes);
+                } while (readBytes < _length.Length);
 
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateAuthorizationRequest(_clientId, _clientSecret);
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    return OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
+                int msgLength = BitConverter.ToInt32(_length.Reverse().ToArray(), 0);
 
-        //private byte[] Listen(SslStream apiSocket)
-        //{
-        //    byte[] _length = new byte[sizeof(int)];
-        //    bool cont = true;
-        //    byte[] _message = new byte[0];
-        //    while (cont)
-        //    {
-        //        int readBytes = 0;
-        //        do
-        //        {
-        //            readBytes += _apiSocket.Read(_length, readBytes, _length.Length - readBytes);
-        //        } while (readBytes < _length.Length);
+                if (msgLength <= 0)
+                    continue;
+                cont = false;
+                _message = new byte[msgLength];
+                readBytes = 0;
+                do
+                {
+                    readBytes += _apiSocket.Read(_message, readBytes, _message.Length - readBytes);
+                } while (readBytes < msgLength);
+            }
 
-        //        int msgLength = BitConverter.ToInt32(_length.Reverse().ToArray(), 0);
+            return _message;
+        }
 
-        //        if (msgLength <= 0)
-        //            continue;
-        //        cont = false;
-        //        _message = new byte[msgLength];
-        //        readBytes = 0;
-        //        do
-        //        {
-        //            readBytes += _apiSocket.Read(_message, readBytes, _message.Length - readBytes);
-        //        } while (readBytes < msgLength);
-        //    }
+        private void Transmit(ProtoMessage msg)
+        {
 
-        //    return _message;
-        //}
+            var msgByteArray = msg.ToByteArray();
+            byte[] length = BitConverter.GetBytes(msgByteArray.Length).Reverse().ToArray();
+            _apiSocket.Write(length);
+            _apiSocket.Write(msgByteArray);
+        }
 
-        //private void Transmit(ProtoMessage msg)
-        //{
-
-        //    var msgByteArray = msg.ToByteArray();
-        //    byte[] length = BitConverter.GetBytes(msgByteArray.Length).Reverse().ToArray();
-        //    _apiSocket.Write(length);
-        //    _apiSocket.Write(msgByteArray);
-        //}
-
-        //private bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        //{
-        //    if (sslPolicyErrors == SslPolicyErrors.None)
-        //        return true;
-        //    Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
-        //    return false;
-        //}
-        //#endregion
+        private bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+            Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
+            return false;
+        }
     }
 }

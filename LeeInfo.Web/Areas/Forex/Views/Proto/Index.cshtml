@@ -90,10 +90,10 @@
                             <span class="input-group-addon">止赢</span>
                             <div class="row">
                                 <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="new-takeprofitprice" type="text" class="form-control" placeholder="止赢价 可选">
+                                    <input id="new-takeprofitpips" type="text" class="form-control" placeholder="止赢点数 可选">
                                 </div>
                                 <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="new-takeprofitpips" type="text" class="form-control" placeholder="止赢点数 可选">
+                                    <input id="new-takeprofit" type="text" class="form-control" placeholder="止赢价 可选">
                                 </div>
                             </div>
                         </div>
@@ -102,17 +102,12 @@
                             <span class="input-group-addon">止损</span>
                             <div class="row">
                                 <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="new-stoplossprice" type="text" class="form-control" placeholder="止损价 可选">
-                                </div>
-                                <div class="col-xs-6" style="padding-left:0px;">
                                     <input id="new-stoplosspips" type="text" class="form-control" placeholder="止损点数 可选">
                                 </div>
+                                <div class="col-xs-6" style="padding-left:0px;">
+                                    <input id="new-stoploss" type="text" class="form-control" placeholder="止损价 可选">
+                                </div>
                             </div>
-                        </div>
-                        <br>
-                        <div class="input-group">
-                            <span class="input-group-addon">标签</span>
-                            <input id="new-label" type="text" class="form-control" placeholder="可选">
                         </div>
                         <br>
                         <div class="input-group">
@@ -120,7 +115,12 @@
                             <input id="new-comment" type="text" class="form-control" placeholder="可选">
                         </div>
                         <br>
-                        <button class="btn btn-primary btn-block margin-bottom">提交</button>
+                        <div class="input-group">
+                            <span class="input-group-addon">标签</span>
+                            <input id="new-label" type="text" class="form-control" placeholder="不可用" disabled="disabled">
+                        </div>
+                        <br>
+                        <button id="btn-new" class="btn btn-primary btn-block margin-bottom">提交</button>
                     </div>
                 </div>
             </div>
@@ -188,28 +188,28 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-xs-6">
-                                <button class="btn btn-primary btn-block margin-bottom">全部平仓</button>
+                                <button id="close-all" class="btn btn-primary btn-block margin-bottom">全部平仓</button>
                             </div>
                             <div class="col-xs-6">
-                                <button class="btn btn-primary btn-block margin-bottom">平选中单</button>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <button class="btn btn-primary btn-block margin-bottom">平买多单</button>
-                            </div>
-                            <div class="col-xs-6">
-                                <button class="btn btn-primary btn-block margin-bottom">平卖空单</button>
+                                <button id="close-selected" class="btn btn-primary btn-block margin-bottom">平选中单</button>
                             </div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-xs-6">
-                                <button class="btn btn-primary btn-block margin-bottom">平赢利单</button>
+                                <button id="close-buy" class="btn btn-primary btn-block margin-bottom">平买多单</button>
                             </div>
                             <div class="col-xs-6">
-                                <button class="btn btn-primary btn-block margin-bottom">平亏损单</button>
+                                <button id="close-sell" class="btn btn-primary btn-block margin-bottom">平卖空单</button>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <button id="close-win"  class="btn btn-primary btn-block margin-bottom">平赢利单</button>
+                            </div>
+                            <div class="col-xs-6">
+                                <button id="close-loss"  class="btn btn-primary btn-block margin-bottom">平亏损单</button>
                             </div>
                         </div>
                         <br>
@@ -240,459 +240,694 @@
                 </div>
                 <div class="box-body" style="padding:0px 5px;">
                     <div class="mailbox-controls">
-                        <button title="全选" type="button" class="btn btn-default btn-sm checkbox-toggle">
+                        @*<button title="全选" type="button" class="btn btn-default btn-sm checkbox-toggle">
                             <i class="fa fa-square-o"></i>
-                        </button>
-                        <button title="关闭选中的订单" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-                        <div class="pull-right">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="切换账号">
-                                    <i class="fa fa-wrench"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-left" role="menu">
-                                    @foreach (var f in Model.Item2)
-                                    {
-                                        <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
-                                    }
-                                </ul>
-                            </div>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
-                                    <i class="fa fa-th-list"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-left" role="menu">
-                                    <li><input type="checkbox" class="toggle-vis" data-column="1" />&emsp;<small>品种ID</small></li>
-                                    <li><input type="checkbox" class="toggle-vis" data-column="2" />&emsp;<small>标签</small></li>
-                                    <li><input type="checkbox" class="toggle-vis" data-column="3" />&emsp;<small>注释</small></li>
-                                    <li><input type="checkbox" class="toggle-vis" data-column="4" />&emsp;<small>平台</small></li>
-                                    <li><input type="checkbox" class="toggle-vis" data-column="7" />&emsp;<small>数量</small></li>
-                                    <li><input type="checkbox" class="toggle-vis" data-column="10" />&emsp;<small>修改时间</small></li>
-                                    <li><input type="checkbox" class="toggle-vis" data-column="15" />&emsp;<small>保证金</small></li>
-                                    <li><input type="checkbox" class="toggle-vis" data-column="16" />&emsp;<small>佣金</small></li>
-                                </ul>
-                            </div>
-                            <button id="refrash" title="刷新持仓明细" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+                        </button>*@
+                    <button title="关闭选中的订单" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="切换账号">
+                                <i class="fa fa-wrench"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                                @foreach (var f in Model.Item2)
+                                {
+                                    <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
+                                }
+                            </ul>
                         </div>
-                    </div>
-                    <div class="table-responsive  mailbox-messages">
-                        <table id="table-pos" class="table table-hover" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>ID(标签/注释)</th>
-                                    <th class="col-visible">品种ID</th>
-                                    <th class="col-visible">标签</th>
-                                    <th class="col-visible">注释</th>
-                                    <th class="col-visible">平台</th>
-                                    <th>品种</th>
-                                    <th>多空</th>
-                                    <th class="col-visible">数量</th>
-                                    <th>手数</th>
-                                    <th>开仓时间</th>
-                                    <th class="col-visible">修改时间</th>
-                                    <th>开仓价</th>
-                                    <th>当前价</th>
-                                    <th>止赢</th>
-                                    <th>止损</th>
-                                    <th class="col-visible">保证金</th>
-                                    <th class="col-visible">佣金</th>
-                                    <th class="col-color">利息</th>
-                                    <th class="col-color">点数</th>
-                                    <th class="col-color">利润</th>
-                                </tr>
-                            </thead>
-                        </table>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
+                                <i class="fa fa-th-list"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                                <li><input type="checkbox" class="toggle-vis" data-column="1" />&emsp;<small>品种ID</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="2" />&emsp;<small>标签</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="3" />&emsp;<small>注释</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="4" />&emsp;<small>平台</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="7" />&emsp;<small>数量</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="10" />&emsp;<small>修改时间</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="15" />&emsp;<small>保证金</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="16" />&emsp;<small>佣金</small></li>
+                            </ul>
+                        </div>
+                        <button id="refrash" title="刷新持仓明细" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
                     </div>
                 </div>
-                <div class="box-footer no-padding">
-                    <div class="mailbox-controls">
-                        <div class="col-sm-2 col-xs-4">
-                            <div class="description-block border-right">
-                                <h5 id="balance" class="description-header"></h5>
-                                <span class="description-text">账户余额</span>
-                            </div>
+                <div class="table-responsive  mailbox-messages">
+                    <table id="table-pos" class="table table-hover" width="100%">
+                        <thead>
+                            <tr>
+                                <th>ID(标签/注释)</th>
+                                <th class="col-visible">品种ID</th>
+                                <th class="col-visible">标签</th>
+                                <th class="col-visible">注释</th>
+                                <th class="col-visible">平台</th>
+                                <th>品种</th>
+                                <th>多空</th>
+                                <th class="col-visible">数量</th>
+                                <th>手数</th>
+                                <th>开仓时间</th>
+                                <th class="col-visible">修改时间</th>
+                                <th>开仓价</th>
+                                <th>当前价</th>
+                                <th>止赢</th>
+                                <th>止损</th>
+                                <th class="col-visible">保证金</th>
+                                <th class="col-visible">佣金</th>
+                                <th class="col-color">利息</th>
+                                <th class="col-color">点数</th>
+                                <th class="col-color">利润</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="box-footer no-padding">
+                <div class="mailbox-controls">
+                    <div class="col-sm-2 col-xs-4">
+                        <div class="description-block border-right">
+                            <h5 id="balance" class="description-header"></h5>
+                            <span class="description-text">账户余额</span>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
-                            <div class="description-block border-right">
-                                <h5 id="equity" class="description-header"></h5>
-                                <span class="description-text">账户净值</span>
-                            </div>
+                    </div>
+                    <div class="col-sm-2 col-xs-4">
+                        <div class="description-block border-right">
+                            <h5 id="equity" class="description-header"></h5>
+                            <span class="description-text">账户净值</span>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
-                            <div class="description-block border-right">
-                                <h5 id="unrnet" class="description-header" style="color:#4cae05"></h5>
-                                <span class="description-text">账户净浮动</span>
-                            </div>
+                    </div>
+                    <div class="col-sm-2 col-xs-4">
+                        <div class="description-block border-right">
+                            <h5 id="unrnet" class="description-header" style="color:#4cae05"></h5>
+                            <span class="description-text">账户净浮动</span>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
-                            <div class="description-block border-right">
-                                <h5 id="marginUsed" class="description-header"></h5>
-                                <span class="description-text">已用保证金</span>
-                            </div>
+                    </div>
+                    <div class="col-sm-2 col-xs-4">
+                        <div class="description-block border-right">
+                            <h5 id="marginUsed" class="description-header"></h5>
+                            <span class="description-text">已用保证金</span>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
-                            <div class="description-block border-right">
-                                <h5 id="freeMargin" class="description-header"></h5>
-                                <span class="description-text">可用保证金</span>
-                            </div>
+                    </div>
+                    <div class="col-sm-2 col-xs-4">
+                        <div class="description-block border-right">
+                            <h5 id="freeMargin" class="description-header"></h5>
+                            <span class="description-text">可用保证金</span>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
-                            <div class="description-block">
-                                <h5 id="marginLevel" class="description-header"></h5>
-                                <span class="description-text">保证金水平</span>
-                            </div>
+                    </div>
+                    <div class="col-sm-2 col-xs-4">
+                        <div class="description-block">
+                            <h5 id="marginLevel" class="description-header"></h5>
+                            <span class="description-text">保证金水平</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+  </div>
+        </div>
 </section>
 @section Scripts{
     <script>
     $(function () {
-            //初始化参数
-            var _connect =@Html.Raw(Json.Serialize(Model.Item1));
-            var _getPositionUrl = "/Forex/Proto/GetPosition";
-            var _getSymbolUrl = "/Forex/Proto/GetSymbol";
-            var _getAccountInfoUrl = "/Forex/Proto/GetAccountInfo";
-            var _symbols = [];
+        //初始化参数
+        var _connect =@Html.Raw(Json.Serialize(Model.Item1));
+        var _getPositionUrl = "/Forex/Proto/GetPosition";
+        var _getSymbolUrl = "/Forex/Proto/GetSymbol";
+        var _getAccountInfoUrl = "/Forex/Proto/GetAccountInfo";
+        var _symbols = [];
+        var _selectedType = "";
+        var _selectedPositions = [];
+        var _allPositions = [];
 
-            //#region Ajax optionAjax
-            var optionAjax = {
-                type: "post",
-                async: true,
-                url: "",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: {},
-                success: function (result) {
-                },
-                error: function (errorMsg) {
-                    alert("请求数据失败!");
-                }
-            };
-            //#endregion
+        //#region Ajax optionAjax
+        var optionAjax = {
+            type: "post",
+            async: true,
+            url: "",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: {},
+            success: function (result) {
+            },
+            error: function (errorMsg) {
+                alert("请求数据失败!");
+            }
+        };
+        //#endregion
 
-            //#region Ajax GetSymbol
-            function GetSymbol() {
-                optionAjax.url = _getSymbolUrl;
-                optionAjax.data = JSON.stringify({});
-                optionAjax.success = function (result) {
+        //#region Ajax GetSymbol
+        function GetSymbol() {
+            optionAjax.url = _getSymbolUrl;
+            optionAjax.data = JSON.stringify({});
+            optionAjax.success = function (result) {
                 _symbols = result.data;
                 GetSymbolList();
-                };
-
-                $.ajax(optionAjax);
             };
-            //#endregion
 
-            //#region Ajax GetPosition
-            function GetPosition() {
-                optionAjax.url = _getPositionUrl;
-                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken});
-                optionAjax.success = function (result) {
-                    table_pos.api().clear();
-                    table_pos.api().rows.add(result.data).draw();
-                    //CalculateAccount(result.data);
-                };
+            $.ajax(optionAjax);
+        };
+        //#endregion
 
-                $.ajax(optionAjax);
+        //#region Ajax GetPosition
+        function GetPosition() {
+            optionAjax.url = _getPositionUrl;
+            optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
+            optionAjax.success = function (result) {
+                table_pos.api().clear();
+                table_pos.api().rows.add(result.data).draw();
+                _allPositions = [];
+                FillterAllPositions(result.data);
             };
-            //#endregion
 
-            //#region Ajax GetAccountInfo
-            function GetAccountInfo() {
-                optionAjax.url = _getAccountInfoUrl;
-                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken ,balance:_connect.balance,preciseLeverage:_connect.preciseLeverage});
-                optionAjax.success = function (result) {
-                    CalculateAccount(result.accountinfo);
-                    table_pos.api().clear();
-                    table_pos.api().rows.add(result.positions).draw();
-                };
+            $.ajax(optionAjax);
+        };
+        //#endregion
 
-                $.ajax(optionAjax);
+        //#region Ajax GetAccountInfo
+        function GetAccountInfo() {
+            optionAjax.url = _getAccountInfoUrl;
+            optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken, balance: _connect.balance, preciseLeverage: _connect.preciseLeverage });
+            optionAjax.success = function (result) {
+                CalculateAccount(result.accountinfo);
+                table_pos.api().clear();
+                table_pos.api().rows.add(result.positions).draw();
+                _allPositions = [];
+                FillterAllPositions(result.positions);
             };
-            //#endregion
 
-            //#region Ajax RefrashPosition
-            function RefrashPosition() {
-                optionAjax.url = _getPositionUrl;
-                optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
-                optionAjax.success = function (result) {
-                    table_pos.api().clear();
-                    table_pos.api().rows.add(result.data).draw();
-                };
+            $.ajax(optionAjax);
+        };
+        //#endregion
 
-                $.ajax(optionAjax);
+        //#region Ajax RefrashPosition
+        function RefrashPosition() {
+            optionAjax.url = _getPositionUrl;
+            optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
+            optionAjax.success = function (result) {
+                table_pos.api().clear();
+                table_pos.api().rows.add(result.data).draw();
+                _allPositions = [];
+                FillterAllPositions(result.data);
             };
-            //#endregion
 
-            //#region 计算显示账号的数据
-            function CalculateAccount(data) {
-                if (data != null) {
-                    $("#balance").text(data.balance.toFixed(2));
-                    $("#equity").text( data.equity.toFixed(2));
-                    $("#unrnet").text(data.unrNet.toFixed(2));
-                    $("#marginUsed").text( data.marginUsed.toFixed(2));
-                    $("#freeMargin").text( data.freeMargin.toFixed(2));
-                    $("#marginLevel").text( data.marginLevel.toFixed(2) + " %");
-                    if (data.unrNet > 0) {
-                        $("#unrnet").css('color', '#4cae05');
-                    }
-                    else {
-                        $("#unrnet").css('color', '#ff5256');
-                    }
+            $.ajax(optionAjax);
+        };
+        //#endregion
+
+        //#region Ajax SendMarketOrder
+        function SendMarketOrder() {
+            optionAjax.url = "/Forex/Proto/SendMarketOrder";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl:_connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret:_connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                symbolName: $("#new-symbol").find("option:selected").text(),
+                tradeSide: GetRadioValue("new-tradetype"),
+                volume: $("#new-volume").val(),
+                stopLossInPips: $("#new-stoplosspips").val(),
+                takeProfitInPips:$("#new-takeprofitpips").val(),
+                comment:$("#new-comment").val(),
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#btn-new").click(function () { SendMarketOrder()});
+        //#endregion
+
+        //#region Ajax SendSelectedPositions
+        function SendSelectedPositions() {
+            optionAjax.url = "/Forex/Proto/SendClosePosition";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl: _connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret: _connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                selectedType:"selected",
+                selectedPositions:_selectedPositions,
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+                _selectedPositions = [];
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#close-selected").click(function () { SendSelectedPositions() });
+        //#endregion
+
+        //#region Ajax SendAllPositions
+        function SendAllPositions() {
+            optionAjax.url = "/Forex/Proto/SendClosePosition";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl: _connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret: _connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                selectedType:"all",
+                selectedPositions:_allPositions,
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+                _selectedPositions = [];
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#close-all").click(function () { SendAllPositions() });
+        //#endregion
+
+        //#region Ajax SendBuyPositions
+        function SendBuyPositions() {
+            var tempallpos = _allPositions.filter(function (item) {
+                return item.tradeSide.toLowerCase() == "buy";
+            });
+            _allPositions = tempallpos;
+            optionAjax.url = "/Forex/Proto/SendClosePosition";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl: _connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret: _connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                selectedType: "buy",
+                selectedPositions: _allPositions,
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+                _selectedPositions = [];
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#close-buy").click(function () { SendBuyPositions() });
+        //#endregion
+
+        //#region Ajax SendSellPositions
+        function SendSellPositions() {
+            var tempallpos = _allPositions.filter(function (item) {
+                return item.tradeSide.toLowerCase() == "sell";
+            });
+            _allPositions = tempallpos;
+            optionAjax.url = "/Forex/Proto/SendClosePosition";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl: _connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret: _connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                selectedType: "sell",
+                selectedPositions: _allPositions,
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+                _selectedPositions = [];
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#close-sell").click(function () { SendSellPositions() });
+        //#endregion
+
+        //#region Ajax SendWinPositions
+        function SendWinPositions() {
+            var tempallpos = _allPositions.filter(function (item) {
+                return item.netProfit>0;
+            });
+            _allPositions = tempallpos;
+            optionAjax.url = "/Forex/Proto/SendClosePosition";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl: _connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret: _connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                selectedType: "win",
+                selectedPositions: _allPositions,
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+                _selectedPositions = [];
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#close-win").click(function () { SendWinPositions() });
+        //#endregion
+
+        //#region Ajax SendLossPositions
+        function SendLossPositions() {
+            var tempallpos = _allPositions.filter(function (item) {
+                return item.netProfit<0;
+            });
+            _allPositions = tempallpos;
+            optionAjax.url = "/Forex/Proto/SendClosePosition";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl: _connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret: _connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                selectedType: "loss",
+                selectedPositions: _allPositions,
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+                _selectedPositions = [];
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#close-loss").click(function () { SendLossPositions() });
+        //#endregion
+
+        //#region 填充_allPostions数据
+        function FillterAllPositions(data) { 
+            $.each(data, function () {
+                var tempnet = this.swap + this.commission * 2 + this.profit;
+                var tempfillter = { positionId: this.positionId, volume: this.volume,tradeSide:this.tradeSide,netProfit:tempnet};
+                _allPositions.push(tempfillter);
+            });
+        };
+        //#endregion
+
+        //#region 计算显示账号的数据
+        function CalculateAccount(data) {
+            if (data != null) {
+                $("#balance").text(data.balance.toFixed(2));
+                $("#equity").text(data.equity.toFixed(2));
+                $("#unrnet").text(data.unrNet.toFixed(2));
+                $("#marginUsed").text(data.marginUsed.toFixed(2));
+                $("#freeMargin").text(data.freeMargin.toFixed(2));
+                $("#marginLevel").text(data.marginLevel.toFixed(2) + " %");
+                if (data.unrNet > 0) {
+                    $("#unrnet").css('color', '#4cae05');
                 }
-            };
-            //#endregion
+                else {
+                    $("#unrnet").css('color', '#ff5256');
+                }
+            }
+        };
+        //#endregion
 
-            //#region 初始化table_pos
-            var table_pos = $('#table-pos').dataTable(
-                {
-                    order: [[9, "desc"]],
-                    info: false,
-                    paging: false,
-                    dom:
-                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
-                        "<'row'<'col-sm-12'tr>>" +
-                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    processing: true,
-                    data:[],
-                    language: {
-                        processing: "加载中...",
-                        lengthMenu: "每页显示 _MENU_ 条数据",
-                        zeroRecords: "没有匹配结果",
-                        info: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
-                        infoEmpty: "显示第 0 至 0 项结果，共 0 项",
-                        infoFiltered: "(由 _MAX_ 项结果过滤)",
-                        infoPostFix: "",
-                        search: "搜索:",
-                        url: "",
-                        emptyTable: "没有匹配结果",
-                        loadingRecords: "载入中...",
-                        thousands: ",",
-                        paginate: {
-                            first: "首页",
-                            previous: "上一页",
-                            next: "下一页",
-                            last: "末页"
+        //#region 初始化table_pos
+        var table_pos = $('#table-pos').dataTable(
+            {
+                order: [[9, "desc"]],
+                info: false,
+                paging: false,
+                dom:
+                    "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                processing: true,
+                data: [],
+                language: {
+                    processing: "加载中...",
+                    lengthMenu: "每页显示 _MENU_ 条数据",
+                    zeroRecords: "没有匹配结果",
+                    info: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                    infoEmpty: "显示第 0 至 0 项结果，共 0 项",
+                    infoFiltered: "(由 _MAX_ 项结果过滤)",
+                    infoPostFix: "",
+                    search: "搜索:",
+                    url: "",
+                    emptyTable: "没有匹配结果",
+                    loadingRecords: "载入中...",
+                    thousands: ",",
+                    paginate: {
+                        first: "首页",
+                        previous: "上一页",
+                        next: "下一页",
+                        last: "末页"
+                    },
+                    aria: {
+                        sortAscending: ": 以升序排列此列",
+                        sortDescending: ": 以降序排列此列"
+                    }
+                },
+                columns: [
+                    { data: "positionId" },
+                    { data: "symbolId" },
+                    { data: "label" },
+                    { data: "comment" },
+                    { data: "channel" },
+                    { data: "symbolName" },
+                    { data: "tradeSide" },
+                    { data: "volume" },
+                    { data: "lot" },
+                    { data: "entryTimestamp" },
+                    { data: "utcLastUpdateTimestamp" },
+                    { data: "entryPrice" },
+                    { data: "currentPrice" },
+                    { data: "takeProfit" },
+                    { data: "stopLoss" },
+                    { data: "marginRate" },
+                    { data: "commission" },
+                    { data: "swap" },
+                    { data: "profitInPips" },
+                    { data: "profit" },
+                ],
+                columnDefs: [
+                    {
+                        targets: "col-visible",
+                        visible: false,
+                    },
+                    {
+                        targets: "col-color",
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            if (cellData > 0)
+                                $(td).css('color', '#4cae05');
+                            else
+                                $(td).css('color', '#ff5256');
                         },
-                        aria: {
-                            sortAscending: ": 以升序排列此列",
-                            sortDescending: ": 以降序排列此列"
+                    },
+                    {
+                        targets: 0,
+                        orderable: false,
+                        render: function (data, type, row, meta) {
+                            return '<span title="' + row.label + '/' + row.comment + '">' + '<input class="icheckbox_flat-blue" type="checkbox" data-id="'+row.positionId+'" style="margin:0;"  name="ids" value="' + row.volume + '">' + "  " + data + '</span>';
                         }
                     },
-                    columns: [
-                        { data: "positionId" },
-                        { data: "symbolId"},
-                        { data: "label" },
-                        { data: "comment" },
-                        { data: "channel" },
-                        { data: "symbolName" },
-                        { data: "tradeSide" },
-                        { data: "volume" },
-                        { data: "lot" },
-                        { data: "entryTimestamp" },
-                        { data: "utcLastUpdateTimestamp" },
-                        { data: "entryPrice" },
-                        { data: "currentPrice" },
-                        { data: "takeProfit" },
-                        { data: "stopLoss" },
-                        { data: "marginRate" },
-                        { data: "commission" },
-                        { data: "swap" },
-                        { data: "profitInPips" },
-                        { data: "profit" },
-                    ],
-                    columnDefs: [
-                        {
-                            targets: "col-visible",
-                            visible: false,
-                        },
-                        {
-                            targets: "col-color",
-                            createdCell: function (td, cellData, rowData, row, col) {
-                                if (cellData > 0)
-                                    $(td).css('color', '#4cae05');
-                                else
-                                    $(td).css('color', '#ff5256');
-                            },
-                        },
-                        {
-                            targets: 0,
-                            orderable: false,
-                            render: function (data, type, row, meta) {
-                                return '<span title="' + row.label + '/' + row.comment + '">' + '<input type="checkbox" style="margin:0;" class="icheckbox_flat-blue" name="ids" value="' + row.id + '">'+"  "+ data + '</span>';
+                    {
+                        targets: 8,
+                        render: function (data, type, row, meta) {
+                            if (_symbols != null) {
+                                var lot = 0.00;
+                                $.each(_symbols, function () {
+                                    if (this.symbolId == row.symbolId) {
+                                        var minlot = 0.00;
+                                        if (this.assetClass == 1 || this.assetClass == 2)
+                                            minlot = 0.01;
+                                        else {
+                                            minlot = 1;
+                                        }
+                                        lot = row.volume / this.minOrderVolume * minlot;
+                                        return false;
+                                    }
+                                });
+                                return lot.toFixed(2);
                             }
-                        },
-                        {
-                            targets: 8,
-                            render: function (data, type, row, meta) {
+                            return 0.00;
+                        }
+                    },
+                    {
+
+                    },
+                    {
+                        targets: [9, 10],
+                        render: function (data, type, row, meta) {
+                            result = moment(data).format('YYYY-MM-DD hh:mm:ss');
+                            return result;
+                        }
+                    },
+                    {
+                        targets: [11, 12, 13, 14],
+                        render: function (data, type, row, meta) {
+                            if (data != null) {
                                 if (_symbols != null) {
-                                    var lot = 0.00;
+                                    var price = 0.00;
                                     $.each(_symbols, function () {
                                         if (this.symbolId == row.symbolId) {
-                                            var minlot = 0.00;
-                                            if (this.assetClass == 1 || this.assetClass == 2)
-                                                minlot = 0.01;
-                                            else {
-                                                minlot = 1;
-                                            }
-                                            lot = row.volume / this.minOrderVolume * minlot;
+                                            price = data.toFixed(this.pipPosition);
                                             return false;
                                         }
                                     });
-                                    return lot.toFixed(2);
+                                    return price;
                                 }
-                                return 0.00;
                             }
-                        },
-                        {
+                            return data;
+                        }
+                    },
+                    {
+                        targets: [15],
+                        render: function (data, type, row, meta) {
+                            return (row.volume / 100 * row.marginRate / _connect.preciseLeverage).toFixed(2);
+                        }
+                    },
+                    {
+                        targets: [16],
+                        render: function (data, type, row, meta) {
+                            return (data / 100 * 2).toFixed(2);
+                        }
+                    },
+                    {
+                        targets: [17],
+                        render: function (data, type, row, meta) {
+                            return (data / 100).toFixed(2);
+                        }
+                    },
+                    {
+                        targets: 19,
+                        render: function (data, type, row, meta) {
+                            var result = row.profit + row.swap + row.commission * 2;
+                            return (result / 100).toFixed(2);
+                        }
+                    },
+                ],
+                footerCallback: function (tfoot, data, start, end, display) {
+                    var api = this.api(), data;
 
-                        },
-                        {
-                            targets: [9,10],
-                            render: function (data, type, row, meta) {
-                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
-                                return result;
-                            }
-                        },
-                        {
-                            targets: [11, 12, 13, 14],
-                            render: function (data, type, row, meta) {
-                                if (data != null) {
-                                    if (_symbols != null) {
-                                        var price = 0.00;
-                                        $.each(_symbols, function () {
-                                            if (this.symbolId == row.symbolId) {
-                                                price = data.toFixed(this.pipPosition);
-                                                return false;
-                                            }
-                                        });
-                                        return price;
-                                    }
-                                }
-                                return data;
-                            }
-                        },
-                        {
-                            targets: [15],
-                            render: function (data, type, row, meta) {
-                                return (row.volume / 100 * row.marginRate / _connect.preciseLeverage).toFixed(2);
-                            }
-                        },
-                        {
-                            targets: [16],
-                            render: function (data, type, row, meta) {
-                                return (data / 100*2).toFixed(2);
-                            }
-                        },
-                        {
-                            targets: [17],
-                            render: function (data, type, row, meta) {
-                                return (data/100).toFixed(2);
-                            }
-                        },
-                        {
-                            targets: 19,
-                            render: function (data, type, row, meta) {
-                                var result = row.profit + row.swap + row.commission*2;
-                                return (result / 100).toFixed(2);
-                            }
-                        },
-                    ],
-                    footerCallback: function (tfoot, data, start, end, display) {
-                        var api = this.api(), data;
+                    var intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
 
-                        var intVal = function (i) { return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0; };
+                    total = api.column(11).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
 
-                        total = api.column(11).data().reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
+                    pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
 
-                        pageTotal = api.column(11, { page: 'current' }).data().reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                        $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
-                    }
-                });
-            $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
-            $("#refrash").click(function () { RefrashPosition(); });
-            //显示隐藏列
-            $('.toggle-vis').on('change', function (e) {
-                e.preventDefault();
-                console.log($(this).attr('data-column'));
-                var column = table_pos.api().column($(this).attr('data-column'));
-                column.visible(!column.visible());
+                    $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
+                }
             });
-            //#endregion
-
-            //#region 设置新建订单和修改订单的值
-
-            //symbolcheck选中状态为false时的事件
-            $("#symbolcheck").on("ifUnchecked", function () {
-                $("#new-box .form-control").val("");
-                $("#new-symbol").val(1);
-                $("#new-symbol").select2().val(1).trigger("change");
-            });
-
-            //table-pos行点击事件
-            $("#table-pos tbody").on("click", 'tr', function () {
-                //var $tr = $(this).parents('tr');
-
-                var row = table_pos.api().row($(this));
-                var data = row.data();
-                //清空数据
-                $(".col-md-3 .form-control").val("");
-
-                //#region Set Amend
-                $("#amend-id").val(data.positionId);
-                $("#amend-symbol").val(data.symbolName);
-                if (data.takeProfit != null) {
-                    $("#amend-takeprofitprice").val(data.takeProfit);
-                }
-                if (data.stopLoss != null) {
-                    $("#amend-stoplossprice").val(data.stopLoss);
-                }
-                //#endregion
-
-                //#region Set New
-                if ($("#symbolcheck").is(':checked')) {
-                    //Set new-symbol
-                    var selectvalue = data.symbolId;
-                    $("#new-symbol").val(selectvalue);
-                    var showsymbol = $("#new-symbol").find("option:selected").text();
-                    $("#new-symbol").select2().val(selectvalue).trigger("change");
-                    $("#new-volume").val(data.volume);
-                    //Set tradetype
-                    var radio = GetRadioValue("new-tradetype");
-                    if (data.tradeSide=="BUY"&&data.tradeSide.toLowerCase()!=radio) {
-                        $("#new-tradetypesell").iCheck("uncheck");
-                        $("#new-tradetypebuy").iCheck("check");
-                    }
-                    if (data.tradeSide == "SELL" && data.tradeSide.toLowerCase() != radio) {
-                        $("#new-tradetypebuy").iCheck("uncheck");
-                        $("#new-tradetypesell").iCheck("check");
-                    }
-
-                    if (data.takeProfit != null) {
-                        $("#new-takeprofitprice").val(data.takeProfit);
-                    }
-                    if (data.stopLoss != null) {
-                        $("#new-stoplossprice").val(data.stopLoss);
-                    }
-                    if (data.label != null) {
-                        $("#new-label").val(data.label);
-                    }
-                    if (data.comment != null) {
-                        $("#new-comment").val(data.comment);
-                    }
-                }
-                //#endregion
+        $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
+        $("#refrash").click(function () { RefrashPosition(); });
+        //显示隐藏列
+        $('.toggle-vis').on('change', function (e) {
+            e.preventDefault();
+            console.log($(this).attr('data-column'));
+            var column = table_pos.api().column($(this).attr('data-column'));
+            column.visible(!column.visible());
         });
 
-            function GetRadioValue(RadioName) {
+        $("#table-pos tbody").on("change", 'tr input[name="ids"]', function () {
+            //console.log($(this).attr("data-id"));
+            //console.log($(this).attr("value"));
+            if ($(this).is(':checked')) {
+                _selectedPositions.push({ positionId: $(this).attr("data-id"), volume: $(this).attr("value"),tradeSide:"",netProfit:0.00});
+            }
+            else {
+                var tempId = $(this).attr("data-id");
+                var tempselected = _selectedPositions.filter(function (item) {
+                    return item.positionId !=tempId ;
+            });
+                _selectedPositions = tempselected;
+            }
+            //console.log(_selectedPositions);
+        });
+        //#endregion
+
+        //#region 设置新建订单和修改订单的值
+
+        //symbolcheck选中状态为false时的事件
+        $("#symbolcheck").on("ifUnchecked", function () {
+            $("#new-box .form-control").val("");
+            $("#new-symbol").val(1);
+            $("#new-symbol").select2().val(1).trigger("change");
+        });
+
+        //table-pos行点击事件
+        $("#table-pos tbody").on("click", 'tr', function () {
+            //var $tr = $(this).parents('tr');
+
+            var row = table_pos.api().row($(this));
+            var data = row.data();
+            //清空数据
+            $(".col-md-3 .form-control").val("");
+
+            //#region Set Amend
+            $("#amend-id").val(data.positionId);
+            $("#amend-symbol").val(data.symbolName);
+            if (data.takeProfit != null) {
+                $("#amend-takeprofitprice").val(data.takeProfit);
+            }
+            if (data.stopLoss != null) {
+                $("#amend-stoplossprice").val(data.stopLoss);
+            }
+            //#endregion
+
+            //#region Set New
+            if ($("#symbolcheck").is(':checked')) {
+                //Set new-symbol
+                var selectvalue = data.symbolId;
+                $("#new-symbol").val(selectvalue);
+                var showsymbol = $("#new-symbol").find("option:selected").text();
+                $("#new-symbol").select2().val(selectvalue).trigger("change");
+                $("#new-volume").val(data.volume/100);
+                //Set tradetype
+                var radio = GetRadioValue("new-tradetype");
+                if (data.tradeSide == "BUY" && data.tradeSide.toLowerCase() != radio) {
+                    $("#new-tradetypesell").iCheck("uncheck");
+                    $("#new-tradetypebuy").iCheck("check");
+                }
+                if (data.tradeSide == "SELL" && data.tradeSide.toLowerCase() != radio) {
+                    $("#new-tradetypebuy").iCheck("uncheck");
+                    $("#new-tradetypesell").iCheck("check");
+                }
+
+                if (data.takeProfit != null) {
+                    $("#new-takeprofit").val(data.takeProfit);
+                }
+                if (data.stopLoss != null) {
+                    $("#new-stoploss").val(data.stopLoss);
+                }
+                if (data.label != null) {
+                    $("#new-label").val(data.label);
+                }
+                if (data.comment != null) {
+                    $("#new-comment").val(data.comment);
+                }
+            }
+            //#endregion
+        });
+
+        function GetRadioValue(RadioName) {
             var obj;
             obj = document.getElementsByName(RadioName);
             if (obj != null) {
@@ -705,40 +940,56 @@
             }
             return null;
         };
-            //#endregion
+        //#endregion
 
-            //#region 设置select(new-symbol) Select2
-            //初始化Select2
-            $('.select2').select2();
+        //#region 设置select(new-symbol) Select2
+        //初始化Select2
+        $('.select2').select2();
 
-            function GetSymbolList() {
-                $.each(_symbols, function () {
-                    $("#new-symbol").append("<option value='" + this.symbolId + "'>" + this.symbolName + "</option>");
-                });
-            }
-            //#endregion
-
-            //#region 设置一些细节
-            //Enable check and uncheck all functionality
-            $(".checkbox-toggle").click(function () {
-                var clicks = $(this).data('clicks');
-                if (clicks) {
-                    //Uncheck all checkboxes
-                    $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
-                    $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
-                } else {
-                    //Check all checkboxes
-                    $(".mailbox-messages input[type='checkbox']").iCheck("check");
-                    $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
-                }
-                $(this).data("clicks", !clicks);
+        function GetSymbolList() {
+            $.each(_symbols, function () {
+                $("#new-symbol").append("<option value='" + this.symbolId + "'>" + this.symbolName + "</option>");
             });
-            //#endregion
+        }
+        //#endregion
 
-            //#region 页面加载时执行的方法
-            GetSymbol();
-            GetAccountInfo();
-            //#endregion
+        //#region 设置一些细节
+        //Enable check and uncheck all functionality
+        //$(".checkbox-toggle").click(function () {
+        //    var clicks = $(this).data('clicks');
+        //    if (clicks) {
+        //        //Uncheck all checkboxes
+        //        $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
+        //        $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
+        //    } else {
+        //        //Check all checkboxes
+        //        $(".mailbox-messages input[type='checkbox']").iCheck("check");
+        //        $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
+        //    }
+        //    $(this).data("clicks", !clicks);
+        //});
+        //$(".checkbox-toggle").click(function () {
+        //    var clicks = $(this).data('clicks');
+        //    if (clicks) {
+        //        //Uncheck all checkboxes
+        //        $(".mailbox-messages input[type='checkbox']").attr("checked",false);
+        //        $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
+        //    } else {
+        //        //Check all checkboxes
+        //        $(".mailbox-messages input[type='checkbox']").attr("checked",true);
+        //        $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
+        //    }
+        //    $(this).data("clicks", !clicks);
+        //});
+        //#endregion
+
+        //#region 页面加载时执行的方法
+        GetSymbol();
+        GetAccountInfo();
+        $(".mailbox-messages input[type='checkbox']").on("ifChecked", function (e) {
+            console.log($(this).attr('data-id'));
+        })
+        //#endregion
         });
     </script>
 }

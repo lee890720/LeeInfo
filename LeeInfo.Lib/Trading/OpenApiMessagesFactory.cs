@@ -227,7 +227,7 @@ namespace Connect_API.Trading
         {
             return CreateExecutionEvent(executionType, order.Build(), position == null ? null : position.Build(), reasonCode, clientMsgId);
         }
-        public ProtoMessage CreateMarketOrderRequest(long accountId, string accessToken, string symbolName, ProtoTradeSide tradeSide, long volume, string clientMsgId = null)
+        public ProtoMessage CreateMarketOrderRequest(long accountId, string accessToken, string symbolName, ProtoTradeSide tradeSide, long volume, int? stopLossInPips,int? takeProfitInPips,string comment,  string clientMsgId = null)
         {
             var _msg = ProtoOACreateOrderReq.CreateBuilder();
             _msg.SetAccountId(accountId);
@@ -236,11 +236,13 @@ namespace Connect_API.Trading
             _msg.SetOrderType(ProtoOAOrderType.OA_MARKET);
             _msg.SetTradeSide(tradeSide);
             _msg.SetVolume(volume);
+            if (stopLossInPips != null)
+                _msg.SetRelativeStopLossInPips((int)stopLossInPips);
+            if (takeProfitInPips != null)
+                _msg.SetRelativeTakeProfitInPips((int)takeProfitInPips);
+            if (!string.IsNullOrEmpty(comment))
+                _msg.SetComment(comment);
 
-            //_msg.SetRelativeStopLossInPips(27);
-            //_msg.SetRelativeTakeProfitInPips(1);
-
-            _msg.SetComment("TradingApiTest.CreateMarketOrderRequest");
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
         }
         public ProtoMessage CreateMarketRangeOrderRequest(long accountId, string accessToken, string symbolName, ProtoTradeSide tradeSide, long volume, double baseSlippagePrice, long slippageInPips, string clientMsgId = null)
