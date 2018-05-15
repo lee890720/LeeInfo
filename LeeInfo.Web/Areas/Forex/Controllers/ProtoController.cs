@@ -50,8 +50,9 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public JsonResult GetAsk([FromBody]Params param)
         {
             DateTime date = DateTime.UtcNow;
+            DateTime date2 = date.AddSeconds(-30);
             string dateString = String.Format("{0:0000}", date.Year) + String.Format("{0:00}", date.Month) + String.Format("{0:00}", date.Day);
-            string timeFrom = String.Format("{0:00}", date.Hour) + String.Format("{0:00}", date.Minute) + String.Format("{0:00}", 0);
+            string timeFrom = String.Format("{0:00}", date2.Hour) + String.Format("{0:00}", date2.Minute) + String.Format("{0:00}", date2.Second);
             string timeTo = String.Format("{0:00}", date.Hour) + String.Format("{0:00}", date.Minute) + String.Format("{0:00}", date.Second);
             var client = new RestClient(param.ApiUrl);
             var request = new RestRequest(@"connect/tradingaccounts/" + param.AccountId + "/symbols/" + param.SymbolName + "/ask/?oauth_token=" + param.AccessToken + "&date=" + dateString + "&from=" + timeFrom + "&to=" + timeTo);
@@ -62,8 +63,9 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public JsonResult GetBid([FromBody]Params param)
         {
             DateTime date = DateTime.UtcNow;
+            DateTime date2 = date.AddSeconds(-30);
             string dateString = String.Format("{0:0000}", date.Year) + String.Format("{0:00}", date.Month) + String.Format("{0:00}", date.Day);
-            string timeFrom = String.Format("{0:00}", date.Hour) + String.Format("{0:00}", date.Minute) + String.Format("{0:00}", 0);
+            string timeFrom = String.Format("{0:00}", date2.Hour) + String.Format("{0:00}", date2.Minute) + String.Format("{0:00}", date2.Second);
             string timeTo = String.Format("{0:00}", date.Hour) + String.Format("{0:00}", date.Minute) + String.Format("{0:00}", date.Second);
             var client = new RestClient(param.ApiUrl);
             var request = new RestRequest(@"connect/tradingaccounts/" + param.AccountId + "/symbols/" + param.SymbolName + "/bid/?oauth_token=" + param.AccessToken + "&date=" + dateString + "&from=" + timeFrom + "&to=" + timeTo);

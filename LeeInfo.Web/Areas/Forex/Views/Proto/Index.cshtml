@@ -65,14 +65,7 @@
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">数量</span>
-                            <div class="row">
-                                <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="new-volume" type="text" class="form-control clear-data" placeholder="数量 二选一">
-                                </div>
-                                <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="new-lot" type="text" class="form-control clear-data" placeholder="手数 二选一">
-                                </div>
-                            </div>
+                            <input id="new-volume" type="text" class="form-control clear-data" placeholder="数量">
                         </div>
                         <br>
                         <div class="input-group">
@@ -88,26 +81,12 @@
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">止赢</span>
-                            <div class="row">
-                                <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="new-takeprofitpips" type="text" class="form-control clear-data" placeholder="止赢点数 可选">
-                                </div>
-                                <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="new-takeprofit" type="text" class="form-control clear-data" placeholder="止赢价 可选">
-                                </div>
-                            </div>
+                            <input id="new-takeprofitpips" type="text" class="form-control clear-data" placeholder="止赢点数 可选">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">止损</span>
-                            <div class="row">
-                                <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="new-stoplosspips" type="text" class="form-control clear-data" placeholder="止损点数 可选">
-                                </div>
-                                <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="new-stoploss" type="text" class="form-control clear-data" placeholder="止损价 可选">
-                                </div>
-                            </div>
+                            <input id="new-stoplosspips" type="text" class="form-control clear-data" placeholder="止损点数 可选">
                         </div>
                         <br>
                         <div class="input-group">
@@ -148,26 +127,12 @@
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">止赢</span>
-                            <div class="row">
-                                <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="amend-takeprofitprice" type="text" class="form-control clear-data" placeholder="止赢价 可选">
-                                </div>
-                                <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="amend-takeprofitpips" type="text" class="form-control clear-data" placeholder="止赢点数 可选">
-                                </div>
-                            </div>
+                            <input id="amend-takeprofitprice" type="text" class="form-control clear-data" placeholder="止赢价 可选">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">止损</span>
-                            <div class="row">
-                                <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="amend-stoplossprice" type="text" class="form-control clear-data" placeholder="止损价 可选">
-                                </div>
-                                <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="amend-stoplosspips" type="text" class="form-control clear-data" placeholder="止损点数 可选">
-                                </div>
-                            </div>
+                            <input id="amend-stoplossprice" type="text" class="form-control clear-data" placeholder="止损价 可选">
                         </div>
                         <br>
                         <button id="btn-amend" class="btn btn-primary btn-block margin-bottom">提交</button>
@@ -206,10 +171,10 @@
                         <br>
                         <div class="row">
                             <div class="col-xs-6">
-                                <button id="close-win"  class="btn btn-primary btn-block margin-bottom">平赢利单</button>
+                                <button id="close-win" class="btn btn-primary btn-block margin-bottom">平赢利单</button>
                             </div>
                             <div class="col-xs-6">
-                                <button id="close-loss"  class="btn btn-primary btn-block margin-bottom">平亏损单</button>
+                                <button id="close-loss" class="btn btn-primary btn-block margin-bottom">平亏损单</button>
                             </div>
                         </div>
                         <br>
@@ -241,111 +206,111 @@
                 <div class="box-body" style="padding:0px 5px;">
                     <div class="mailbox-controls">
                         @*<button title="全选" type="button" class="btn btn-default btn-sm checkbox-toggle">
-                            <i class="fa fa-square-o"></i>
-                        </button>*@
-                    <button id="close-selected2" title="关闭选中的订单" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-                    <div class="pull-right">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="切换账号">
-                                <i class="fa fa-wrench"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
-                                @foreach (var f in Model.Item2)
-                                {
-                                    <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
-                                }
-                            </ul>
+                                <i class="fa fa-square-o"></i>
+                            </button>*@
+                        <button id="close-selected2" title="关闭选中的订单" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
+                        <div class="pull-right">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="切换账号">
+                                    <i class="fa fa-wrench"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                                    @foreach (var f in Model.Item2)
+                                    {
+                                        <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
+                                    <i class="fa fa-th-list"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                                    <li><input type="checkbox" class="toggle-vis" data-column="1" />&emsp;<small>品种ID</small></li>
+                                    <li><input type="checkbox" class="toggle-vis" data-column="2" />&emsp;<small>标签</small></li>
+                                    <li><input type="checkbox" class="toggle-vis" data-column="3" />&emsp;<small>注释</small></li>
+                                    <li><input type="checkbox" class="toggle-vis" data-column="4" />&emsp;<small>平台</small></li>
+                                    <li><input type="checkbox" class="toggle-vis" data-column="7" />&emsp;<small>数量</small></li>
+                                    <li><input type="checkbox" class="toggle-vis" data-column="10" />&emsp;<small>修改时间</small></li>
+                                    <li><input type="checkbox" class="toggle-vis" data-column="15" />&emsp;<small>保证金</small></li>
+                                    <li><input type="checkbox" class="toggle-vis" data-column="16" />&emsp;<small>佣金</small></li>
+                                </ul>
+                            </div>
+                            <button id="refrash" title="刷新持仓明细" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
                         </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
-                                <i class="fa fa-th-list"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
-                                <li><input type="checkbox" class="toggle-vis" data-column="1" />&emsp;<small>品种ID</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="2" />&emsp;<small>标签</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="3" />&emsp;<small>注释</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="4" />&emsp;<small>平台</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="7" />&emsp;<small>数量</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="10" />&emsp;<small>修改时间</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="15" />&emsp;<small>保证金</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="16" />&emsp;<small>佣金</small></li>
-                            </ul>
-                        </div>
-                        <button id="refrash" title="刷新持仓明细" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+                    </div>
+                    <div class="table-responsive  mailbox-messages">
+                        <table id="table-pos" class="table table-hover" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>ID(标签/注释)</th>
+                                    <th class="col-visible">品种ID</th>
+                                    <th class="col-visible">标签</th>
+                                    <th class="col-visible">注释</th>
+                                    <th class="col-visible">平台</th>
+                                    <th>品种</th>
+                                    <th>多空</th>
+                                    <th class="col-visible">数量</th>
+                                    <th>手数</th>
+                                    <th>开仓时间</th>
+                                    <th class="col-visible">修改时间</th>
+                                    <th>开仓价</th>
+                                    <th>当前价</th>
+                                    <th>止赢</th>
+                                    <th>止损</th>
+                                    <th class="col-visible">保证金</th>
+                                    <th class="col-visible">佣金</th>
+                                    <th class="col-color">利息</th>
+                                    <th class="col-color">点数</th>
+                                    <th class="col-color">利润</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
                 </div>
-                <div class="table-responsive  mailbox-messages">
-                    <table id="table-pos" class="table table-hover" width="100%">
-                        <thead>
-                            <tr>
-                                <th>ID(标签/注释)</th>
-                                <th class="col-visible">品种ID</th>
-                                <th class="col-visible">标签</th>
-                                <th class="col-visible">注释</th>
-                                <th class="col-visible">平台</th>
-                                <th>品种</th>
-                                <th>多空</th>
-                                <th class="col-visible">数量</th>
-                                <th>手数</th>
-                                <th>开仓时间</th>
-                                <th class="col-visible">修改时间</th>
-                                <th>开仓价</th>
-                                <th>当前价</th>
-                                <th>止赢</th>
-                                <th>止损</th>
-                                <th class="col-visible">保证金</th>
-                                <th class="col-visible">佣金</th>
-                                <th class="col-color">利息</th>
-                                <th class="col-color">点数</th>
-                                <th class="col-color">利润</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-            <div class="box-footer no-padding">
-                <div class="mailbox-controls">
-                    <div class="col-sm-2 col-xs-4">
-                        <div class="description-block border-right">
-                            <h5 id="balance" class="description-header"></h5>
-                            <span class="description-text">账户余额</span>
+                <div class="box-footer no-padding">
+                    <div class="mailbox-controls">
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 id="balance" class="description-header"></h5>
+                                <span class="description-text">账户余额</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-2 col-xs-4">
-                        <div class="description-block border-right">
-                            <h5 id="equity" class="description-header"></h5>
-                            <span class="description-text">账户净值</span>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 id="equity" class="description-header"></h5>
+                                <span class="description-text">账户净值</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-2 col-xs-4">
-                        <div class="description-block border-right">
-                            <h5 id="unrnet" class="description-header" style="color:#4cae05"></h5>
-                            <span class="description-text">账户净浮动</span>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 id="unrnet" class="description-header" style="color:#4cae05"></h5>
+                                <span class="description-text">账户净浮动</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-2 col-xs-4">
-                        <div class="description-block border-right">
-                            <h5 id="marginUsed" class="description-header"></h5>
-                            <span class="description-text">已用保证金</span>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 id="marginUsed" class="description-header"></h5>
+                                <span class="description-text">已用保证金</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-2 col-xs-4">
-                        <div class="description-block border-right">
-                            <h5 id="freeMargin" class="description-header"></h5>
-                            <span class="description-text">可用保证金</span>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block border-right">
+                                <h5 id="freeMargin" class="description-header"></h5>
+                                <span class="description-text">可用保证金</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-2 col-xs-4">
-                        <div class="description-block">
-                            <h5 id="marginLevel" class="description-header"></h5>
-                            <span class="description-text">保证金水平</span>
+                        <div class="col-sm-2 col-xs-4">
+                            <div class="description-block">
+                                <h5 id="marginLevel" class="description-header"></h5>
+                                <span class="description-text">保证金水平</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-  </div>
-        </div>
+    </div>
 </section>
 @section Scripts{
     <script>
@@ -399,9 +364,12 @@
                 symbolName: tempsymbolname,
             });
             optionAjax.success = function (result) {
-                $("#new-ask").val(result.data[0].tick);
+                if( !(result.data === undefined || result.data.length == 0)) {
+                    $("#new-ask").val(result.data[0].tick);
+                }
                 setTimeout(GetBid(), 1000);
             };
+            optionAjax.error = function (errorMsg) {};
 
             $.ajax(optionAjax);
         };
@@ -420,9 +388,12 @@
                 symbolName: tempsymbolname,
             });
             optionAjax.success = function (result) {
-                $("#new-bid").val(result.data[0].tick);
+                if (!(result.data === undefined || result.data.length == 0)) {
+                    $("#new-bid").val(result.data[0].tick);
+                }
                 setTimeout(GetAsk(), 1000);
             };
+            optionAjax.error = function (errorMsg) { };
 
             $.ajax(optionAjax);
         };
@@ -749,7 +720,7 @@
         //#endregion
 
         //#region 填充_allPostions数据
-        function FillterAllPositions(data) { 
+        function FillterAllPositions(data) {
             $.each(data, function () {
                 var tempnet = this.swap + this.commission * 2 + this.profit;
                 var tempfillter = {
@@ -955,7 +926,9 @@
                 }
             });
         $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
-        $("#refrash").click(function () { RefrashPosition(); });
+        $("#refrash").click(function () {
+            RefrashPosition();
+        });
         //显示隐藏列
         $('.toggle-vis').on('change', function (e) {
             e.preventDefault();
@@ -1114,7 +1087,7 @@
         //#region 页面加载时执行的方法
         GetSymbol();
         GetAccountInfo();
-        setTimeout(GetAsk(),1000);
+        setTimeout(GetAsk(), 1000);
         //#endregion
         });
     </script>
