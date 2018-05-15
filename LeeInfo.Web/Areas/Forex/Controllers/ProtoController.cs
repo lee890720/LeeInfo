@@ -65,26 +65,38 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public JsonResult GetAccountInfo([FromBody]Params param)
         {
             var positions = Position.GetPositions(param.ApiUrl, param.AccountId.ToString(), param.AccessToken);
-            var posgroup = positions.GroupBy(g => new { g.SymbolName })
-                .Select(s => new
-                {
-                    Symbol = s.Key.SymbolName,
-                    Margin = s.Where(b => b.TradeSide == "BUY").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
-                    > s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
-                    ? s.Where(b => b.TradeSide == "BUY").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
-                    : s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage),
-                    UnrNet = s.Sum(a => a.Swap + a.Commission + a.Profit) / 100,
-                }).ToList();
             var accountinfo = new
             {
                 Balance = param.Balance,
-                Equity = param.Balance + posgroup.Sum(s => s.UnrNet),
-                UnrNet = posgroup.Sum(s => s.UnrNet),
-                MarginUsed = posgroup.Sum(s => s.Margin),
-                FreeMargin = param.Balance + posgroup.Sum(s => s.UnrNet) - posgroup.Sum(s => s.Margin),
-                MarginLevel = (param.Balance + posgroup.Sum(s => s.UnrNet)) / posgroup.Sum(s => s.Margin)*100,
+                Equity = (double?)param.Balance,
+                UnrNet = (double?)0.00,
+                MarginUsed =0.00,
+                FreeMargin = (double?)param.Balance,
+                MarginLevel = (double?)0.00,
             };
-            return Json(new {accountinfo,positions});
+            if (positions.Count != 0)
+            {
+                var posgroup = positions.GroupBy(g => new { g.SymbolName })
+                    .Select(s => new
+                    {
+                        Symbol = s.Key.SymbolName,
+                        Margin = s.Where(b => b.TradeSide == "BUY").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
+                        > s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
+                        ? s.Where(b => b.TradeSide == "BUY").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
+                        : s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage),
+                        UnrNet = s.Sum(a => a.Swap + a.Commission + a.Profit) / 100,
+                    }).ToList();
+                accountinfo = new
+                {
+                    Balance = param.Balance,
+                    Equity = param.Balance + posgroup.Sum(s => s.UnrNet),
+                    UnrNet = posgroup.Sum(s => s.UnrNet),
+                    MarginUsed = posgroup.Sum(s => s.Margin),
+                    FreeMargin = param.Balance + posgroup.Sum(s => s.UnrNet) - posgroup.Sum(s => s.Margin),
+                    MarginLevel = (param.Balance + posgroup.Sum(s => s.UnrNet)) / posgroup.Sum(s => s.Margin) * 100,
+                };
+            }
+            return Json(new { accountinfo, positions });
         }
 
         //#region Proto
@@ -96,16 +108,64 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             SendAuthorizationRequest(param);
             List<string> data = new List<string>();
 
-            ProtoTradeSide tradeType=new ProtoTradeSide();
+            ProtoTradeSide tradeType = new ProtoTradeSide();
             if (param.TradeSide.ToUpper() == "BUY")
                 tradeType = ProtoTradeSide.BUY;
             if (param.TradeSide.ToUpper() == "SELL")
                 tradeType = ProtoTradeSide.SELL;
             var msgFactory = new OpenApiMessagesFactory();
-            var msg = msgFactory.CreateMarketOrderRequest(param.AccountId, param.AccessToken, param.SymbolName, tradeType, param.Volume*100,
-                param.StopLossInPips,param.TakeProfitInPips,param.Comment);
+            var msg = msgFactory.CreateMarketOrderRequest(param.AccountId, param.AccessToken, param.SymbolName, tradeType, param.Volume * 100,
+                param.StopLossInPips, param.TakeProfitInPips, param.Comment);
             Transmit(msg);
-            byte[]  _message = Listen(_apiSocket);
+            byte[] _message = Listen(_apiSocket);
+            var protoMessage = msgFactory.GetMessage(_message);
+            data.Add(OpenApiMessagesPresentation.ToString(protoMessage));
+
+            Thread.Sleep(1000);
+            _message = Listen(_apiSocket);
+            protoMessage = msgFactory.GetMessage(_message);
+            data.Add(OpenApiMessagesPresentation.ToString(protoMessage));
+            return Json(new { data });
+        }
+
+        public JsonResult SendResetPosition([FromBody]Params param)
+        {
+            _tcpClient = new TcpClient(param.ApiHost, param.ApiPort); ;
+            _apiSocket = new SslStream(_tcpClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+            _apiSocket.AuthenticateAsClient(param.ApiHost);
+            SendAuthorizationRequest(param);
+            List<string> data = new List<string>();
+            var msgFactory = new OpenApiMessagesFactory();
+
+            if (param.SelectedType == "double")
+            {
+                foreach (var p in param.SelectedPositions)
+                {
+                    ProtoTradeSide tradeType = new ProtoTradeSide();
+                    if (p.TradeSide.ToUpper() == "BUY")
+                        tradeType = ProtoTradeSide.BUY;
+                    if (p.TradeSide.ToUpper() == "SELL")
+                        tradeType = ProtoTradeSide.SELL;
+                    var msg = msgFactory.CreateMarketOrderRequest(param.AccountId, param.AccessToken, p.SymbolName, tradeType, p.Volume,null, null,null ,p.PositionId);
+                    Transmit(msg);
+                }
+            }
+
+            if (param.SelectedType == "reverse")
+            {
+                foreach (var p in param.SelectedPositions)
+                {
+                    ProtoTradeSide tradeType = new ProtoTradeSide();
+                    if (p.TradeSide.ToUpper() == "BUY")
+                        tradeType = ProtoTradeSide.SELL;
+                    if (p.TradeSide.ToUpper() == "SELL")
+                        tradeType = ProtoTradeSide.BUY;
+                    var msg = msgFactory.CreateMarketOrderRequest(param.AccountId, param.AccessToken, p.SymbolName, tradeType, p.Volume*2,null, null,null, p.PositionId);
+                    Transmit(msg);
+                }
+            }
+
+            byte[] _message = Listen(_apiSocket);
             var protoMessage = msgFactory.GetMessage(_message);
             data.Add(OpenApiMessagesPresentation.ToString(protoMessage));
 
@@ -134,6 +194,23 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     Transmit(msg);
                 }
             }
+            byte[] _message = Listen(_apiSocket);
+            var protoMessage = msgFactory.GetMessage(_message);
+            data.Add(OpenApiMessagesPresentation.ToString(protoMessage));
+            return Json(new { data });
+        }
+
+        public JsonResult SendAmendPosition([FromBody]Params param)
+        {
+            _tcpClient = new TcpClient(param.ApiHost, param.ApiPort); ;
+            _apiSocket = new SslStream(_tcpClient.GetStream(), false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+            _apiSocket.AuthenticateAsClient(param.ApiHost);
+            SendAuthorizationRequest(param);
+            List<string> data = new List<string>();
+
+            var msgFactory = new OpenApiMessagesFactory();
+            var msg = msgFactory.CreateAmendPositionProtectionRequest(param.AccountId,param.AccessToken.ToString(),param.PositionId,param.StopLossPrice,param.TakeProfitPrice);
+            Transmit(msg);
             byte[] _message = Listen(_apiSocket);
             var protoMessage = msgFactory.GetMessage(_message);
             data.Add(OpenApiMessagesPresentation.ToString(protoMessage));

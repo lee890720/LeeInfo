@@ -170,7 +170,7 @@
                             </div>
                         </div>
                         <br>
-                        <button class="btn btn-primary btn-block margin-bottom">提交</button>
+                        <button id="btn-amend" class="btn btn-primary btn-block margin-bottom">提交</button>
                     </div>
                 </div>
             </div>
@@ -215,10 +215,10 @@
                         <br>
                         <div class="row">
                             <div class="col-xs-6">
-                                <button class="btn btn-primary btn-block margin-bottom">加倍选中单</button>
+                                <button id="close-double" class="btn btn-primary btn-block margin-bottom">加倍选中单</button>
                             </div>
                             <div class="col-xs-6">
-                                <button class="btn btn-primary btn-block margin-bottom">反转选中单</button>
+                                <button id="close-reverse" class="btn btn-primary btn-block margin-bottom">反转选中单</button>
                             </div>
                         </div>
                     </div>
@@ -352,14 +352,11 @@
     $(function () {
         //初始化参数
         var _connect =@Html.Raw(Json.Serialize(Model.Item1));
-        var _getPositionUrl = "/Forex/Proto/GetPosition";
-        var _getSymbolUrl = "/Forex/Proto/GetSymbol";
-        var _getAccountInfoUrl = "/Forex/Proto/GetAccountInfo";
         var _symbols = [];
-        var _selectedType = "";
         var _selectedPositions = [];
         var _allPositions = [];
 
+        //#region Ajax
         //#region Ajax optionAjax
         var optionAjax = {
             type: "post",
@@ -378,7 +375,7 @@
 
         //#region Ajax GetSymbol
         function GetSymbol() {
-            optionAjax.url = _getSymbolUrl;
+            optionAjax.url = "/Forex/Proto/GetSymbol";
             optionAjax.data = JSON.stringify({});
             optionAjax.success = function (result) {
                 _symbols = result.data;
@@ -391,29 +388,13 @@
 
         //#region Ajax GetPosition
         function GetPosition() {
-            optionAjax.url = _getPositionUrl;
+            optionAjax.url = "/Forex/Proto/GetPosition";
             optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
             optionAjax.success = function (result) {
                 table_pos.api().clear();
                 table_pos.api().rows.add(result.data).draw();
                 _allPositions = [];
                 FillterAllPositions(result.data);
-            };
-
-            $.ajax(optionAjax);
-        };
-        //#endregion
-
-        //#region Ajax GetAccountInfo
-        function GetAccountInfo() {
-            optionAjax.url = _getAccountInfoUrl;
-            optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken, balance: _connect.balance, preciseLeverage: _connect.preciseLeverage });
-            optionAjax.success = function (result) {
-                CalculateAccount(result.accountinfo);
-                table_pos.api().clear();
-                table_pos.api().rows.add(result.positions).draw();
-                _allPositions = [];
-                FillterAllPositions(result.positions);
             };
 
             $.ajax(optionAjax);
@@ -422,13 +403,23 @@
 
         //#region Ajax RefrashPosition
         function RefrashPosition() {
-            optionAjax.url = _getPositionUrl;
-            optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
+            GetAccountInfo();
+        };
+        //#endregion
+
+        //#region Ajax GetAccountInfo
+        function GetAccountInfo() {
+            optionAjax.url = "/Forex/Proto/GetAccountInfo";
+            optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken, balance: _connect.balance, preciseLeverage: _connect.preciseLeverage });
             optionAjax.success = function (result) {
+                //计算账号数据
+                CalculateAccount(result.accountinfo);
+                //重绘表格
                 table_pos.api().clear();
-                table_pos.api().rows.add(result.data).draw();
+                table_pos.api().rows.add(result.positions).draw();
+                //填充返回时的选择订单
                 _allPositions = [];
-                FillterAllPositions(result.data);
+                FillterAllPositions(result.positions);
             };
 
             $.ajax(optionAjax);
@@ -462,6 +453,84 @@
             $.ajax(optionAjax);
         };
         $("#btn-new").click(function () { SendMarketOrder()});
+        //#endregion
+
+        //#region Ajax SendDoublePositions
+        function SendDoublePositions() {
+            optionAjax.url = "/Forex/Proto/SendResetPosition";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl: _connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret: _connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                selectedType:"double",
+                selectedPositions:_selectedPositions,
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+                _selectedPositions = [];
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#close-double").click(function () { SendDoublePositions() });
+        //#endregion
+
+        //#region Ajax SendReversePositions
+        function SendReversePositions() {
+            optionAjax.url = "/Forex/Proto/SendResetPosition";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl: _connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret: _connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                selectedType: "reverse",
+                selectedPositions: _selectedPositions,
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+                _selectedPositions = [];
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#close-reverse").click(function () { SendReversePositions() });
+        //#endregion
+
+        //#region Ajax SendAmendPosition
+        function SendAmendPosition() {
+            optionAjax.url = "/Forex/Proto/SendAmendPosition";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                connectUrl: _connect.connectUrl,
+                apiUrl: _connect.apiUrl,
+                apiHost: _connect.apiHost,
+                apiPort: _connect.apiPort,
+                clientId: _connect.clientId,
+                clientSecret: _connect.clientSecret,
+                accessToken: _connect.accessToken,
+                refreshToken: _connect.refreshToken,
+                positionId: $("#amend-id").val(),
+                stopLossPrice: $("#amend-stoplossprice").val(),
+                takeProfitPrice: $("#amend-takeprofitprice").val(),
+            });
+            optionAjax.success = function (result) {
+                RefrashPosition();
+            };
+
+            $.ajax(optionAjax);
+        };
+        $("#btn-amend").click(function () { SendAmendPosition() });
         //#endregion
 
         //#region Ajax SendSelectedPositions
@@ -635,12 +704,19 @@
         };
         $("#close-loss").click(function () { SendLossPositions() });
         //#endregion
+        //#endregion
 
         //#region 填充_allPostions数据
         function FillterAllPositions(data) { 
             $.each(data, function () {
                 var tempnet = this.swap + this.commission * 2 + this.profit;
-                var tempfillter = { positionId: this.positionId, volume: this.volume,tradeSide:this.tradeSide,netProfit:tempnet};
+                var tempfillter = {
+                    positionId: this.positionId,
+                    volume: this.volume,
+                    tradeSide: this.tradeSide,
+                    netProfit: tempnet,
+                    symbolName: this.symbolName,
+                };
                 _allPositions.push(tempfillter);
             });
         };
@@ -847,10 +923,18 @@
         });
 
         $("#table-pos tbody").on("change", 'tr input[name="ids"]', function () {
-            //console.log($(this).attr("data-id"));
-            //console.log($(this).attr("value"));
+            var $tr = $(this).parents('tr');
+            var row = table_pos.api().row($tr);
+            var data = row.data();
+
             if ($(this).is(':checked')) {
-                _selectedPositions.push({ positionId: $(this).attr("data-id"), volume: $(this).attr("value"),tradeSide:"",netProfit:0.00});
+                _selectedPositions.push({
+                    positionId: $(this).attr("data-id"),
+                    volume: data.volume,
+                    tradeSide: data.tradeSide,
+                    netProfit: 0.00,
+                    symbolName: data.symbolName,
+                });
             }
             else {
                 var tempId = $(this).attr("data-id");
@@ -859,7 +943,6 @@
             });
                 _selectedPositions = tempselected;
             }
-            //console.log(_selectedPositions);
         });
         //#endregion
 

@@ -10,9 +10,9 @@ namespace LeeInfo.Web.Areas.Forex.Models
         public string SymbolName { get; set; }
         public string TradeSide { get; set; }
         public long Volume { get; set; }
-        public double? StopLoss { get; set; }
+        public double? StopLossPrice { get; set; }
         public int? StopLossInPips { get; set; }
-        public double? TakeProfit { get; set; }
+        public double? TakeProfitPrice { get; set; }
         public int? TakeProfitInPips { get; set; }
         public long? RangePips { get; set; }
         public string Comment { get; set; }
@@ -24,6 +24,7 @@ namespace LeeInfo.Web.Areas.Forex.Models
     public class SelectedPosition
     {
         public long PositionId { get; set; }
+        public string SymbolName { get; set; }
         public long Volume { get; set; }
         public string TradeSide { get; set; }
         public double NetProfit { get; set; }

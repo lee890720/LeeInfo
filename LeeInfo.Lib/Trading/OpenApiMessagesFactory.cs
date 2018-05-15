@@ -227,7 +227,7 @@ namespace Connect_API.Trading
         {
             return CreateExecutionEvent(executionType, order.Build(), position == null ? null : position.Build(), reasonCode, clientMsgId);
         }
-        public ProtoMessage CreateMarketOrderRequest(long accountId, string accessToken, string symbolName, ProtoTradeSide tradeSide, long volume, int? stopLossInPips,int? takeProfitInPips,string comment,  string clientMsgId = null)
+        public ProtoMessage CreateMarketOrderRequest(long accountId, string accessToken, string symbolName, ProtoTradeSide tradeSide, long volume, int? stopLossInPips=null,int? takeProfitInPips=null,string comment=null,long? positionId=null,  string clientMsgId = null)
         {
             var _msg = ProtoOACreateOrderReq.CreateBuilder();
             _msg.SetAccountId(accountId);
@@ -242,6 +242,8 @@ namespace Connect_API.Trading
                 _msg.SetRelativeTakeProfitInPips((int)takeProfitInPips);
             if (!string.IsNullOrEmpty(comment))
                 _msg.SetComment(comment);
+            if (positionId != null)
+                _msg.SetPositionId((long)positionId);
 
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
         }
@@ -322,14 +324,16 @@ namespace Connect_API.Trading
             _msg.SetTakeProfitPrice(takeProfitPrice);
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
         }
-        public ProtoMessage CreateAmendPositionProtectionRequest(long accountId, string accessToken, long positionId, double stopLossPrice, double takeProfitPrice, string clientMsgId = null)
+        public ProtoMessage CreateAmendPositionProtectionRequest(long accountId, string accessToken, long positionId, double? stopLossPrice, double? takeProfitPrice, string clientMsgId = null)
         {
             var _msg = ProtoOAAmendPositionStopLossTakeProfitReq.CreateBuilder();
             _msg.SetAccountId(accountId);
             _msg.SetAccessToken(accessToken);
             _msg.SetPositionId(positionId);
-            _msg.SetStopLossPrice(stopLossPrice);
-            _msg.SetTakeProfitPrice(takeProfitPrice);
+            if(takeProfitPrice!=null)
+            _msg.SetTakeProfitPrice((double)takeProfitPrice);
+            if(stopLossPrice!=null)
+            _msg.SetStopLossPrice((double)stopLossPrice);
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
         }
         public ProtoMessage CreateAmendLimitOrderRequest(long accountId, string accessToken, long orderId, double limitPrice, string clientMsgId = null)
