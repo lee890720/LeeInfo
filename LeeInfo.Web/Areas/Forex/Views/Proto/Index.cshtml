@@ -52,9 +52,9 @@
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">买多价</span>
-                            <input type="text" class="form-control" placeholder="1.02451" disabled="disabled">
+                            <input id="new-ask" type="text" class="form-control" placeholder="1.02451" disabled="disabled" style="color:red">
                             <span class="input-group-addon">卖空价</span>
-                            <input type="text" class="form-control" placeholder="1.04578" disabled="disabled">
+                            <input id="new-bid" type="text" class="form-control" placeholder="1.04578" disabled="disabled" style="color:red">
                         </div>
                         <br>
                         <div class="input-group">
@@ -67,10 +67,10 @@
                             <span class="input-group-addon">数量</span>
                             <div class="row">
                                 <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="new-volume" type="text" class="form-control" placeholder="数量 二选一">
+                                    <input id="new-volume" type="text" class="form-control clear-data" placeholder="数量 二选一">
                                 </div>
                                 <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="new-lot" type="text" class="form-control" placeholder="手数 二选一">
+                                    <input id="new-lot" type="text" class="form-control clear-data" placeholder="手数 二选一">
                                 </div>
                             </div>
                         </div>
@@ -90,10 +90,10 @@
                             <span class="input-group-addon">止赢</span>
                             <div class="row">
                                 <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="new-takeprofitpips" type="text" class="form-control" placeholder="止赢点数 可选">
+                                    <input id="new-takeprofitpips" type="text" class="form-control clear-data" placeholder="止赢点数 可选">
                                 </div>
                                 <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="new-takeprofit" type="text" class="form-control" placeholder="止赢价 可选">
+                                    <input id="new-takeprofit" type="text" class="form-control clear-data" placeholder="止赢价 可选">
                                 </div>
                             </div>
                         </div>
@@ -102,22 +102,22 @@
                             <span class="input-group-addon">止损</span>
                             <div class="row">
                                 <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="new-stoplosspips" type="text" class="form-control" placeholder="止损点数 可选">
+                                    <input id="new-stoplosspips" type="text" class="form-control clear-data" placeholder="止损点数 可选">
                                 </div>
                                 <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="new-stoploss" type="text" class="form-control" placeholder="止损价 可选">
+                                    <input id="new-stoploss" type="text" class="form-control clear-data" placeholder="止损价 可选">
                                 </div>
                             </div>
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">注释</span>
-                            <input id="new-comment" type="text" class="form-control" placeholder="可选">
+                            <input id="new-comment" type="text" class="form-control clear-data" placeholder="可选">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">标签</span>
-                            <input id="new-label" type="text" class="form-control" placeholder="不可用" disabled="disabled">
+                            <input id="new-label" type="text" class="form-control clear-data" placeholder="不可用" disabled="disabled">
                         </div>
                         <br>
                         <button id="btn-new" class="btn btn-primary btn-block margin-bottom">提交</button>
@@ -138,22 +138,22 @@
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">单号</span>
-                            <input id="amend-id" type="text" class="form-control" placeholder="请从持仓明细中选择">
+                            <input id="amend-id" type="text" class="form-control clear-data" placeholder="请从持仓明细中选择">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">品种</span>
-                            <input id="amend-symbol" type="text" class="form-control" placeholder="必填">
+                            <input id="amend-symbol" type="text" class="form-control clear-data" placeholder="必填">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">止赢</span>
                             <div class="row">
                                 <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="amend-takeprofitprice" type="text" class="form-control" placeholder="止赢价 可选">
+                                    <input id="amend-takeprofitprice" type="text" class="form-control clear-data" placeholder="止赢价 可选">
                                 </div>
                                 <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="amend-takeprofitpips" type="text" class="form-control" placeholder="止赢点数 可选">
+                                    <input id="amend-takeprofitpips" type="text" class="form-control clear-data" placeholder="止赢点数 可选">
                                 </div>
                             </div>
                         </div>
@@ -162,10 +162,10 @@
                             <span class="input-group-addon">止损</span>
                             <div class="row">
                                 <div class="col-xs-6" style="padding-right:0px;">
-                                    <input id="amend-stoplossprice" type="text" class="form-control" placeholder="止损价 可选">
+                                    <input id="amend-stoplossprice" type="text" class="form-control clear-data" placeholder="止损价 可选">
                                 </div>
                                 <div class="col-xs-6" style="padding-left:0px;">
-                                    <input id="amend-stoplosspips" type="text" class="form-control" placeholder="止损点数 可选">
+                                    <input id="amend-stoplosspips" type="text" class="form-control clear-data" placeholder="止损点数 可选">
                                 </div>
                             </div>
                         </div>
@@ -243,7 +243,7 @@
                         @*<button title="全选" type="button" class="btn btn-default btn-sm checkbox-toggle">
                             <i class="fa fa-square-o"></i>
                         </button>*@
-                    <button title="关闭选中的订单" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
+                    <button id="close-selected2" title="关闭选中的订单" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
                     <div class="pull-right">
                         <div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="切换账号">
@@ -380,6 +380,48 @@
             optionAjax.success = function (result) {
                 _symbols = result.data;
                 GetSymbolList();
+            };
+
+            $.ajax(optionAjax);
+        };
+        //#endregion
+
+        //#region Ajax GetAsk
+        function GetAsk() {
+            var tempsymbolname = $("#new-symbol").find("option:selected").text();
+            if (tempsymbolname.length==0)
+                tempsymbolname = "EURUSD";
+            optionAjax.url = "/Forex/Proto/GetAsk";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                apiUrl: _connect.apiUrl,
+                accessToken: _connect.accessToken,
+                symbolName: tempsymbolname,
+            });
+            optionAjax.success = function (result) {
+                $("#new-ask").val(result.data[0].tick);
+                setTimeout(GetBid(), 1000);
+            };
+
+            $.ajax(optionAjax);
+        };
+        //#endregion
+
+        //#region Ajax GetBid
+        function GetBid() {
+            var tempsymbolname = $("#new-symbol").find("option:selected").text();
+            if (tempsymbolname.length==0)
+                tempsymbolname = "EURUSD";
+            optionAjax.url = "/Forex/Proto/GetBid";
+            optionAjax.data = JSON.stringify({
+                accountId: _connect.accountId,
+                apiUrl: _connect.apiUrl,
+                accessToken: _connect.accessToken,
+                symbolName: tempsymbolname,
+            });
+            optionAjax.success = function (result) {
+                $("#new-bid").val(result.data[0].tick);
+                setTimeout(GetAsk(), 1000);
             };
 
             $.ajax(optionAjax);
@@ -556,7 +598,7 @@
 
             $.ajax(optionAjax);
         };
-        $("#close-selected").click(function () { SendSelectedPositions() });
+        $("#close-selected,#close-selected2").click(function () { SendSelectedPositions() });
         //#endregion
 
         //#region Ajax SendAllPositions
@@ -950,7 +992,7 @@
 
         //symbolcheck选中状态为false时的事件
         $("#symbolcheck").on("ifUnchecked", function () {
-            $("#new-box .form-control").val("");
+            $(".clear-data").val("");
             $("#new-symbol").val(1);
             $("#new-symbol").select2().val(1).trigger("change");
         });
@@ -962,7 +1004,7 @@
             var row = table_pos.api().row($(this));
             var data = row.data();
             //清空数据
-            $(".col-md-3 .form-control").val("");
+            $(".clear-data").val("");
 
             //#region Set Amend
             $("#amend-id").val(data.positionId);
@@ -1031,7 +1073,10 @@
 
         function GetSymbolList() {
             $.each(_symbols, function () {
-                $("#new-symbol").append("<option value='" + this.symbolId + "'>" + this.symbolName + "</option>");
+                if(this.symbolId==1)
+                    $("#new-symbol").append("<option value='" + this.symbolId + "' selected >" + this.symbolName + "</option>");
+                else
+                    $("#new-symbol").append("<option value='" + this.symbolId + "'>" + this.symbolName + "</option>");
             });
         }
         //#endregion
@@ -1069,9 +1114,7 @@
         //#region 页面加载时执行的方法
         GetSymbol();
         GetAccountInfo();
-        $(".mailbox-messages input[type='checkbox']").on("ifChecked", function (e) {
-            console.log($(this).attr('data-id'));
-        })
+        setTimeout(GetAsk(),1000);
         //#endregion
         });
     </script>

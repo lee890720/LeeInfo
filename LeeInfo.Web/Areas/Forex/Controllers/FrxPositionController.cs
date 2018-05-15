@@ -77,14 +77,26 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             var accountinfo = new
             {
                 Balance = param.Balance,
-                Equity = param.Balance + temp.Sum(s => s.UnrNet),
-                UnrNet = temp.Sum(s => s.UnrNet),
-                MarginUsed = temp.Sum(s => s.Margin),
-                FreeMargin = param.Balance + temp.Sum(s => s.UnrNet) - temp.Sum(s => s.Margin),
-                MarginLevel = (param.Balance + temp.Sum(s => s.UnrNet)) / temp.Sum(s => s.Margin) * 100,
+                Equity = (double?)param.Balance,
+                UnrNet = (double?)0.00,
+                MarginUsed = 0.00,
+                FreeMargin = (double?)param.Balance,
+                MarginLevel = (double?)0.00,
             };
+            if (positions.Count != 0)
+            {
+                accountinfo = new
+                {
+                    Balance = param.Balance,
+                    Equity = param.Balance + temp.Sum(s => s.UnrNet),
+                    UnrNet = temp.Sum(s => s.UnrNet),
+                    MarginUsed = temp.Sum(s => s.Margin),
+                    FreeMargin = param.Balance + temp.Sum(s => s.UnrNet) - temp.Sum(s => s.Margin),
+                    MarginLevel = (param.Balance + temp.Sum(s => s.UnrNet)) / temp.Sum(s => s.Margin) * 100,
+                };
+            }
 
-            return Json(new {positions, posgroup, accountinfo });
+            return Json(new { positions, posgroup, accountinfo });
         }
 
         public JsonResult GetSymbol()

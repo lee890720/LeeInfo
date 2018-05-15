@@ -261,9 +261,9 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     withdraw += c.Delta;
             }
             var maxbalance = histories.Select(x => x.Balance).Max();
-            DateTime maxtime = histories.SingleOrDefault(x => x.Balance == maxbalance).ClosingTime.Date;
+            DateTime maxtime = histories.FirstOrDefault(x => x.Balance == maxbalance).ClosingTime.Date;
             var maxdrawdown = histories.Select(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4)).Max();
-            DateTime maxdrawtime = histories.SingleOrDefault(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4) == maxdrawdown).ClosingTime.Date;
+            DateTime maxdrawtime = histories.FirstOrDefault(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4) == maxdrawdown).ClosingTime.Date;
             var totalswap = histories.Select(x => x.Swap).Sum();
             var twr = 1.00;
             foreach (var m in monthBaseData)

@@ -30,7 +30,7 @@ namespace Connect_API.Accounts
         /// The tick
         /// </summary>
         [JsonProperty("tick")]
-        public string Tick { get; set; }
+        public double Tick { get; set; }
 
         /// <summary>
         /// Gets the tick data.
