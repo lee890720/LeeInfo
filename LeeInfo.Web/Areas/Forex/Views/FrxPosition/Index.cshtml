@@ -62,7 +62,7 @@
                 </div>
                 <div class="box-body" style="margin:30px">
                     <div class="row">
-                        <div class="col-md-7">
+                        <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
                             <div class="table-responsive">
                                 <table id="table-posGroup" class="table table-hover" width="100%">
                                     <thead>
@@ -85,44 +85,44 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
                             <div id="PosGroupChart" style="height:300px"></div>
                         </div>
                     </div>
                 </div>
                 <div class="box-footer">
                     <div class="row">
-                        <div class="col-sm-2 col-xs-4">
+                        <div class="col-md-2 col-sm-4 col-xs-6">
                             <div class="description-block border-right">
                                 <h5 id="balance" class="description-header"></h5>
                                 <span class="description-text">账户余额</span>
                             </div>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
+                        <div class="col-md-2 col-sm-4 col-xs-6">
                             <div class="description-block border-right">
                                 <h5 id="equity" class="description-header"></h5>
                                 <span class="description-text">账户净值</span>
                             </div>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
+                        <div class="col-md-2 col-sm-4 col-xs-6">
                             <div class="description-block border-right">
                                 <h5 id="unrnet" class="description-header"></h5>
                                 <span class="description-text">账户净浮动</span>
                             </div>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
+                        <div class="col-md-2 col-sm-4 col-xs-6">
                             <div class="description-block border-right">
                                 <h5 id="marginUsed" class="description-header"></h5>
                                 <span class="description-text">已用保证金</span>
                             </div>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
+                        <div class="col-md-2 col-sm-4 col-xs-6">
                             <div class="description-block border-right">
                                 <h5 id="freeMargin" class="description-header"></h5>
                                 <span class="description-text">可用保证金</span>
                             </div>
                         </div>
-                        <div class="col-sm-2 col-xs-4">
+                        <div class="col-md-2 col-sm-4 col-xs-6">
                             <div class="description-block">
                                 <h5 id="marginLevel" class="description-header"></h5>
                                 <span class="description-text">保证金水平</span>
@@ -135,7 +135,7 @@
     </div>
     <!--持仓明细-->
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-12">
             <div class="box box-info collapsed-box">
                 <div class="box-header with-border">
                     <h3 class="box-title">持仓明细</h3>
@@ -173,11 +173,11 @@
                     </div>
                 </div>
                 <div class="box-body table-responsive">
-                    <div class="form-group col-md-12">
-                        <div class="col-md-3">
+                    <div class="form-group">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
                             <input type="text" placeholder="搜索" id="search" class="form-control">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
                             <select id="date_select" class="form-control select2" style="width: 100%;">
                                 <option value="7">全部</option>
                                 <option value="0">今天</option>
@@ -189,10 +189,10 @@
                                 <option value="6">最后一年</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
                             <input type="text" placeholder="开始日期" id="date_beg" class="form-control datepickertemp">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
                             <input type="text" placeholder="结束日期" id="date_end" class="form-control datepickertemp">
                         </div>
                     </div>
@@ -328,6 +328,7 @@
                     show: false
                 },
                 tooltip: {
+                    show:false,
                     trigger: 'item',
                     formatter: "{a} <br/>{b} : {c} ({d}%)"
                 },
@@ -344,12 +345,27 @@
                     {
                         name: 'SymbolCode',
                         type: 'pie',
-                        radius: [0, '55%'],
-                        center: ['50%', '50%'],
+                        radius: ['50%', '75%'],
+                        center: ['40%', '50%'],
+                        avoidLabelOverlap: false,
                         data: seriesData,
                         label: {
                             normal: {
-                                formatter: '{b} {d}%',
+                                show: false,
+                                position: 'center',
+                                formatter: '{b} : {c} ({d}%)',
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '12',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
                             }
                         },
                         itemStyle: {
@@ -780,6 +796,11 @@
             //#region 页面加载时执行的方法
             GetSymbol();
             GetPosGroup();
+            setTimeout(function () {
+                window.onresize = function () {
+                    PosGroupChart.resize();
+                }
+            }, 200);
             //#endregion
         });
     </script>
