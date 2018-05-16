@@ -122,12 +122,17 @@
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">品种</span>
-                            <input id="amend-symbol" type="text" class="form-control clear-data" placeholder="自动填充" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
+                            <input id="amend-symbol" type="text" class="form-control clear-data" placeholder="自动填充" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral" disabled="disabled">
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <span class="input-group-addon">多空</span>
+                            <input id="amend-tradeSide" type="text" class="form-control clear-data" placeholder="开仓价 自动填充" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral" disabled="disabled">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">价格</span>
-                            <input id="amend-price" type="text" class="form-control clear-data" placeholder="开仓价 自动填充" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
+                            <input id="amend-price" type="text" class="form-control clear-data" placeholder="开仓价 自动填充" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral" disabled="disabled">
                         </div>
                         <br>
                         <div class="input-group">
@@ -235,7 +240,7 @@
                                     <li><input type="checkbox" class="toggle-vis" data-column="2" />&emsp;<small>标签</small></li>
                                     <li><input type="checkbox" class="toggle-vis" data-column="3" />&emsp;<small>注释</small></li>
                                     <li><input type="checkbox" class="toggle-vis" data-column="4" />&emsp;<small>平台</small></li>
-                                    <li><input type="checkbox" class="toggle-vis" data-column="7" />&emsp;<small>数量</small></li>
+                                    <li><input type="checkbox" class="toggle-vis" data-column="8" />&emsp;<small>手数</small></li>
                                     <li><input type="checkbox" class="toggle-vis" data-column="10" />&emsp;<small>修改时间</small></li>
                                     <li><input type="checkbox" class="toggle-vis" data-column="15" />&emsp;<small>保证金</small></li>
                                     <li><input type="checkbox" class="toggle-vis" data-column="16" />&emsp;<small>佣金</small></li>
@@ -255,8 +260,8 @@
                                     <th class="col-visible">平台</th>
                                     <th>品种</th>
                                     <th>多空</th>
-                                    <th class="col-visible">数量</th>
-                                    <th>手数</th>
+                                    <th>数量</th>
+                                    <th  class="col-visible">手数</th>
                                     <th>开仓时间</th>
                                     <th class="col-visible">修改时间</th>
                                     <th>开仓价</th>
@@ -818,6 +823,12 @@
                         }
                     },
                     {
+                        targets:7,
+                        render: function (data, type, row, meta) {
+                            return data / 100;
+                        }
+                    },
+                    {
                         targets: 8,
                         render: function (data, type, row, meta) {
                             if (_symbols != null) {
@@ -966,6 +977,7 @@
             //#region Set Amend
             $("#amend-id").val(data.positionId);
             $("#amend-symbol").val(data.symbolName);
+            $("#amend-tradeSide").val(data.tradeSide);
             $("#amend-price").val(data.entryPrice);
             if (data.takeProfit != null) {
                 $("#amend-takeprofitprice").val(data.takeProfit);
