@@ -20,7 +20,7 @@ using System.Threading;
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {
     [Area("Forex")]
-    [Authorize(Roles = "Admins,Forex")]
+    [Authorize(Roles = "Admins,Trader")]
     public class ProtoController : Controller
     {
         private readonly AppIdentityDbContext _identitycontext;

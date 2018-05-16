@@ -21,7 +21,7 @@
             <a asp-action="Index" asp-controller="Home"><b>Lee</b>Info</a>
         </div>
         <div class="login-box-body">
-            <p class="login-box-msg">Sign in to start your session</p>
+            <h4 class="login-box-msg">欢 迎 登 录</h4>
             <form asp-action="Login" method="post">
                 <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
                 <div class="form-group has-feedback">
@@ -38,13 +38,12 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
-                        <label asp-for="RememberMe">
-                            <input type="checkbox" asp-for="RememberMe" class="minimal" />
-                            @Html.DisplayNameFor(m => m.RememberMe)
-                        </label>
+                        @*<label asp-for="RememberMe"></label>*@
+                        <input type="checkbox" asp-for="RememberMe" class="minimal" />
+                        <small style="margin:0;vertical-align:bottom"> 记住我</small>
                     </div>
                     <div class="col-xs-4">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
                     </div>
                 </div>
             </form>

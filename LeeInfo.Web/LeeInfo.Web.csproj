@@ -42,6 +42,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Mail\Controllers\" />
+    <Folder Include="Areas\Mail\Data\" />
+    <Folder Include="Areas\Mail\Models\" />
     <Folder Include="Connected Services\" />
     <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>

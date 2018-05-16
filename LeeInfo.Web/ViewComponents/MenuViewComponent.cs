@@ -24,7 +24,7 @@ namespace LeeInfo.Web.ViewComponents
             {
                 foreach (var r in list_str)
                 {
-                    if (t.Description.IndexOf(r) != -1)
+                    if (t.Description.IndexOf(r) != -1&&t.Valid)
                         menu.Add(t);
                 }
             }

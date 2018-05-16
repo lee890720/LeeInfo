@@ -52,9 +52,14 @@ desired effect
                 </a>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
-                        @await Component.InvokeAsync("Forex")
-                        @await Component.InvokeAsync("Alert")
-                        @await Component.InvokeAsync("Task")
+                        @{
+                            if (User.IsInRole("Admins"))
+                            {
+                                @await Component.InvokeAsync("Forex")
+                                @await Component.InvokeAsync("Alert")
+                                @await Component.InvokeAsync("Task")
+                            }
+                        }
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <img src="@_user.UserImage" class="user-image" alt="User Image">
@@ -109,14 +114,14 @@ desired effect
             <strong>Copyright &copy; 2018 <a href="/">LeeInfo</a>.</strong> All rights reserved.
         </footer>
         <!-- Control Sidebar -->
-        @Html.Partial("_ControlSidebarPartial")
+        @*@Html.Partial("_ControlSidebarPartial")*@
         <div class="control-sidebar-bg"></div>
     </div>
     @Html.Partial("_Modal", new BootstrapModel { ID = "modal-action", AreaLabeledId = "modal-action-label", Size = ModalSize.Medium })
     <script src="~/js/adminlte.min.js"></script>
     <script src="~/js/datatables.min.js"></script>
     <script src="~/lib/icheck/icheck.min.js"></script>
-    <script src="~/js/layout.js"></script>
+    @*<script src="~/js/layout.js"></script>*@
     <script>
         $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
             checkboxClass: 'icheckbox_minimal-blue',
