@@ -52,9 +52,9 @@
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">买多价</span>
-                            <input id="new-ask" type="text" class="form-control" placeholder="1.02451" disabled="disabled" style="color:red">
+                            <input id="new-ask" type="text" class="form-control" placeholder="1.02451" disabled="disabled" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                             <span class="input-group-addon">卖空价</span>
-                            <input id="new-bid" type="text" class="form-control" placeholder="1.04578" disabled="disabled" style="color:red">
+                            <input id="new-bid" type="text" class="form-control" placeholder="1.04578" disabled="disabled" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                         </div>
                         <br>
                         <div class="input-group">
@@ -65,7 +65,7 @@
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">数量</span>
-                            <input id="new-volume" type="text" class="form-control clear-data" placeholder="数量">
+                            <input id="new-volume" type="text" class="form-control clear-data" placeholder="数量" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                         </div>
                         <br>
                         <div class="input-group">
@@ -81,12 +81,12 @@
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">止赢</span>
-                            <input id="new-takeprofitpips" type="text" class="form-control clear-data" placeholder="止赢点数 可选">
+                            <input id="new-takeprofitpips" type="text" class="form-control clear-data" placeholder="止赢点数 可选" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">止损</span>
-                            <input id="new-stoplosspips" type="text" class="form-control clear-data" placeholder="止损点数 可选">
+                            <input id="new-stoplosspips" type="text" class="form-control clear-data" placeholder="止损点数 可选" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                         </div>
                         <br>
                         <div class="input-group">
@@ -117,22 +117,27 @@
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">单号</span>
-                            <input id="amend-id" type="text" class="form-control clear-data" placeholder="请从持仓明细中选择">
+                            <input id="amend-id" type="text" class="form-control clear-data" placeholder="请从持仓明细中选择" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">品种</span>
-                            <input id="amend-symbol" type="text" class="form-control clear-data" placeholder="必填">
+                            <input id="amend-symbol" type="text" class="form-control clear-data" placeholder="自动填充" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <span class="input-group-addon">价格</span>
+                            <input id="amend-price" type="text" class="form-control clear-data" placeholder="开仓价 自动填充" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">止赢</span>
-                            <input id="amend-takeprofitprice" type="text" class="form-control clear-data" placeholder="止赢价 可选">
+                            <input id="amend-takeprofitprice" type="text" class="form-control clear-data" placeholder="止赢价 可选" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                         </div>
                         <br>
                         <div class="input-group">
                             <span class="input-group-addon">止损</span>
-                            <input id="amend-stoplossprice" type="text" class="form-control clear-data" placeholder="止损价 可选">
+                            <input id="amend-stoplossprice" type="text" class="form-control clear-data" placeholder="止损价 可选" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
                         </div>
                         <br>
                         <button id="btn-amend" class="btn btn-primary btn-block margin-bottom">提交</button>
@@ -961,6 +966,7 @@
             //#region Set Amend
             $("#amend-id").val(data.positionId);
             $("#amend-symbol").val(data.symbolName);
+            $("#amend-price").val(data.entryPrice);
             if (data.takeProfit != null) {
                 $("#amend-takeprofitprice").val(data.takeProfit);
             }
