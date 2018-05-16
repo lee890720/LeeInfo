@@ -153,37 +153,37 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-xs-6">
-                                <button id="close-all" class="btn btn-primary btn-block margin-bottom">全部平仓</button>
+                                <button id="close-all" class="btn btn-primary btn-block margin-bottom"><span style="color:yellow">全部</span>&emsp;平仓</button>
                             </div>
                             <div class="col-xs-6">
-                                <button id="close-selected" class="btn btn-primary btn-block margin-bottom">平选中单</button>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <button id="close-buy" class="btn btn-primary btn-block margin-bottom">平买多单</button>
-                            </div>
-                            <div class="col-xs-6">
-                                <button id="close-sell" class="btn btn-primary btn-block margin-bottom">平卖空单</button>
+                                <button id="close-selected" class="btn btn-primary btn-block margin-bottom"><span style="color:yellow">选中</span>&emsp;平仓</button>
                             </div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-xs-6">
-                                <button id="close-win" class="btn btn-primary btn-block margin-bottom">平赢利单</button>
+                                <button id="close-buy" class="btn btn-primary btn-block margin-bottom"><span style="color:yellow">买多</span>&emsp;平仓</button>
                             </div>
                             <div class="col-xs-6">
-                                <button id="close-loss" class="btn btn-primary btn-block margin-bottom">平亏损单</button>
+                                <button id="close-sell" class="btn btn-primary btn-block margin-bottom"><span style="color:yellow">卖空</span>&emsp;平仓</button>
                             </div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-xs-6">
-                                <button id="close-double" class="btn btn-primary btn-block margin-bottom">加倍选中单</button>
+                                <button id="close-win" class="btn btn-primary btn-block margin-bottom"><span style="color:yellow">赢利</span>&emsp;平仓</button>
                             </div>
                             <div class="col-xs-6">
-                                <button id="close-reverse" class="btn btn-primary btn-block margin-bottom">反转选中单</button>
+                                <button id="close-loss" class="btn btn-primary btn-block margin-bottom"><span style="color:yellow">亏损</span>&emsp;平仓</button>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <button id="close-double" class="btn btn-primary btn-block margin-bottom"><span style="color:yellow">加倍</span>&emsp;选中单</button>
+                            </div>
+                            <div class="col-xs-6">
+                                <button id="close-reverse" class="btn btn-primary btn-block margin-bottom"><span style="color:yellow">反转</span>&emsp;选中单</button>
                             </div>
                         </div>
                     </div>
@@ -351,12 +351,12 @@
         };
         //#endregion
 
-        //#region Ajax GetAsk
-        function GetAsk() {
+        //#region Ajax GetPrice
+        function GetPrice() {
             var tempsymbolname = $("#new-symbol").find("option:selected").text();
             if (tempsymbolname.length==0)
                 tempsymbolname = "EURUSD";
-            optionAjax.url = "/Forex/Proto/GetAsk";
+            optionAjax.url = "/Forex/Proto/GetPrice";
             optionAjax.data = JSON.stringify({
                 accountId: _connect.accountId,
                 apiUrl: _connect.apiUrl,
@@ -364,36 +364,15 @@
                 symbolName: tempsymbolname,
             });
             optionAjax.success = function (result) {
-                if( !(result.data === undefined || result.data.length == 0)) {
-                    $("#new-ask").val(result.data[0].tick);
+                if( !(result.ask.data === undefined || result.ask.data.length == 0)) {
+                    $("#new-ask").val(result.ask.data[0].tick);
                 }
-                setTimeout(GetBid(), 1000);
+                if (!(result.bid.data === undefined || result.bid.data.length == 0)) {
+                    $("#new-bid").val(result.bid.data[0].tick);
+                }
+                setTimeout(GetPrice(), 1000);
             };
             optionAjax.error = function (errorMsg) {};
-
-            $.ajax(optionAjax);
-        };
-        //#endregion
-
-        //#region Ajax GetBid
-        function GetBid() {
-            var tempsymbolname = $("#new-symbol").find("option:selected").text();
-            if (tempsymbolname.length==0)
-                tempsymbolname = "EURUSD";
-            optionAjax.url = "/Forex/Proto/GetBid";
-            optionAjax.data = JSON.stringify({
-                accountId: _connect.accountId,
-                apiUrl: _connect.apiUrl,
-                accessToken: _connect.accessToken,
-                symbolName: tempsymbolname,
-            });
-            optionAjax.success = function (result) {
-                if (!(result.data === undefined || result.data.length == 0)) {
-                    $("#new-bid").val(result.data[0].tick);
-                }
-                setTimeout(GetAsk(), 1000);
-            };
-            optionAjax.error = function (errorMsg) { };
 
             $.ajax(optionAjax);
         };
@@ -1087,7 +1066,7 @@
         //#region 页面加载时执行的方法
         GetSymbol();
         GetAccountInfo();
-        setTimeout(GetAsk(), 1000);
+        setTimeout(GetPrice(), 1000);
         //#endregion
         });
     </script>

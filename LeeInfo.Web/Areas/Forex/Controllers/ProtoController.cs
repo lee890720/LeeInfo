@@ -47,30 +47,21 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             return View(Tuple.Create<ConnectAPI, List<FrxAccount>>(connect, accounts));
         }
 
-        public JsonResult GetAsk([FromBody]Params param)
+        public JsonResult GetPrice([FromBody]Params param)
         {
-            DateTime date = DateTime.UtcNow;
-            DateTime date2 = date.AddSeconds(-30);
+            DateTime date = DateTime.UtcNow.AddMinutes(1);
+            DateTime date2 = DateTime.UtcNow.AddSeconds(-30);
             string dateString = String.Format("{0:0000}", date.Year) + String.Format("{0:00}", date.Month) + String.Format("{0:00}", date.Day);
             string timeFrom = String.Format("{0:00}", date2.Hour) + String.Format("{0:00}", date2.Minute) + String.Format("{0:00}", date2.Second);
             string timeTo = String.Format("{0:00}", date.Hour) + String.Format("{0:00}", date.Minute) + String.Format("{0:00}", date.Second);
             var client = new RestClient(param.ApiUrl);
-            var request = new RestRequest(@"connect/tradingaccounts/" + param.AccountId + "/symbols/" + param.SymbolName + "/ask/?oauth_token=" + param.AccessToken + "&date=" + dateString + "&from=" + timeFrom + "&to=" + timeTo);
-            var responseTickData= client.Execute<TickData>(request);
-            return Json(JObject.Parse(responseTickData.Content));
-        }
-
-        public JsonResult GetBid([FromBody]Params param)
-        {
-            DateTime date = DateTime.UtcNow;
-            DateTime date2 = date.AddSeconds(-30);
-            string dateString = String.Format("{0:0000}", date.Year) + String.Format("{0:00}", date.Month) + String.Format("{0:00}", date.Day);
-            string timeFrom = String.Format("{0:00}", date2.Hour) + String.Format("{0:00}", date2.Minute) + String.Format("{0:00}", date2.Second);
-            string timeTo = String.Format("{0:00}", date.Hour) + String.Format("{0:00}", date.Minute) + String.Format("{0:00}", date.Second);
-            var client = new RestClient(param.ApiUrl);
-            var request = new RestRequest(@"connect/tradingaccounts/" + param.AccountId + "/symbols/" + param.SymbolName + "/bid/?oauth_token=" + param.AccessToken + "&date=" + dateString + "&from=" + timeFrom + "&to=" + timeTo);
-            var responseTickData = client.Execute<TickData>(request);
-            return Json(JObject.Parse(responseTickData.Content));
+            var request_ask = new RestRequest(@"connect/tradingaccounts/" + param.AccountId + "/symbols/" + param.SymbolName + "/ask/?oauth_token=" + param.AccessToken + "&date=" + dateString + "&from=" + timeFrom + "&to=" + timeTo);
+            var request_bid = new RestRequest(@"connect/tradingaccounts/" + param.AccountId + "/symbols/" + param.SymbolName + "/bid/?oauth_token=" + param.AccessToken + "&date=" + dateString + "&from=" + timeFrom + "&to=" + timeTo);
+            var responseTickData_ask = client.Execute<TickData>(request_ask);
+            var responseTickData_bid = client.Execute<TickData>(request_bid);
+            var ask = JObject.Parse(responseTickData_ask.Content);
+            var bid = JObject.Parse(responseTickData_bid.Content);
+            return Json(new { ask, bid });
         }
 
         public JsonResult GetPosition([FromBody]Params param)
