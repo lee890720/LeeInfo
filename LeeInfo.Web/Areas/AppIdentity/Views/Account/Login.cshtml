@@ -10,15 +10,13 @@
     <title>LeeInfo | Log in</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="~/css/adminlte.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <link rel="stylesheet" href="~/css/site.min.css" />
-    <link rel="stylesheet" href="~/css/datatables.min.css" />
-    <link rel="stylesheet" href="~/lib/icheck/all.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a asp-action="Index" asp-controller="Home"><b>Lee</b>Info</a>
+            <a  asp-page="/"><b>Lee</b>Info</a>
         </div>
         <div class="login-box-body">
             <h4 class="login-box-msg">欢 迎 登 录</h4>
@@ -38,9 +36,8 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-8">
-                        @*<label asp-for="RememberMe"></label>*@
-                        <input type="checkbox" asp-for="RememberMe" class="minimal" />
-                        <small style="margin:0;vertical-align:bottom"> 记住我</small>
+                        <input type="checkbox" asp-for="RememberMe" class="minimal" style="vertical-align:middle"/>
+                        <span style="vertical-align:middle"> 记住我</span>
                     </div>
                     <div class="col-xs-4">
                         <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
@@ -50,20 +47,11 @@
         </div>
     </div>
     <script src="~/js/adminlte.min.js"></script>
-    <script src="~/lib/icheck/icheck.min.js"></script>
     <script>
         $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
             checkboxClass: 'icheckbox_minimal-blue',
             radioClass: 'iradio_minimal-blue'
-        })
-        $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
-            checkboxClass: 'icheckbox_flat-blue',
-            radioClass: 'iradio_flat-blue'
-        })
-        $('input[type="checkbox"].layout-flat-blue, input[type="radio"].layout-flat-blue').iCheck({
-            checkboxClass: 'icheckbox_flat-blue pull-right',
-            radioClass: 'iradio_flat-blue pull-right'
-        })
+        });
     </script>
 </body>
 </html>

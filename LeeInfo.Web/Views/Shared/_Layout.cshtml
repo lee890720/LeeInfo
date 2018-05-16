@@ -13,10 +13,8 @@
     <title>@ViewData["Title"] | LeeInfo</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="~/css/adminlte.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <link rel="stylesheet" href="~/css/site.min.css" />
-    <link rel="stylesheet" href="~/css/datatables.min.css" />
-    <link rel="stylesheet" href="~/lib/icheck/all.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -83,9 +81,9 @@ desired effect
                                 </li>
                             </ul>
                         </li>
-                        <li>
+                        @*<li>
                             <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-                        </li>
+                        </li>*@
                     </ul>
                 </div>
             </nav>
@@ -113,14 +111,12 @@ desired effect
             </div>
             <strong>Copyright &copy; 2018 <a href="/">LeeInfo</a>.</strong> All rights reserved.
         </footer>
-        <!-- Control Sidebar -->
         @*@Html.Partial("_ControlSidebarPartial")*@
         <div class="control-sidebar-bg"></div>
     </div>
     @Html.Partial("_Modal", new BootstrapModel { ID = "modal-action", AreaLabeledId = "modal-action-label", Size = ModalSize.Medium })
     <script src="~/js/adminlte.min.js"></script>
-    <script src="~/js/datatables.min.js"></script>
-    <script src="~/lib/icheck/icheck.min.js"></script>
+    <script src="~/js/site.min.js"></script>
     @*<script src="~/js/layout.js"></script>*@
     <script>
         $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({

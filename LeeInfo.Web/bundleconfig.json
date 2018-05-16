@@ -6,22 +6,18 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/css/datatables.min.css",
-    "inputFiles": [
-      "wwwroot/lib/datatables/css/dataTables.bootstrap.css"
-    ]
-  },
-  {
     "outputFileName": "wwwroot/css/adminlte.min.css",
     "inputFiles": [
-      "wwwroot/lib/bootstrap/dist/css/bootstrap.css",
-      "wwwroot/lib/font-awesome/css/font-awesome.css",
-      "wwwroot/lib/ionicons/css/ionicons.css",
-      "wwwroot/lib/select/css/select2.css",
-      "wwwroot/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css",
-      "wwwroot/lib/timepicker/bootstrap-timepicker.css",
-      "wwwroot/lib/adminlte/dist/css/AdminLTE.css",
-      "wwwroot/lib/adminlte/dist/css/skins/_all-skins.css"
+      "wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
+      "wwwroot/lib/font-awesome/css/font-awesome.min.css",
+      "wwwroot/lib/Ionicons/css/ionicons.min.css",
+      "wwwroot/lib/AdminLTE/css/skins/skin-blue.min.css",
+      "wwwroot/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
+      "wwwroot/lib/datatables.net-bs/css/dataTables.bootstrap.min.css",
+      "wwwroot/lib/iCheck/flat/_all.css",
+      "wwwroot/lib/iCheck/minimal/_all.css",
+      "wwwroot/lib/select2/dist/css/select2.min.css",
+      "wwwroot/lib/AdminLTE/css/AdminLTE.min.css"
     ]
   },
   {
@@ -35,29 +31,20 @@
     }
   },
   {
-    "outputFileName": "wwwroot/js/datatables.min.js",
-    "inputFiles": [
-      "wwwroot/lib/datatables/js/jquery.dataTables.js",
-      "wwwroot/lib/datatables/js/dataTables.bootstrap.js"
-    ],
-    "minify": {
-      "enabled": true,
-      "renameLocals": true
-    }
-  },
-  {
     "outputFileName": "wwwroot/js/adminlte.min.js",
     "inputFiles": [
-      "wwwroot/lib/jquery/dist/jquery.js",
-      "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
-      "wwwroot/lib/jquery-slimscroll/jquery.slimscroll.js",
+      "wwwroot/lib/jquery/dist/jquery.min.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
+      "wwwroot/lib/jquery-slimscroll/jquery.slimscroll.min.js",
       "wwwroot/lib/fastclick/lib/fastclick.js",
-      "wwwroot/lib/select/js/select2.full.js",
-      "wwwroot/lib/moment/moment.js",
-      "wwwroot/lib/echart/echarts.js",
-      "wwwroot/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js",
-      "wwwroot/lib/timepicker/bootstrap-timepicker.js",
-      "wwwroot/lib/adminlte/dist/js/adminlte.js"
+      "wwwroot/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js",
+      "wwwroot/lib/echart/echarts.min.js",
+      "wwwroot/lib/datatables.net/js/jquery.dataTables.min.js",
+      "wwwroot/lib/datatables.net-bs/js/dataTables.bootstrap.min.js",
+      "wwwroot/lib/iCheck/icheck.min.js",
+      "wwwroot/lib/moment/moment.min.js",
+      "wwwroot/lib/select2/dist/js/select2.full.min.js",
+      "wwwroot/lib/AdminLTE/js/adminlte.min.js"
     ],
     "minify": {
       "enabled": true,
