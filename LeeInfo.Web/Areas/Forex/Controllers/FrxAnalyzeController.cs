@@ -40,7 +40,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         }
         public async Task<IActionResult> Index(int? acId)
         {
-            ConnectAPI connect = ConnectAPI.GetConnectAPI(_identitycontext, _context, User.Identity.Name,acId);
+            ConnectAPI connect = ConnectAPI.GetConnectAPI(_identitycontext, _context, User.Identity.Name, acId);
             if (connect.AccountId == 0)
                 return Redirect("/");
             var useraccounts = _identitycontext.AspNetUserForexAccount.Where(u => u.AppIdentityUserId == connect.UserId).ToList();
@@ -71,7 +71,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             #region GetHistory
             DateTime fromtime;
             if (_context.FrxHistory.Count() != 0)
-                fromtime = _context.FrxHistory.OrderByDescending(x => x.ClosingTime).ToList()[0].ClosingTime.AddDays(-1) ;
+                fromtime = _context.FrxHistory.OrderByDescending(x => x.ClosingTime).ToList()[0].ClosingTime.AddDays(-1);
             else
                 fromtime = connect.TraderRegistrationTime;
             DateTime utcnow = DateTime.UtcNow;
@@ -132,7 +132,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
                 fh.Roi = h.PositionCloseDetails.Roi;
                 fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
-                fh.Digits= symbols.SingleOrDefault(x => x.SymbolName == fh.SymbolCode).PipPosition;
+                fh.Digits = symbols.SingleOrDefault(x => x.SymbolName == fh.SymbolCode).PipPosition;
                 var result = _context.FrxHistory.SingleOrDefault(x => x.ClosingDealId == fh.ClosingDealId);
                 if (result == null)
                 {
@@ -260,6 +260,9 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 if (c.Type == "WITHDRAW")
                     withdraw += c.Delta;
             }
+            var unrnet = 0.00;
+            if (positions.Count != 0)
+                unrnet = (double)positions.Sum(x => x.Commission * 2 + x.Swap + x.Profit) / 100;
             var maxbalance = histories.Select(x => x.Balance).Max();
             DateTime maxtime = histories.FirstOrDefault(x => x.Balance == maxbalance).ClosingTime.Date;
             var maxdrawdown = histories.Select(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4)).Max();
@@ -287,7 +290,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 Deposit = deposit,
                 Withdraw = withdraw,
                 Balance = account.Balance,
-                Equity = account.Equity,
+                Equity = account.Balance + (double)unrnet,
                 MaxBalance = maxbalance,
                 MaxBalanceTime = maxtime,
                 TotalProfit = account.Balance - deposit + withdraw,
@@ -296,7 +299,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 RigistrationTime = account.TraderRegistrationTime
             };
             #endregion
-            return Json(new { monthBaseData, accountinfo});
+            return Json(new { monthBaseData, accountinfo });
         }
 
         public JsonResult GetHistory([FromBody]Params param)

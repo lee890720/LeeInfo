@@ -125,7 +125,7 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Edit(string id, string email,string password,SexType sex,string userImage,bool connectAPI,
-            string clientId,string clientSecret,string accessToken,string refreshToken)
+            string clientId,string clientSecret,string accessToken,string refreshToken,string connectUrl,string apiUrl,string apiHost,int? apiPort)
         {
             AppIdentityUser user = await userManager.FindByIdAsync(id);
             if (user != null)
@@ -138,6 +138,13 @@ namespace LeeInfo.Web.Areas.AppIdentity.Controllers
                 user.ClientSecret = clientSecret;
                 user.AccessToken = accessToken;
                 user.RefreshToken = refreshToken;
+                user.ConnectUrl = connectUrl;
+                user.ApiUrl = apiUrl;
+                user.ApiHost = apiHost;
+                if (apiPort != null)
+                    user.ApiPort = (int)apiPort;
+                else
+                    user.ApiPort = 0;
                 IdentityResult validEmail
                     = await userValidator.ValidateAsync(userManager, user);
                 if (!validEmail.Succeeded)

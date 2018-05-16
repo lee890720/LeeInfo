@@ -41,10 +41,10 @@
 
     <div class="form-group">
         <label class="control-label">
-            ConnectAPI
+            如果你有自己的ConnectAPI，请选定后填写以下信息，否则切勿点击！
         </label>
         <div class="checkbox icheck">
-            <input type="checkbox" class="flat-blue" asp-for="ConnectAPI"/>
+            <input type="checkbox" class="flat-blue" asp-for="ConnectAPI" />
         </div>
     </div>
 
@@ -70,6 +70,29 @@
         @Html.LabelFor(model => model.RefreshToken, "RefreshToken", htmlAttributes: new { @class = "control-label" })
         @Html.EditorFor(model => model.RefreshToken, new { htmlAttributes = new { @class = "form-control" } })
         @Html.ValidationMessageFor(model => model.RefreshToken, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.ConnectUrl, "ConnectUrl", htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.ConnectUrl, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ConnectUrl, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ApiUrl, "ApiUrl", htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.ApiUrl, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ApiUrl, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ApiHost, "ApiHost", htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.ApiHost, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ApiHost, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ApiPort, "ApiPort", htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.ApiPort, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.ApiPort, "", new { @class = "text-danger" })
     </div>
 </div>
 <script>

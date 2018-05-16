@@ -72,7 +72,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     > s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
                     ? s.Where(b => b.TradeSide == "BUY").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage)
                     : s.Where(b => b.TradeSide == "SELL").Sum(a => a.Volume / 100 * a.MarginRate / param.PreciseLeverage),
-                    UnrNet = s.Sum(a => a.Swap + a.Commission + a.Profit) / 100,
+                    UnrNet = s.Sum(a => a.Swap + a.Commission*2 + a.Profit) / 100,
                 }).ToList();
             var accountinfo = new
             {
