@@ -21,13 +21,18 @@
 </section>
 <section class="content">
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-12">
             <div class="box">
-                <div class="box-header">
-                    @*<h3 class="box-title">Data Table With Full Features</h3>*@
-                </div>
                 <div class="box-body table-responsive">
-                    <table id="example1" class="table  table-bordered table-striped table-hover" onmouseover="eFresh();" onmouseout="sFresh();" width="100%">
+                    <div class="form-group">
+                        <div class="col-md-3 col-sm-6 col-xs-12 no-padding hidden-xs" style="margin-bottom:10px;">
+                            <a id="createModal" data-toggle="modal" data-target="#modal-action" class="btn btn-primary" href="@path/Create"><i class="glyphicon glyphicon-plus"></i> Create</a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 no-padding pull-right" style="margin-bottom:10px;">
+                            <input type="text" placeholder="搜索" id="search" class="form-control">
+                        </div>
+                    </div>
+                    <table id="table-1" class="table  table-bordered table-striped table-hover" onmouseover="eFresh();" onmouseout="sFresh();" width="100%">
                         <thead>
                             <tr>
                                 <th>
@@ -82,91 +87,91 @@
                                     Alike
                                 </th>
                                 @{
-                                    if (User.IsInRole("Admins"))
-                                    {
-                                        <th></th>
-                                    }
+                    if (User.IsInRole("Admins"))
+                    {
+                        <th></th>
+    }
                                 }
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model)
-                            {
-                                double srsa = 0;
-                                if (item.Sr.HasValue && item.Sa.HasValue)
-                                {
-                                    srsa = Math.Abs((double)(item.Sr - item.Sa));
-                                }
-                                string isbrk = null;
-                                if (Math.Abs((double)item.Sr) > item.Brk)
-                                {
-                                    isbrk = "break";
-                                }
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Symbol)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.InitVolume)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Tmr)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Brk)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Distance)
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" checked="@item.IsTrade" class="flat-blue" />
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" checked="@item.IsBreak" class="flat-blue" />
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" checked="@item.IsBrkFirst" class="flat-blue" />
-                                    </td>
-                                    <td>
-                                        @item.Result/@item.Average/@item.Magnify/@item.Sub
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Cr)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Ca)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Sr)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Sa)
-                                    </td>
-                                    <td>
-                                        @srsa
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Signal)
-                                    </td>
-                                    <td>
-                                        @isbrk
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Alike)
-                                    </td>
-                                    @if (User.IsInRole("Admins"))
-                                    {
-                                        <td style="min-width:150px">
-                                            <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">
-                                                <i class="glyphicon glyphicon-pencil"></i> Edit
-                                            </a>
-                                            <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-warning" style="width:70px;margin-right:5px; min-width:50px;">
-                                                <i class="glyphicon glyphicon-trash"></i> Delete
-                                            </a>
-                                        </td>
-                                    }
-                                </tr>
-                            }
+            {
+                double srsa = 0;
+                if (item.Sr.HasValue && item.Sa.HasValue)
+                {
+                    srsa = Math.Abs((double)(item.Sr - item.Sa));
+                }
+                string isbrk = null;
+                if (Math.Abs((double)item.Sr) > item.Brk)
+                {
+                    isbrk = "break";
+                }
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Symbol)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.InitVolume)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tmr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Brk)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Distance)
+                    </td>
+                    <td>
+                        <input type="checkbox" checked="@item.IsTrade" class="flat-blue" />
+                    </td>
+                    <td>
+                        <input type="checkbox" checked="@item.IsBreak" class="flat-blue" />
+                    </td>
+                    <td>
+                        <input type="checkbox" checked="@item.IsBrkFirst" class="flat-blue" />
+                    </td>
+                    <td>
+                        @item.Result/@item.Average/@item.Magnify/@item.Sub
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ca)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sr)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sa)
+                    </td>
+                    <td>
+                        @srsa
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Signal)
+                    </td>
+                    <td>
+                        @isbrk
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Alike)
+                    </td>
+                    @if (User.IsInRole("Admins"))
+    {
+                <td style="min-width:150px">
+                    <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">
+                        <i class="glyphicon glyphicon-pencil"></i> Edit
+                    </a>
+                    <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-warning" style="width:70px;margin-right:5px; min-width:50px;">
+                        <i class="glyphicon glyphicon-trash"></i> Delete
+                    </a>
+                </td>
+}
+                </tr>
+}
                         </tbody>
                     </table>
                 </div>
@@ -176,24 +181,42 @@
 </section>
 @section Scripts{
     <script>
-    $(function () {
-        $('#example1').DataTable(
-            {
-            'order': [[14, "desc"],[15,"desc"]],
-            'pageLength':10,
-            //initComplete: function () {
-            //    $("#mytool").append('<a id="createModal" data-toggle="modal" data-target="#modal-action" class="btn btn-primary" href="@path/Create"><i class="glyphicon glyphicon-plus"></i> Create</a>');
-            //}
-        })
-        $('#example2').DataTable({
-            'paging': true,
-            'lengthChange': false,
-            'searching': false,
-            'ordering': true,
-            'info': true,
-            'autoWidth': false
-        })
-    })
+        $(function () {
+            var table1 = $('#table-1').DataTable(
+                {
+                    order: [[14, "desc"], [15, "desc"]],
+                    dom:
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    scrollX: true,
+                    language: {
+                        processing: "加载中...",
+                        lengthMenu: "每页显示 _MENU_ 条数据",
+                        zeroRecords: "没有匹配结果",
+                        info: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        infoEmpty: "显示第 0 至 0 项结果，共 0 项",
+                        infoFiltered: "(由 _MAX_ 项结果过滤)",
+                        infoPostFix: "",
+                        search: "搜索:",
+                        url: "",
+                        emptyTable: "没有匹配结果",
+                        loadingRecords: "载入中...",
+                        thousands: ",",
+                        paginate: {
+                            first: "首页",
+                            previous: "上一页",
+                            next: "下一页",
+                            last: "末页"
+                        },
+                        aria: {
+                            sortAscending: ": 以升序排列此列",
+                            sortDescending: ": 以降序排列此列"
+                        }
+                    },
+                });
+            $("#search").keyup(function () { table1.search($("#search").val()).draw(); });
+        });
 
         var stop = 1;
         function myrefresh() {

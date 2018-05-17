@@ -22,7 +22,8 @@ namespace LeeInfo.Web.Controllers
         }
         public IActionResult Index()
         {
-            //return Redirect("/Forex/FrxCbotset");
+            if (User.IsInRole("Forex"))
+                return Redirect("/Forex/FrxSymbol");
             return View();
         }
 

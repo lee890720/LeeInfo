@@ -43,8 +43,8 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">新建订单</h3>
                     <div class="box-tools">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-minus"></i>
+                        <button type="button" class="btn btn-box-tool" id="new-tool" data-widget="collapse">
+                            <i class="fa fa-plus"></i>
                         </button>
                     </div>
                 </div>
@@ -108,8 +108,8 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">修改订单</h3>
                     <div class="box-tools">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-minus"></i>
+                        <button type="button" class="btn btn-box-tool" id="amend-tool" data-widget="collapse">
+                            <i class="fa fa-plus"></i>
                         </button>
                     </div>
                 </div>
@@ -154,8 +154,8 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">快捷命令</h3>
                     <div class="box-tools">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-minus"></i>
+                        <button type="button" class="btn btn-box-tool" id="order-tool" data-widget="collapse">
+                            <i class="fa fa-plus"></i>
                         </button>
                     </div>
                 </div>
@@ -973,6 +973,37 @@
             }
         });
         //#endregion
+
+        $('#new-tool').on('click', function (e) {
+            e.preventDefault();
+            if ($("#new-box").hasClass("collapsed-box")) {
+                $("#amend-box").addClass("collapsed-box");
+                $("#order-box").addClass("collapsed-box");
+                $(".fa", "#amend-tool").removeClass("fa-minus").addClass('fa-plus');
+                $(".fa", "#order-tool").removeClass("fa-minus").addClass('fa-plus');
+                scrollTo(0, 0);
+            }
+        });
+        $('#amend-tool').on('click', function (e) {
+            e.preventDefault();
+            if ($("#amend-box").hasClass("collapsed-box")) {
+                $("#new-box").addClass("collapsed-box");
+                $("#order-box").addClass("collapsed-box");
+                $(".fa", "#new-tool").removeClass("fa-minus").addClass('fa-plus');
+                $(".fa", "#order-tool").removeClass("fa-minus").addClass('fa-plus');
+                scrollTo(0, 0);
+            }
+        });
+        $('#order-tool').on('click', function (e) {
+            e.preventDefault();
+            if ($("#order-box").hasClass("collapsed-box")) {
+                $("#amend-box").addClass("collapsed-box");
+                $("#new-box").addClass("collapsed-box");
+                $(".fa", "#amend-tool").removeClass("fa-minus").addClass('fa-plus');
+                $(".fa", "#new-tool").removeClass("fa-minus").addClass('fa-plus');
+                scrollTo(0, 0);
+            }
+        });
 
         //#region 设置新建订单和修改订单的值
 
