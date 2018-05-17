@@ -65,8 +65,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
 
         public JsonResult GetSymbol()
         {
-            string[] bases = { "XAU", "XAG", "XBR", "XTI" };
-            var data = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
+            var data = _context.FrxSymbol.OrderBy(x => x.SymbolId).ToList();
             return Json(new { data, data.Count });
         }
 

@@ -852,13 +852,8 @@
                                 var lot = 0.00;
                                 $.each(_symbols, function () {
                                     if (this.symbolId == row.symbolId) {
-                                        var minlot = 0.00;
-                                        if (this.assetClass == 1 || this.assetClass == 2)
-                                            minlot = 0.01;
-                                        else {
-                                            minlot = 1;
-                                        }
-                                        lot = row.volume / this.minOrderVolume * minlot;
+                                        var minlot = this.minOrderLot;
+                                        lot = row.volume / (this.minOrderVolume*100) * minlot;
                                         return false;
                                     }
                                 });
@@ -974,6 +969,7 @@
         });
         //#endregion
 
+        //#region Collapse切换
         $('#new-tool').on('click', function (e) {
             e.preventDefault();
             if ($("#new-box").hasClass("collapsed-box")) {
@@ -1004,6 +1000,7 @@
                 scrollTo(0, 0);
             }
         });
+        //#endregion
 
         //#region 设置新建订单和修改订单的值
 

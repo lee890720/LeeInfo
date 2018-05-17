@@ -37,6 +37,8 @@ namespace LeeInfo.Data.Forex
         public double SwapShort { get; set; }
         [Display(Name = "三日利息时间")]
         public string ThreeDaysSwaps { get; set; }
+        [Display(Name = "最小交易手数")]
+        public double MinOrderLot { get; set; }
         [Display(Name = "最小交易数量")]
         public long MinOrderVolume { get; set; }
         [Display(Name = "数量最小尺度")]

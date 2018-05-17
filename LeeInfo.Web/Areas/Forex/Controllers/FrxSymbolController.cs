@@ -75,9 +75,15 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 symbol.SwapLong = s.SwapLong;
                 symbol.SwapShort = s.SwapShort;
                 symbol.ThreeDaysSwaps = s.ThreeDaysSwaps;
-                symbol.MinOrderVolume = s.MinOrderVolume;
-                symbol.MinOrderStep = s.MinOrderStep;
-                symbol.MaxOrderVolume = s.MaxOrderVolume;
+                if (s.SymbolName.Contains("XAG"))
+                    symbol.MinOrderLot = (double)s.MinOrderVolume / 100 / 1000;
+                else if (s.SymbolName.Contains("XBR") || s.SymbolName.Contains("XTI") || s.SymbolName.Contains("XAU"))
+                    symbol.MinOrderLot = (double)s.MinOrderVolume / 100 / 100;
+                else
+                    symbol.MinOrderLot = (double)s.MinOrderVolume / 100 / 100000;
+                symbol.MinOrderVolume = s.MinOrderVolume/100;
+                symbol.MinOrderStep = s.MinOrderStep/100;
+                symbol.MaxOrderVolume = s.MaxOrderVolume/100;
                 symbol.AssetClass = s.AssetClass;
                 symbol.LastBid = s.LastBid;
                 symbol.LastAsk = s.LastAsk;

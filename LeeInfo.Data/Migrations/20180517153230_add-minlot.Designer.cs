@@ -13,9 +13,10 @@ using System;
 namespace LeeInfo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180517153230_add-minlot")]
+    partial class addminlot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -525,7 +526,7 @@ namespace LeeInfo.Data.Migrations
 
                     b.Property<string>("MeasurementUnits");
 
-                    b.Property<double>("MinOrderLot");
+                    b.Property<long>("MinOrderLot");
 
                     b.Property<long>("MinOrderStep");
 

@@ -35,10 +35,11 @@
                                 <li><input type="checkbox" class="toggle-vis" data-column="1" />&emsp;<small>报价精度</small></li>
                                 <li><input type="checkbox" class="toggle-vis" data-column="3" />&emsp;<small>计量单位</small></li>
                                 <li><input type="checkbox" class="toggle-vis" data-column="6" />&emsp;<small>Tick精度</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="12" />&emsp;<small>最小交易数量</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="13" />&emsp;<small>数量最小尺度</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="14" />&emsp;<small>最大交易数量</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="15" />&emsp;<small>描述</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="10" />&emsp;<small>最新卖价</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="11" />&emsp;<small>最新买价</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="14" />&emsp;<small>数量最小尺度</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="15" />&emsp;<small>最大交易数量</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="16" />&emsp;<small>描述</small></li>
                             </ul>
                         </div>
                     </div>
@@ -93,26 +94,30 @@
                                     @Html.DisplayNameFor(model => model.ThreeDaysSwaps)
                                 </th>
                                 <!--10-->
-                                <th class="hidden-xs hidden-sm">
+                                <th class="hidden-xs hidden-sm col-visible">
                                     @Html.DisplayNameFor(model => model.LastBid)
                                 </th>
                                 <!--11-->
-                                <th class="hidden-xs hidden-sm">
+                                <th class="hidden-xs hidden-sm col-visible">
                                     @Html.DisplayNameFor(model => model.LastAsk)
                                 </th>
                                 <!--12-->
-                                <th class="hidden-xs col-visible">
-                                    @Html.DisplayNameFor(model => model.MinOrderVolume)
+                                <th class="hidden-xs hidden-sm">
+                                    @Html.DisplayNameFor(model => model.MinOrderLot)
                                 </th>
                                 <!--13-->
-                                <th class="hidden-xs col-visible">
-                                    @Html.DisplayNameFor(model => model.MinOrderStep)
+                                <th class="hidden-xs hidden-sm">
+                                    @Html.DisplayNameFor(model => model.MinOrderVolume)
                                 </th>
                                 <!--14-->
                                 <th class="hidden-xs col-visible">
-                                    @Html.DisplayNameFor(model => model.MaxOrderVolume)
+                                    @Html.DisplayNameFor(model => model.MinOrderStep)
                                 </th>
                                 <!--15-->
+                                <th class="hidden-xs col-visible">
+                                    @Html.DisplayNameFor(model => model.MaxOrderVolume)
+                                </th>
+                                <!--16-->
                                 <th class="hidden-xs col-visible">
                                     @Html.DisplayNameFor(model => model.Description)
                                 </th>
@@ -121,56 +126,59 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.SymbolName)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.Digits)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.PipPosition)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.MeasurementUnits)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.BaseAsset)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.QuoteAsset)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.TickSize)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.SwapLong)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.SwapShort)
-                                    </td>
-                                    <td class="hidden-xs  hidden-sm">
-                                        @Html.DisplayFor(modelItem => item.ThreeDaysSwaps)
-                                    </td>
-                                    <td class="hidden-xs  hidden-sm">
-                                        @Html.DisplayFor(modelItem => item.LastBid)
-                                    </td>
-                                    <td class="hidden-xs  hidden-sm">
-                                        @Html.DisplayFor(modelItem => item.LastAsk)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.MinOrderVolume)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.MinOrderStep)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.MaxOrderVolume)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.Description)
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SymbolName)
+                                </td>
+                                <td class="hidden-xs">
+                                    @Html.DisplayFor(modelItem => item.Digits)
+                                </td>
+                                <td class="hidden-xs">
+                                    @Html.DisplayFor(modelItem => item.PipPosition)
+                                </td>
+                                <td class="hidden-xs">
+                                    @Html.DisplayFor(modelItem => item.MeasurementUnits)
+                                </td>
+                                <td class="hidden-xs">
+                                    @Html.DisplayFor(modelItem => item.BaseAsset)
+                                </td>
+                                <td class="hidden-xs">
+                                    @Html.DisplayFor(modelItem => item.QuoteAsset)
+                                </td>
+                                <td class="hidden-xs">
+                                    @Html.DisplayFor(modelItem => item.TickSize)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SwapLong)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SwapShort)
+                                </td>
+                                <td class="hidden-xs  hidden-sm">
+                                    @Html.DisplayFor(modelItem => item.ThreeDaysSwaps)
+                                </td>
+                                <td class="hidden-xs  hidden-sm">
+                                    @Html.DisplayFor(modelItem => item.LastBid)
+                                </td>
+                                <td class="hidden-xs  hidden-sm">
+                                    @Html.DisplayFor(modelItem => item.LastAsk)
+                                </td>
+                                <td class="hidden-xs  hidden-sm">
+                                    @Html.DisplayFor(modelItem => item.MinOrderLot)
+                                </td>
+                                <td class="hidden-xs  hidden-sm">
+                                    @Html.DisplayFor(modelItem => item.MinOrderVolume)
+                                </td>
+                                <td class="hidden-xs">
+                                    @Html.DisplayFor(modelItem => item.MinOrderStep)
+                                </td>
+                                <td class="hidden-xs">
+                                    @Html.DisplayFor(modelItem => item.MaxOrderVolume)
+                                </td>
+                                <td class="hidden-xs">
+                                    @Html.DisplayFor(modelItem => item.Description)
+                                </td>
+                            </tr>
                             }
                         </tbody>
                     </table>

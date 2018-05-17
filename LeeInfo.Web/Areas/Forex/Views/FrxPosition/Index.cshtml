@@ -268,12 +268,8 @@
                     //获取数据
                     _posGroup = result.posgroup;
                     for (var i = 0; i < _posGroup.length; i++) {
-                        var minlot = 0.00;
-                        if (_posGroup[i].assetClass == 1 || _posGroup[i].assetClass == 2)
-                            minlot = 0.01;
-                        else
-                            minlot = 1;
-                        _posGroup[i].lot = _posGroup[i].volume / _posGroup[i].minOrderVolume * minlot * 100;
+                        var minlot = _posGroup[i].minOrderLot;
+                        _posGroup[i].lot = _posGroup[i].volume / _posGroup[i].minOrderVolume * minlot;
 
                         var _name = _posGroup[i].symbolName;
                         var _value = parseFloat(_posGroup[i].lot).toFixed(2);
@@ -467,19 +463,20 @@
                             }
                         },
                         {
+                            targets: 7,
+                            render: function (data, type, row, meta) {
+                                return row.volume/100;
+                            }
+                        },
+                        {
                             targets: 8,
                             render: function (data, type, row, meta) {
                                 if (_symbols != null) {
                                     var lot = 0.00;
                                     $.each(_symbols, function () {
                                         if (this.symbolId == row.symbolId) {
-                                            var minlot = 0.00;
-                                            if (this.assetClass == 1 || this.assetClass == 2)
-                                                minlot = 0.01;
-                                            else {
-                                                minlot = 1;
-                                            }
-                                            lot = row.volume / this.minOrderVolume * minlot;
+                                            var minlot = this.minOrderLot;                                           
+                                            lot = row.volume / (this.minOrderVolume*100) * minlot;
                                             return false;
                                         }
                                     });
@@ -487,9 +484,6 @@
                                 }
                                 return 0.00;
                             }
-                        },
-                        {
-
                         },
                         {
                             targets: [9, 10],

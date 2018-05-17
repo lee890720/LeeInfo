@@ -41,8 +41,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             #region Parameters
             var positions = Position.GetPositions(param.ApiUrl, param.AccountId.ToString(), param.AccessToken);
             var account = _context.FrxAccount.SingleOrDefault(x => x.AccountId == param.AccountId);
-            string[] bases = { "XAU", "XAG", "XBR", "XTI" };
-            var symbols = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
+            var symbols = _context.FrxSymbol.OrderBy(x => x.SymbolId).ToList();
             #endregion
 
             List<PosGroup> posgroup = new List<PosGroup>();
@@ -61,6 +60,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     Gain = s.Sum(a => (double)a.Profit) / account.Balance,
                     PipPosition = symbols.SingleOrDefault(a => a.SymbolId == s.Key.SymbolId).PipPosition,
                     AssetClass = symbols.SingleOrDefault(a => a.SymbolId == s.Key.SymbolId).AssetClass,
+                    MinOrderLot=symbols.SingleOrDefault(a=>a.SymbolId==s.Key.SymbolId).MinOrderLot,
                     MinOrderVolume = symbols.SingleOrDefault(a => a.SymbolId == s.Key.SymbolId).MinOrderVolume,
                 }).OrderBy(o => o.Profit).ToList();
 
@@ -101,8 +101,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
 
         public JsonResult GetSymbol()
         {
-            string[] bases = { "XAU", "XAG", "XBR", "XTI" };
-            var data = _context.FrxSymbol.Where(x => (x.AssetClass == 1 || bases.Contains(x.BaseAsset)) && x.TradeEnabled).OrderBy(x => x.SymbolId).ToList();
+            var data = _context.FrxSymbol.OrderBy(x => x.SymbolId).ToList();
             return Json(new { data, data.Count });
         }
     }
@@ -121,6 +120,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         public double Gain { get; set; }
         public int PipPosition { get; set; }
         public int AssetClass { get; set; }
+        public double MinOrderLot { get; set; }
         public long MinOrderVolume { get; set; }
     }
 }
