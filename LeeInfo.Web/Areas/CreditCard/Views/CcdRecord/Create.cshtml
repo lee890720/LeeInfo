@@ -10,7 +10,7 @@
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
 }
-<section class="content-header">
+<section class="content-header hidden-xs">
     <h1>
         @ViewData["action"]
         <small>@ViewData["controller"]</small>
@@ -22,20 +22,25 @@
 </section>
 <section class="content">
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-12">
             <div class="box">
-                <div class="box-header">
-                    @*<h3 class="box-title">Data Table With Full Features</h3>*@
-                </div>
-                <div class="box-body table-responsive">
-                    <div class="col-md-3">
+                <div class="box-body ">
+                    <div class="col-lg-3 col-md-4">
                         @Html.Partial("_PartialCreate", new CcdRecord { })
                     </div>
-                    <div class="col-md-9">
-                        <table id="example1" class="table table-bordered table-striped table-hover">
+                    <div class="col-lg-9 col-md-8">
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 no-padding hidden-xs" style="margin-bottom:10px;">
+                                <a class="btn btn-primary" style="border-radius:0;width:80px;" href="@path/Index"><i class="glyphicon glyphicon-th-list"></i> Index</a><a class="btn btn-primary" style="border-radius:0;width:80px;" href="@path/RecordList"><i class="glyphicon glyphicon-th"></i> Details</a>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12 no-padding pull-right"  style="margin-bottom:10px;">
+                                <input type="text" placeholder="搜索" id="search" class="form-control">
+                            </div>
+                        </div>
+                        <table id="table-1" class="table table-bordered table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>
+                                    <th class="hidden-xs">
                                         ID
                                     </th>
                                     <th>
@@ -44,19 +49,19 @@
                                     <th>
                                         @Html.DisplayNameFor(model => model.IssuingBank)
                                     </th>
-                                    <th>
+                                    <th class="hidden-xs">
                                         @Html.DisplayNameFor(model => model.BillAmount)
                                     </th>
                                     <th>
                                         @Html.DisplayNameFor(model => model.OutstandingAmount)
                                     </th>
-                                    <th>
+                                    <th class="hidden-xs">
                                         @Html.DisplayNameFor(model => model.RepaymentDate)
                                     </th>
-                                    <th>
+                                    <th class="hidden-xs">
                                         @Html.DisplayNameFor(model => model.ExpendCount)
                                     </th>
-                                    <th>
+                                    <th class="hidden-xs">
                                         @Html.DisplayNameFor(model => model.ExpendSum)
                                     </th>
                                     <th>
@@ -66,39 +71,39 @@
                             </thead>
                             <tbody>
                                 @foreach (var item in Model)
-        {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CreditCardId)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.PersonName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.IssuingBank)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.BillAmount)
-                            </td>
-                            <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
-                                @Html.DisplayFor(modelItem => item.OutstandingAmount)
-                            </td>
-                            <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-                                @Html.DisplayFor(modelItem => item.RepaymentDate)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.ExpendCount)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.ExpendSum)
-                            </td>
-                            <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:fuchsia">
-                                @Html.DisplayFor(modelItem => item.Total)
-                            </td>
-                        </tr>
-}
+                                {
+                                    <tr>
+                                        <td class="hidden-xs">
+                                            @Html.DisplayFor(modelItem => item.CreditCardId)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.PersonName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.IssuingBank)
+                                        </td>
+                                        <td class="hidden-xs">
+                                            @Html.DisplayFor(modelItem => item.BillAmount)
+                                        </td>
+                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
+                                            @Html.DisplayFor(modelItem => item.OutstandingAmount)
+                                        </td>
+                                        <td class="hidden-xs" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                                            @Html.DisplayFor(modelItem => item.RepaymentDate)
+                                        </td>
+                                        <td class="hidden-xs">
+                                            @Html.DisplayFor(modelItem => item.ExpendCount)
+                                        </td>
+                                        <td class="hidden-xs">
+                                            @Html.DisplayFor(modelItem => item.ExpendSum)
+                                        </td>
+                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:fuchsia">
+                                            @Html.DisplayFor(modelItem => item.Total)
+                                        </td>
+                                    </tr>
+                                }
                             </tbody>
-                            <tfoot>
+                            <tfoot class="hidden-xs">
                                 <tr>
                                     <th colspan="4" style="text-align:right !important">Total:</th>
                                     <th style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">@ViewBag.SumOut</th>
@@ -115,23 +120,40 @@
 </section>
 @section Scripts{
     <script>
-    $(function () {
-        $('#example1').DataTable(
-            {
-                'order': [[5, "asc"]],
-                'pageLength': 10,
-                initComplete: function () {
-                    $("#mytool").append('<a  class="btn btn-primary" style="width:80px;border-radius:0;" href="@path/Index"><i class="glyphicon glyphicon-th-list"></i> Index</a><a class="btn btn-primary" style="width:80px;border-radius:0;" href="@path/RecordList"><i class="glyphicon glyphicon-th"></i> Details</a>');
-                }
-            })
-        $('#example2').DataTable({
-            'paging': true,
-            'lengthChange': false,
-            'searching': false,
-            'ordering': true,
-            'info': true,
-            'autoWidth': false
-        })
-    })
+        $(function () {
+            var table1=$('#table-1').DataTable(
+                {
+                    order: [[5, "asc"]],
+                    dom:
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    language: {
+                        processing: "加载中...",
+                        lengthMenu: "每页显示 _MENU_ 条数据",
+                        zeroRecords: "没有匹配结果",
+                        info: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        infoEmpty: "显示第 0 至 0 项结果，共 0 项",
+                        infoFiltered: "(由 _MAX_ 项结果过滤)",
+                        infoPostFix: "",
+                        search: "搜索:",
+                        url: "",
+                        emptyTable: "没有匹配结果",
+                        loadingRecords: "载入中...",
+                        thousands: ",",
+                        paginate: {
+                            first: "首页",
+                            previous: "上一页",
+                            next: "下一页",
+                            last: "末页"
+                        },
+                        aria: {
+                            sortAscending: ": 以升序排列此列",
+                            sortDescending: ": 以降序排列此列"
+                        }
+                    },
+                });
+            $("#search").keyup(function () { table1.search($("#search").val()).draw(); });
+        });
     </script>
 }

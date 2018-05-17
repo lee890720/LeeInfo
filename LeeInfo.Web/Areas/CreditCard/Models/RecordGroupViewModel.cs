@@ -30,7 +30,7 @@ namespace LeeInfo.Web.Areas.CreditCard.Models
         public double BillAmount { get; set; }
 
         [Required]
-        [Display(Name = "未还款金额")]
+        [Display(Name = "未还")]
         public double OutstandingAmount { get; set; }
 
         [Required]
@@ -38,7 +38,7 @@ namespace LeeInfo.Web.Areas.CreditCard.Models
         public int DepositCount { get; set; }
 
         [Required]
-        [Display(Name = "存入总额")]
+        [Display(Name = "存入金额")]
         public double DepositSum { get; set; }
 
         [Required]
@@ -46,11 +46,11 @@ namespace LeeInfo.Web.Areas.CreditCard.Models
         public int ExpendCount { get; set; }
 
         [Required]
-        [Display(Name = "支出总额")]
+        [Display(Name = "支出金额")]
         public double ExpendSum { get; set; }
 
         [Required]
-        [Display(Name = "卡剩余总额")]
+        [Display(Name = "剩余")]
         public double Total { get; set; }
 
         [Required]
