@@ -27,7 +27,7 @@
             text-align: right !important;
         }
 </style>
-<section class="content-header">
+<section class="content-header hidden-xs">
     <h1>
         @ViewData["action"]
         <small>@ViewData["controller"]</small>
@@ -43,7 +43,7 @@
         <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title">历史统计</h3>
+                    <h3 class="box-title hidden-xs">历史统计</h3>
                     <div class="box-tools pull-right">
                         <button id="BalanceProfitBtn" title="余额与净值" type="button" class="btn btn-box-tool">NET</button>
                         <button id="BalanceHandBtn" title="手数" type="button" class="btn btn-box-tool">LOT</button>
@@ -121,7 +121,7 @@
         <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title">月度分析报告<small>（点击图柱更新多空比和摘要）</small></h3>
+                    <h3 class="box-title hidden-xs">月度分析报告<small>（点击图柱更新多空比和摘要）</small></h3>
                     <div class="box-tools pull-right">
                         <button id="MonthProfitBtn" title="利润" type="button" class="btn btn-box-tool">NET</button>
                         <button id="MonthHandBtn" title="手数" type="button" class="btn btn-box-tool">LOT</button>
@@ -136,9 +136,9 @@
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 @foreach (var f in Model.Item2)
-                {
-                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
-}
+                                {
+                                    <li><a href="@Url.Action("Index","FrxAnalyze",new {  acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
+                                }
                             </ul>
                         </div>
                         <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -194,7 +194,7 @@
         </div>
     </div>
     <!--摘要-->
-    <div class="row">
+    <div class="row hidden-xs">
         <div class="col-md-12">
             <div class="box box-info collapsed-box">
                 <div class="box-header with-border">
@@ -280,7 +280,7 @@
         </div>
     </div>
     <!--历史记录-->
-    <div class="row">
+    <div class="row hidden-xs">
         <div class="col-md-12">
             <div class="box box-info collapsed-box">
                 <div class="box-header with-border">
@@ -631,6 +631,14 @@
                     bottom: '5%',
                     containLabel: true
                 },
+                dataZoom: [
+                    {
+                        id: 'dataZoomX',
+                        type: 'inside',
+                        xAxisIndex: [0],
+                        filterMode: 'filter'
+                    }
+                ],
                 xAxis:
                     {
                         type: 'category',
@@ -796,7 +804,7 @@
                     seriesData.push({ name: _name, value: _value });
                 }
                 optionMonthPie.series[0].data = seriesData;
-                MonthPieChart.setOption(optionMonthPie);             
+                MonthPieChart.setOption(optionMonthPie);
             };
             //#endregion
 
@@ -813,7 +821,15 @@
                 right: '4%',
                 bottom: '3%',
                 containLabel: true
-            },
+                },
+                dataZoom: [
+                    {
+                        id: 'dataZoomX',
+                        type: 'inside',
+                        xAxisIndex: [0],
+                        filterMode: 'filter'
+                    }
+                ],
             xAxis: {
                 type: 'category',
                 axisLabel: {

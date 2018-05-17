@@ -11,3 +11,17 @@
 .table-hover > tbody > tr:hover {
     background-color:skyblue !important;
 }
+
+.table th {
+    white-space: nowrap !important;
+    text-align: center !important;
+}
+
+.table td {
+    white-space: nowrap !important;
+    text-align: center !important;
+}
+
+.description-text {
+    color: darkgray !important;
+}

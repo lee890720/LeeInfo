@@ -9,22 +9,8 @@
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
 }
-<!--Style-->
-<style>
-    .table th {
-        text-align: center !important;
-    }
-
-    .table td {
-        text-align: center !important;
-    }
-
-    .description-text {
-        color: darkgray !important;
-    }
-</style>
 <!---Content-Header-->
-<section class="content-header">
+<section class="content-header hidden-xs">
     <h1>
         @ViewData["action"]
         <small>@ViewData["controller"]</small>
@@ -70,13 +56,13 @@
                                             <th class="col2-visible">品种ID</th>
                                             <th>品种</th>
                                             <th>多空</th>
-                                            <th>均价</th>
+                                            <th class="hidden-xs col2-hidden">均价</th>
                                             <th class="col2-visible">数量</th>
                                             <th>手数</th>
-                                            <th class="col2-color">利息</th>
-                                            <th class="col2-color">点数</th>
+                                            <th class="hidden-xs col2-color-hidden">利息</th>
+                                            <th class="hidden-xs col2-color-hidden">点数</th>
                                             <th class="col2-color">利润</th>
-                                            <th class="col2-color">收益率</th>
+                                            <th class="hidden-xs col2-color-hidden">收益率</th>
                                             <th class="col2-visible">位数</th>
                                             <th class="col2-visible">类别</th>
                                             <th class="col2-visible">最小数量</th>
@@ -199,7 +185,7 @@
                     <table id="table-pos" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
-                                <th>ID(标签/注释)</th>
+                                <th class="hidden-xs col-hidden">ID(标签/注释)</th>
                                 <th class="col-visible">品种ID</th>
                                 <th class="col-visible">标签</th>
                                 <th class="col-visible">注释</th>
@@ -208,21 +194,21 @@
                                 <th>多空</th>
                                 <th class="col-visible">数量</th>
                                 <th>手数</th>
-                                <th>开仓时间</th>
+                                <th class="hidden-xs col-hidden">开仓时间</th>
                                 <th class="col-visible">修改时间</th>
-                                <th>开仓价</th>
-                                <th>当前价</th>
-                                <th>止赢</th>
-                                <th>止损</th>
+                                <th class="hidden-xs col-hidden">开仓价</th>
+                                <th class="hidden-xs col-hidden">当前价</th>
+                                <th class="hidden-xs col-hidden">止赢</th>
+                                <th class="hidden-xs col-hidden">止损</th>
                                 <th class="col-visible">保证金</th>
                                 <th class="col-visible">佣金</th>
-                                <th class="col-color">利息</th>
-                                <th class="col-color">点数</th>
+                                <th class="hidden-xs col-color-hidden">利息</th>
+                                <th class="hidden-xs col-color-hidden">点数</th>
                                 <th class="col-color">利润</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
-                        <tfoot>
+                        <tfoot class="hidden-xs">
                             <tr>
                                 <th colspan="19" style="text-align:right !important">合计:</th>
                                 <th></th>
@@ -240,8 +226,6 @@
         $(function () {
             //初始化参数
             var _connect =@Html.Raw(Json.Serialize(Model.Item1));
-            var _getSymbolUrl = "/Forex/FrxPosition/GetSymbol";
-            var _getPosGroupUrl = "/Forex/FrxPosition/GetPosGroup";
             var PosGroupChart = echarts.init(document.getElementById('PosGroupChart'));
             var legendData = [];
             var seriesData = [];
@@ -266,7 +250,7 @@
 
             //#region Ajax GetSymbol
             function GetSymbol() {
-                optionAjax.url = _getSymbolUrl;
+                optionAjax.url = "/Forex/FrxPosition/GetSymbol";
                 optionAjax.data = JSON.stringify({});
                 optionAjax.success = function (result) {
                     _symbols = result.data;
@@ -278,7 +262,7 @@
 
             //#region Ajax GetPosGroup
             function GetPosGroup() {
-                optionAjax.url = _getPosGroupUrl;
+                optionAjax.url = "/Forex/FrxPosition/GetPosGroup";
                 optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken, balance: _connect.balance, preciseLeverage: _connect.preciseLeverage });
                 optionAjax.success = function (result) {
                     //获取数据
@@ -297,14 +281,22 @@
                         seriesData.push({ name: _name, value: _value });
                     }
                     //初始化图表
+                    var legendShow = false;
+                    var centerValue = ['50%', '50%'];
+                    if (document.body.clientWidth > 1200) {
+                        legendShow = true;
+                        centerValue = ['40%', '50%'];
+                    }
                     PosGroupChart.hideLoading();
                     PosGroupChart.setOption({
                         legend: {
+                            show:legendShow,
                             data: legendData
                         },
                         series: [
                             {
                                 name: 'SymbolCode',
+                                center:centerValue,
                                 data: seriesData
                             }
                         ]
@@ -441,6 +433,22 @@
                         {
                             targets: "col-visible",
                             visible: false,
+                        },
+                        {
+                            targets: "col-color-hidden",
+                            createdCell: function (td, cellData, rowData, row, col) {
+                                if (cellData > 0)
+                                    $(td).css('color', '#4cae05');
+                                else
+                                    $(td).css('color', '#ff5256');
+                                $(td).addClass(" hidden-xs");
+                            },
+                        },
+                        {
+                            targets: "col-hidden",
+                            createdCell: function (td, cellData, rowData, row, col) {
+                                $(td).addClass(" hidden-xs");
+                            },
                         },
                         {
                             targets: "col-color",
@@ -621,12 +629,28 @@
                             visible: false,
                         },
                         {
+                            targets: "col2-color-hidden",
+                            createdCell: function (td, cellData, rowData, row, col) {
+                                if (cellData > 0)
+                                    $(td).css('color', '#4cae05');
+                                else
+                                    $(td).css('color', '#ff5256');
+                                $(td).addClass(" hidden-xs");
+                            },
+                        },
+                        {
                             targets: "col2-color",
                             createdCell: function (td, cellData, rowData, row, col) {
                                 if (cellData > 0)
                                     $(td).css('color', '#4cae05');
                                 else
                                     $(td).css('color', '#ff5256');
+                            },
+                        },
+                        {
+                            targets: "col2-hidden",
+                            createdCell: function (td, cellData, rowData, row, col) {
+                                $(td).addClass(" hidden-xs");
                             },
                         },
                         {
