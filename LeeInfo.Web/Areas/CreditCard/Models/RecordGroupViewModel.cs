@@ -30,7 +30,7 @@ namespace LeeInfo.Web.Areas.CreditCard.Models
         public double BillAmount { get; set; }
 
         [Required]
-        [Display(Name = "未还")]
+        [Display(Name = "未还总额")]
         public double OutstandingAmount { get; set; }
 
         [Required]
@@ -50,7 +50,7 @@ namespace LeeInfo.Web.Areas.CreditCard.Models
         public double ExpendSum { get; set; }
 
         [Required]
-        [Display(Name = "剩余")]
+        [Display(Name = "剩余总额")]
         public double Total { get; set; }
 
         [Required]

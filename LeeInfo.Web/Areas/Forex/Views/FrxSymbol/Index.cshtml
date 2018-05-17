@@ -22,48 +22,98 @@
 </section>
 <section class="content">
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-12">
             <div class="box">
-                <div class="box-header">
+                <div class="box-header with-border">
+                    <h3 class="box-title">品种信息</h3>
+                    <div class="box-tools pull-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
+                                <i class="fa fa-table"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                                <li><input type="checkbox" class="toggle-vis" data-column="1" />&emsp;<small>报价精度</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="3" />&emsp;<small>计量单位</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="6" />&emsp;<small>Tick精度</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="12" />&emsp;<small>最小交易数量</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="13" />&emsp;<small>数量最小尺度</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="14" />&emsp;<small>最大交易数量</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="15" />&emsp;<small>描述</small></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 <div class="box-body table-responsive">
-                    <table id="example1" class="table  table-bordered table-striped table-hover" width="100%">
+                    <div class="form-group">
+                        <div class="col-md-3 col-sm-6 col-xs-12 no-padding pull-right" style="margin-bottom:10px;">
+                            <input type="text" placeholder="搜索" id="search" class="form-control">
+                        </div>
+                    </div>
+                    <table id="table-1" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
+                                <!--0-->
                                 <th>
                                     @Html.DisplayNameFor(model => model.SymbolName)
                                 </th>
-                                <th>
+                                <!--1-->
+                                <th class="hidden-xs col-visible">
                                     @Html.DisplayNameFor(model => model.Digits)
                                 </th>
-                                <th>
+                                <!--2-->
+                                <th class="hidden-xs">
                                     @Html.DisplayNameFor(model => model.PipPosition)
                                 </th>
-                                <th>
+                                <!--3-->
+                                <th class="hidden-xs col-visible">
                                     @Html.DisplayNameFor(model => model.MeasurementUnits)
                                 </th>
-                                <th>
+                                <!--4-->
+                                <th class="hidden-xs">
                                     @Html.DisplayNameFor(model => model.BaseAsset)
                                 </th>
-                                <th>
+                                <!--5-->
+                                <th class="hidden-xs">
                                     @Html.DisplayNameFor(model => model.QuoteAsset)
                                 </th>
-                                <th>
+                                <!--6-->
+                                <th class="hidden-xs col-visible">
                                     @Html.DisplayNameFor(model => model.TickSize)
                                 </th>
-                                <th>
+                                <!--7-->
+                                <th class="col-color">
                                     @Html.DisplayNameFor(model => model.SwapLong)
                                 </th>
-                                <th>
+                                <!--8-->
+                                <th class="col-color">
                                     @Html.DisplayNameFor(model => model.SwapShort)
                                 </th>
-                                <th>
+                                <!--9-->
+                                <th class="hidden-xs hidden-sm">
+                                    @Html.DisplayNameFor(model => model.ThreeDaysSwaps)
+                                </th>
+                                <!--10-->
+                                <th class="hidden-xs hidden-sm">
                                     @Html.DisplayNameFor(model => model.LastBid)
                                 </th>
-                                <th>
+                                <!--11-->
+                                <th class="hidden-xs hidden-sm">
                                     @Html.DisplayNameFor(model => model.LastAsk)
                                 </th>
-                                <th>
+                                <!--12-->
+                                <th class="hidden-xs col-visible">
+                                    @Html.DisplayNameFor(model => model.MinOrderVolume)
+                                </th>
+                                <!--13-->
+                                <th class="hidden-xs col-visible">
+                                    @Html.DisplayNameFor(model => model.MinOrderStep)
+                                </th>
+                                <!--14-->
+                                <th class="hidden-xs col-visible">
+                                    @Html.DisplayNameFor(model => model.MaxOrderVolume)
+                                </th>
+                                <!--15-->
+                                <th class="hidden-xs col-visible">
                                     @Html.DisplayNameFor(model => model.Description)
                                 </th>
                             </tr>
@@ -75,37 +125,49 @@
                                     <td>
                                         @Html.DisplayFor(modelItem => item.SymbolName)
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs">
                                         @Html.DisplayFor(modelItem => item.Digits)
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs">
                                         @Html.DisplayFor(modelItem => item.PipPosition)
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs">
                                         @Html.DisplayFor(modelItem => item.MeasurementUnits)
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs">
                                         @Html.DisplayFor(modelItem => item.BaseAsset)
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs">
                                         @Html.DisplayFor(modelItem => item.QuoteAsset)
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs">
                                         @Html.DisplayFor(modelItem => item.TickSize)
                                     </td>
-                                    <td name="swaplong">
+                                    <td>
                                         @Html.DisplayFor(modelItem => item.SwapLong)
                                     </td>
-                                    <td name="swapshort">
+                                    <td>
                                         @Html.DisplayFor(modelItem => item.SwapShort)
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs  hidden-sm">
+                                        @Html.DisplayFor(modelItem => item.ThreeDaysSwaps)
+                                    </td>
+                                    <td class="hidden-xs  hidden-sm">
                                         @Html.DisplayFor(modelItem => item.LastBid)
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs  hidden-sm">
                                         @Html.DisplayFor(modelItem => item.LastAsk)
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.MinOrderVolume)
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.MinOrderStep)
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.MaxOrderVolume)
+                                    </td>
+                                    <td class="hidden-xs">
                                         @Html.DisplayFor(modelItem => item.Description)
                                     </td>
                                 </tr>
@@ -121,22 +183,79 @@
 @section Scripts{
     <script>
         $(function () {
-            $('#example1').DataTable(
+            var table1 = $('#table-1').DataTable(
                 {
-                    'order': [[0, "asc"]],
-                    'pageLength': 10,
-                    "columnDefs": [
+                    order: [[0, "asc"]],
+                    dom:
+                        "<'row'<'col-sm-6'><'col-sm-6'>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                    scrollX: true,
+                    language: {
+                        processing: "加载中...",
+                        lengthMenu: "每页显示 _MENU_ 条数据",
+                        zeroRecords: "没有匹配结果",
+                        info: "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                        infoEmpty: "显示第 0 至 0 项结果，共 0 项",
+                        infoFiltered: "(由 _MAX_ 项结果过滤)",
+                        infoPostFix: "",
+                        search: "搜索:",
+                        url: "",
+                        emptyTable: "没有匹配结果",
+                        loadingRecords: "载入中...",
+                        thousands: ",",
+                        paginate: {
+                            first: "首页",
+                            previous: "上一页",
+                            next: "下一页",
+                            last: "末页"
+                        },
+                        aria: {
+                            sortAscending: ": 以升序排列此列",
+                            sortDescending: ": 以降序排列此列"
+                        }
+                    },
+                    columnDefs: [
                         {
-                            "targets": [7,8],
-                            "createdCell": function (td, cellData, rowData, row, col) {
+                            targets: "col-visible",
+                            visible: false,
+                        },
+                        {
+                            targets: "col-color-hidden",
+                            createdCell: function (td, cellData, rowData, row, col) {
+                                if (cellData > 0)
+                                    $(td).css('color', '#4cae05');
+                                else
+                                    $(td).css('color', '#ff5256');
+                                $(td).addClass(" hidden-xs");
+                            },
+                        },
+                        {
+                            targets: "col-hidden",
+                            createdCell: function (td, cellData, rowData, row, col) {
+                                $(td).addClass(" hidden-xs");
+                            },
+                        },
+                        {
+                            targets: "col-color",
+                            createdCell: function (td, cellData, rowData, row, col) {
                                 if (cellData > 0)
                                     $(td).css('color', '#4cae05');
                                 else
                                     $(td).css('color', '#ff5256');
                             },
                         },
-                        ]
+                    ],
                 });
+            $("#search").keyup(function () { table1.search($("#search").val()).draw(); });
+
+            //显示隐藏列
+            $('.toggle-vis').on('change', function (e) {
+                e.preventDefault();
+                console.log($(this).attr('data-column'));
+                var column = table1.column($(this).attr('data-column'));
+                column.visible(!column.visible());
+            });
         });
     </script>
 }

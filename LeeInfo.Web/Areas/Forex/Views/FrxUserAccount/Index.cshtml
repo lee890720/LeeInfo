@@ -50,12 +50,12 @@
                                 <td>
                                     <input type="checkbox" checked="@item.Alive" class="flat-blue" />
                                 </td>
-                                <td style="min-width:150px">
-                                    <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">
-                                        <i class="glyphicon glyphicon-pencil"></i> 编辑
+                                <td>
+                                    <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-primary" style="max-width:70px;min-width:30px;margin-right:5px;">
+                                        <i class="glyphicon glyphicon-pencil"></i> <small class="hidden-xs">编辑</small>
                                     </a>
-                                    <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-warning" style="width:70px;margin-right:5px; min-width:50px;">
-                                        <i class="glyphicon glyphicon-trash"></i> 删除
+                                    <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-warning" style="max-width:70px;min-width:30px;margin-right:5px;">
+                                        <i class="glyphicon glyphicon-trash"></i> <small class="hidden-xs">删除</small>
                                     </a>
                                 </td>
                             </tr>
