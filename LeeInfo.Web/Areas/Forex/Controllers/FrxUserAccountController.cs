@@ -38,8 +38,9 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             if (User.Identity.Name == "lee890720" || _user.ConnectAPI)
             {
                 string _accessToken = "";
-                string _apiUrl = "https://api.spotware.com/";
+                string _apiUrl = "";
                 _accessToken = _user.AccessToken;
+                _apiUrl = _user.ApiUrl;
                 #region GetAccount
                 var accounts = TradingAccount.GetTradingAccounts(_apiUrl, _accessToken);
                 foreach (var a in accounts)
@@ -52,7 +53,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                         temp.AccountNumber = a.AccountNumber;
                         temp.BrokerName = a.BrokerTitle;
                         temp.Currency = a.DepositCurrency;
-                        temp.TraderRegistrationTime = ConvertJson.StampToDateTime(a.TraderRegistrationTimestamp);
+                        temp.TraderRegistrationTimestamp =a.TraderRegistrationTimestamp;
                         temp.IsLive = a.Live;
                         temp.Balance = a.Balance;
                         temp.PreciseLeverage = a.Leverage;

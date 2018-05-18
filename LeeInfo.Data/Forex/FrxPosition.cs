@@ -21,7 +21,7 @@ namespace LeeInfo.Data.Forex
         public string Comment { get; set; }
         public double EntryPrice { get; set; }
         public double CurrentPrice { get; set; }
-        public DateTime EntryTime { get; set; }
+        public long EntryTimestamp { get; set; }
         public double? TakeProfit { get; set; }
         public double? StopLoss { get; set; }
         public double Commissions { get; set; }

@@ -59,16 +59,16 @@ namespace LeeInfo.Web.Areas.Forex.Models
         public double Gain { get; set; }
         public double AbsGain { get; set; }
         public double MaxDraw { get; set; }
-        public DateTime MaxDrawTime { get; set; }
+        public long MaxDrawTimestamp { get; set; }
         public double Deposit { get; set; }
         public double Withdraw { get; set; }
         public double Balance { get; set; }
         public double Equity { get; set; }
         public double MaxBalance { get; set; }
-        public DateTime MaxBalanceTime { get; set; }
+        public long MaxBalanceTimestamp { get; set; }
         public double TotalProfit { get; set; }
         public double TotalSwap { get; set; }
-        public DateTime LastTradeTime { get; set; }
-        public DateTime RigistrationTime { get; set; }
+        public long LastTradeTimestamp { get; set; }
+        public long RigistrationTimestamp { get; set; }
     }
 }

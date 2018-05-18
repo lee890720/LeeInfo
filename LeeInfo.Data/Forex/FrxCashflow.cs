@@ -17,7 +17,7 @@ namespace LeeInfo.Data.Forex
         public double Delta { get; set; }
         public double Balance { get; set; }
         public long BalanceVersion { get; set; }
-        public DateTime ChangeTime { get; set; }
+        public long ChangeTimestamp { get; set; }
         public double Equity { get; set; }
 
         public FrxAccount FrxAccount { get; set; }

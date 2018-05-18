@@ -44,8 +44,6 @@ namespace LeeInfo.Web.Areas.Forex.Models
             if (account != null)
             {
                 frxaccount.Balance = account.Balance / 100;
-                //context.Update(frxaccount);
-                //context.SaveChanges();
             }
             else
             {
@@ -64,7 +62,7 @@ namespace LeeInfo.Web.Areas.Forex.Models
             connectAPI.ApiUrl = frxaccount.ApiUrl;
             connectAPI.ApiHost = frxaccount.ApiHost;
             connectAPI.ApiPort = frxaccount.ApiPort;
-            connectAPI.TraderRegistrationTime = frxaccount.TraderRegistrationTime;
+            connectAPI.TraderRegistrationTimestamp = frxaccount.TraderRegistrationTimestamp;
             return connectAPI;
         }
     }

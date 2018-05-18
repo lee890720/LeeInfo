@@ -21,7 +21,7 @@ namespace LeeInfo.Data.Forex
         public string Password { get; set; }
         public string BrokerName { get; set; }
         public string Currency { get; set; }
-        public DateTime TraderRegistrationTime { get; set; }
+        public long TraderRegistrationTimestamp { get; set; }
         public bool IsLive { get; set; }
         public double Balance { get; set; }
         public double Equity { get; set; }

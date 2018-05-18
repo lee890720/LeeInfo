@@ -11,14 +11,6 @@
 }
 <!--样式-->
 <style>
-    .table th {
-        text-align: center !important;
-    }
-
-    .table td {
-        text-align: center !important;
-    }
-
         .table td.brr {
             text-align: left !important;
         }
@@ -431,12 +423,11 @@
 </section>
 @section Scripts{
     <script src="~/js/range_dates.js"></script>
+    <script src="~/js/dateRangeSelector.js"></script>
     <script>
         $(document).ready(function () {
             //初始化数据
             var _connect =@Html.Raw(Json.Serialize(Model.Item1));
-            var _getMonthBaseUrl = "/Forex/FrxAnalyze/GetMonthBase";
-            var _getHistoryUrl = "/Forex/FrxAnalyze/GetHistory";
             var MonthBaseData = [];
             var HistoryData = [];
             var BalanceChart = echarts.init(document.getElementById('BalanceChart'));
@@ -462,7 +453,7 @@
 
             //#region Ajax GetMonthBase
             function GetMonthBase() {
-                optionAjax.url = _getMonthBaseUrl;
+                optionAjax.url = "/Forex/FrxAnalyze/GetMonthBase";
                 optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken });
                 optionAjax.success = function (result) {
                     MonthBaseData = result.monthBaseData;
@@ -471,9 +462,6 @@
                     Render_MonthPieChart(11);
                     Render_BuySellRateChart(11);
                     table_buysell.api().rows.add(result.monthBaseData[11].buySellData).draw();
-
-                    //Render_BalanceChart(result.histories, 2);
-                    //table_his.api().rows.add(result.histories).draw();
                 };
 
                 $.ajax(optionAjax);
@@ -482,7 +470,7 @@
 
             //#region Ajax GetHistory
             function GetHistory() {
-                optionAjax.url = _getHistoryUrl;
+                optionAjax.url = "/Forex/FrxAnalyze/GetHistory";
                 optionAjax.data = JSON.stringify({ accountId: _connect.accountId });
                 optionAjax.success = function (result) {
                     HistoryData = result.data;
@@ -494,33 +482,33 @@
             };
             //#endregion
 
-            //#region AccountInfo
+            //#region 设置AccountInfo
             function Render_AccountInfo(data) {
                 if (data != null) {
                     $("#accountinfo-gain").html(data.gain.toFixed(2) + "%");
                     $("#accountinfo-balance").html(data.balance.toFixed(2));
                     $("#accountinfo-absgain").html(data.absGain.toFixed(2) + "%");
                     $("#accountinfo-equity").html(data.equity.toFixed(2));
-                    $("#accountinfo-maxdraw").html("-" + data.maxDraw.toFixed(2) + "%" + "(" + moment(data.maxDrawTime).format('YYYY-MM-DD') + ")");
-                    $("#accountinfo-maxbalance").html(data.maxBalance.toFixed(2) + "(" + moment(data.maxBalanceTime).format('YYYY-MM-DD') + ")");
+                    $("#accountinfo-maxdraw").html("-" + data.maxDraw.toFixed(2) + "%" + "(" + new Date(data.maxDrawTimestamp).Format('YYYY-MM-DD') + ")");
+                    $("#accountinfo-maxbalance").html(data.maxBalance.toFixed(2) + "(" + new Date(data.maxBalanceTimestamp).Format('YYYY-MM-DD') + ")");
                     $("#accountinfo-deposit").html(data.deposit.toFixed(2));
                     $("#accountinfo-totalprofit").html(data.totalProfit.toFixed(2));
                     $("#accountinfo-withdraw").html(data.withdraw.toFixed(2));
                     $("#accountinfo-totalswap").html(data.totalSwap.toFixed(2));
-                    $("#accountinfo-rigistrationtime").html(moment(data.rigistrationTime).format('YYYY-MM-DD hh:mm'));
-                    $("#accountinfo-lasttradetime").html(moment(data.lastTradeTime).format('YYYY-MM-DD hh:mm'));
+                    $("#accountinfo-rigistrationtime").html(new Date(data.rigistrationTimestamp).Format('YYYY-MM-DD hh:mm'));
+                    $("#accountinfo-lasttradetime").html(new Date(data.lastTradeTimestamp).Format('YYYY-MM-DD hh:mm'));
                     $("#accountinfo-gain2").html(data.gain.toFixed(2) + "%");
                     $("#accountinfo-balance2").html(data.balance.toFixed(2));
                     $("#accountinfo-absgain2").html(data.absGain.toFixed(2) + "%");
                     $("#accountinfo-equity2").html(data.equity.toFixed(2));
-                    $("#accountinfo-maxdraw2").html("-" + data.maxDraw.toFixed(2) + "%" + "(" + moment(data.maxDrawTime).format('YYYY-MM-DD') + ")");
-                    $("#accountinfo-maxbalance2").html(data.maxBalance.toFixed(2) + "(" + moment(data.maxBalanceTime).format('YYYY-MM-DD') + ")");
+                    $("#accountinfo-maxdraw2").html("-" + data.maxDraw.toFixed(2) + "%" + "(" + new Date(data.maxDrawTimestamp).Format('YYYY-MM-DD') + ")");
+                    $("#accountinfo-maxbalance2").html(data.maxBalance.toFixed(2) + "(" + new Date(data.maxBalanceTimestamp).Format('YYYY-MM-DD') + ")");
                     $("#accountinfo-deposit2").html(data.deposit.toFixed(2));
                     $("#accountinfo-totalprofit2").html(data.totalProfit.toFixed(2));
                     $("#accountinfo-withdraw2").html(data.withdraw.toFixed(2));
                     $("#accountinfo-totalswap2").html(data.totalSwap.toFixed(2));
-                    $("#accountinfo-rigistrationtime2").html(moment(data.rigistrationTime).format('YYYY-MM-DD hh:mm'));
-                    $("#accountinfo-lasttradetime2").html(moment(data.lastTradeTime).format('YYYY-MM-DD hh:mm'));
+                    $("#accountinfo-rigistrationtime2").html(new Date(data.rigistrationTimestamp).Format('YYYY-MM-DD hh:mm'));
+                    $("#accountinfo-lasttradetime2").html(new Date(data.lastTradeTimestamp).Format('YYYY-MM-DD hh:mm'));
                 }
             };
             //#endregion
@@ -628,7 +616,7 @@
                     if (type == 1) {
                         var totalnet = 0.00;
                         for (var i = 0; i < data.length; i++) {
-                            names.push(moment(data[i].closingTime).format('YYYY-MM-DD'));
+                            names.push(new Date(data[i].closingTimestamp).Format('YYYY-MM-DD'));
                             totalnet += data[i].netProfit;
                             bs.push((data[i].roi * 100).toFixed(2));
                             es.push(totalnet.toFixed(2));
@@ -636,7 +624,7 @@
                     }
                     if (type == 2) {
                         for (var i = 0; i < data.length; i++) {
-                            names.push(moment(data[i].closingTime).format('YYYY-MM-DD'));
+                            names.push(new Date(data[i].closingTimestamp).Format('YYYY-MM-DD'));
                             bs.push(data[i].balance);
                             es.push(data[i].equity);
                         }
@@ -644,7 +632,7 @@
                     if (type == 3) {
                         var totallots = 0.00;
                         for (var i = 0; i < data.length; i++) {
-                            names.push(moment(data[i].closingTime).format('YYYY-MM-DD'));
+                            names.push(new Date(data[i].closingTimestamp).Format('YYYY-MM-DD'));
                             totallots += data[i].quantity;
                             bs.push(totallots.toFixed(2));
                             es.push(data[i].quantity);
@@ -653,7 +641,7 @@
                     if (type == 4) {
                         var totalpips = 0.00;
                         for (var i = 0; i < data.length; i++) {
-                            names.push(moment(data[i].closingTime).format('YYYY-MM-DD'));
+                            names.push(new Date(data[i].closingTimestamp).Format('YYYY-MM-DD'));
                             totalpips += data[i].pips;
                             bs.push(totalpips.toFixed(2));
                             es.push(data[i].pips);
@@ -1128,8 +1116,8 @@
                         { data: "closingDealId" },
                         { data: "symbolCode" },
                         { data: "tradeType" },
-                        { data: "entryTime" },
-                        { data: "closingTime" },
+                        { data: "entryTimestamp" },
+                        { data: "closingTimestamp" },
                         { data: "entryPrice" },
                         { data: "closingPrice" },
                         { data: "quantity" },
@@ -1164,8 +1152,8 @@
                         {
                             targets: [3, 4],
                             render: function (data, type, row, meta) {
-                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
-                                return result;
+                                var temp = new Date(data);
+                                return temp.Format('YYYY-MM-DD hh:mm:ss');
                             }
                         },
                         {
@@ -1219,61 +1207,25 @@
                         $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
                     }
                 });
+            //#endregion
 
+            //#region table_his点击事件
             $("#date_beg,#date_end").keyup(function () { table_his.api().draw(); });
             $("#date_beg,#date_end").change(function () { table_his.api().draw(); });
             $("#search").keyup(function () { table_his.api().search($("#search").val()).draw(); });
             //#endregion
 
-            //#region Date-Range选择定义
-            var now = new Date();
-            var nowDayOfWeek = now.getDay();
-            var nowDay = now.getDate();
-            var nowMonth = now.getMonth();
-            var nowYear = now.getYear();
-            nowYear += (nowYear < 2000) ? 1900 : 0;
-            var getCurrentDate = new Date(nowYear, nowMonth, nowDay + 1);
-            var getCurrentDate = formatDate(getCurrentDate)
-            var getTodayDate = new Date(nowYear, nowMonth, nowDay);
-            var getTodayDate = formatDate(getTodayDate);
-            var getYesterdayDate = new Date(nowYear, nowMonth, nowDay-1);
-            var getYesterdayDate = formatDate(getYesterdayDate);
+            //#region 设置一些细节
+            $('.datepickertemp').datepicker({
+                autoclose: true,
+                format: 'yyyy-mm-dd',
+            });
 
-            var getMonthStartDate = new Date(nowYear, nowMonth, 1);
-            var getMonthStartDate = formatDate(getMonthStartDate);
+            //Select2
+            $('.select2').select2();
+            //#endregion
 
-            var getWeekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek);
-            var getWeekStartDate = formatDate(getWeekStartDate);
-
-            var getWeekEndDate = new Date(nowYear, nowMonth, nowDay + (6 - nowDayOfWeek));
-            var getWeekEndDate = formatDate(getWeekEndDate);
-
-            var getPreMonthStartDate = new Date(nowYear, nowMonth - 1, 1);
-            var getPreMonthStartDate = formatDate(getPreMonthStartDate);
-
-            var getFirMonthStartDate = new Date(nowYear, nowMonth - 1, nowDay);
-            var getFirMonthStartDate = formatDate(getFirMonthStartDate);
-
-            var getTreeMonthStartDate = new Date(nowYear, nowMonth - 3, nowDay);
-            var getTreeMonthStartDate = formatDate(getTreeMonthStartDate);
-
-            var getYearStartDate = new Date(nowYear, nowMonth - 12, nowDay);
-            var getYearStartDate = formatDate(getYearStartDate);
-
-            function formatDate(date) {
-                var myyear = date.getFullYear();
-                var mymonth = date.getMonth() + 1;
-                var myweekday = date.getDate();
-
-                if (mymonth < 10) {
-                    mymonth = "0" + mymonth;
-                }
-                if (myweekday < 10) {
-                    myweekday = "0" + myweekday;
-                }
-                return (myyear + "-" + mymonth + "-" + myweekday);
-            }
-
+            //#region 日期区间选择事件
             $("#date_select").change(function () {
                 var flag = parseInt($("#date_select").val());
                 switch (flag) {
@@ -1319,20 +1271,6 @@
                 }
                 table_his.api().draw();
             });
-            //#endregion
-
-            //#region 设置一些细节
-            $('.datepickertemp').datepicker({
-                autoclose: true,
-                format: 'yyyy-mm-dd',
-            });
-            ////Timepicker
-            //    $('.timepicker').timepicker({
-            //        showInputs: false
-            //    });
-
-            //Select2
-            $('.select2').select2();
             //#endregion
 
             //#region 页面加载时执行的方法

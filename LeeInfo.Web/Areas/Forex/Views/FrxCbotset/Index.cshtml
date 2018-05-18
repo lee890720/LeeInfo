@@ -38,34 +38,34 @@
                                 <th>
                                     Symbol
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     Volume
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     Tmr
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     Brk
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     Distance
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     IsTrade
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     IsBreak
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     IsBrkFirst
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     R/A/M/S
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     Cr
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     Ca
                                 </th>
                                 <th>
@@ -74,7 +74,7 @@
                                 <th>
                                     Sa
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     Ra
                                 </th>
                                 <th>
@@ -83,95 +83,95 @@
                                 <th>
                                     Sbrk
                                 </th>
-                                <th>
+                                <th class="hidden-xs">
                                     Alike
                                 </th>
                                 @{
-                    if (User.IsInRole("Admins"))
-                    {
-                        <th></th>
-    }
+                                    if (User.IsInRole("Admins"))
+                                    {
+                                        <th class="hidden-xs"></th>
+                                    }
                                 }
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model)
-            {
-                double srsa = 0;
-                if (item.Sr.HasValue && item.Sa.HasValue)
-                {
-                    srsa = Math.Abs((double)(item.Sr - item.Sa));
-                }
-                string isbrk = null;
-                if (Math.Abs((double)item.Sr) > item.Brk)
-                {
-                    isbrk = "break";
-                }
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Symbol)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.InitVolume)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Tmr)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Brk)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Distance)
-                    </td>
-                    <td>
-                        <input type="checkbox" checked="@item.IsTrade" class="flat-blue" />
-                    </td>
-                    <td>
-                        <input type="checkbox" checked="@item.IsBreak" class="flat-blue" />
-                    </td>
-                    <td>
-                        <input type="checkbox" checked="@item.IsBrkFirst" class="flat-blue" />
-                    </td>
-                    <td>
-                        @item.Result/@item.Average/@item.Magnify/@item.Sub
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Cr)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Ca)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Sr)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Sa)
-                    </td>
-                    <td>
-                        @srsa
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Signal)
-                    </td>
-                    <td>
-                        @isbrk
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Alike)
-                    </td>
-                    @if (User.IsInRole("Admins"))
-    {
-                <td style="min-width:150px">
-                    <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">
-                        <i class="glyphicon glyphicon-pencil"></i> Edit
-                    </a>
-                    <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-warning" style="width:70px;margin-right:5px; min-width:50px;">
-                        <i class="glyphicon glyphicon-trash"></i> Delete
-                    </a>
-                </td>
-}
-                </tr>
-}
+                            {
+                                double srsa = 0;
+                                if (item.Sr.HasValue && item.Sa.HasValue)
+                                {
+                                    srsa = Math.Abs((double)(item.Sr - item.Sa));
+                                }
+                                string isbrk = null;
+                                if (Math.Abs((double)item.Sr) > item.Brk)
+                                {
+                                    isbrk = "break";
+                                }
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Symbol)
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.InitVolume)
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.Tmr)
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.Brk)
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.Distance)
+                                    </td>
+                                    <td class="hidden-xs">
+                                        <input type="checkbox" checked="@item.IsTrade" class="flat-blue" />
+                                    </td>
+                                    <td class="hidden-xs">
+                                        <input type="checkbox" checked="@item.IsBreak" class="flat-blue" />
+                                    </td>
+                                    <td class="hidden-xs">
+                                        <input type="checkbox" checked="@item.IsBrkFirst" class="flat-blue" />
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @item.Result/@item.Average/@item.Magnify/@item.Sub
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.Cr)
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.Ca)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Sr)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Sa)
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @srsa
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Signal)
+                                    </td>
+                                    <td>
+                                        @isbrk
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @Html.DisplayFor(modelItem => item.Alike)
+                                    </td>
+                                    @if (User.IsInRole("Admins"))
+                                    {
+                                        <td class="hidden-xs" style="min-width:150px">
+                                            <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">
+                                                <i class="glyphicon glyphicon-pencil"></i> Edit
+                                            </a>
+                                            <a id="deleteModal" data-toggle="modal" asp-action="Delete" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-warning" style="width:70px;margin-right:5px; min-width:50px;">
+                                                <i class="glyphicon glyphicon-trash"></i> Delete
+                                            </a>
+                                        </td>
+                                    }
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -189,7 +189,6 @@
                         "<'row'<'col-sm-6'><'col-sm-6'>>" +
                         "<'row'<'col-sm-12'tr>>" +
                         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    scrollX: true,
                     language: {
                         processing: "加载中...",
                         lengthMenu: "每页显示 _MENU_ 条数据",

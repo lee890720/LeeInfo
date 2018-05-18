@@ -221,7 +221,8 @@
     </div>
 </section>
 @section Scripts{
-    <script src="~/js/range-pos.js"></script>
+    <script src="~/js/range_pos.js"></script>
+    <script src="~/js/dateRangeSelector.js"></script>
     <script>
         $(function () {
             //初始化参数
@@ -488,8 +489,8 @@
                         {
                             targets: [9, 10],
                             render: function (data, type, row, meta) {
-                                result = moment(data).format('YYYY-MM-DD hh:mm:ss');
-                                return result;
+                                var temp = new Date(data);
+                                return temp.Format('YYYY-MM-DD hh:mm:ss');
                             }
                         },
                         {
@@ -552,18 +553,22 @@
                         $(api.column(19).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
                     }
                 });
+            //#endregion
+
+            //#region table_pos点击事件
             $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
             $("#refrash").click(function () { RefrashPosition(); });
-            //显示隐藏列
+            $("#date_beg,#date_end").keyup(function () { table_pos.api().draw(); });
+            $("#date_beg,#date_end").change(function () { table_pos.api().draw(); });
+            //#endregion
+
+            //#region 显示隐藏列
             $('.toggle-vis').on('change', function (e) {
                 e.preventDefault();
                 console.log($(this).attr('data-column'));
                 var column = table_pos.api().column($(this).attr('data-column'));
                 column.visible(!column.visible());
             });
-
-            $("#date_beg,#date_end").keyup(function () { table_pos.api().draw(); });
-            $("#date_beg,#date_end").change(function () { table_pos.api().draw(); });
             //#endregion
 
             //#region 初始化table_posGroup
@@ -689,81 +694,16 @@
             //#endregion
 
             //#region 设置一些细节
-            //var table = document.getElementById("posgroup");
-            //var rowObj = null;
-            //var cellObj = null;
-
-            //for (var i = 1; i < table.rows.length; i++) {
-            //    rowObj = table.rows[i];
-            //    var s = rowObj.cells[6].innerHTML;
-            //    if (s > 0)
-            //        rowObj.cells[6].style.color = "#4cae05";
-            //    else
-            //        rowObj.cells[6].style.color = "#ff5256";
-            //}
-
             $('.datepickertemp').datepicker({
                 autoclose: true,
                 format: 'yyyy-mm-dd',
             });
-            ////Timepicker
-            //$('.timepicker').timepicker({
-            //    showInputs: false
-            //});
 
             //Select2
             $('.select2').select2();
             //#endregion
 
-            //#region Date-Range选择定义
-            var now = new Date();
-            var nowDayOfWeek = now.getDay();
-            var nowDay = now.getDate();
-            var nowMonth = now.getMonth();
-            var nowYear = now.getYear();
-            nowYear += (nowYear < 2000) ? 1900 : 0;
-            var getCurrentDate = new Date(nowYear, nowMonth, nowDay + 1);
-            var getCurrentDate = formatDate(getCurrentDate)
-            var getTodayDate = new Date(nowYear, nowMonth, nowDay);
-            var getTodayDate = formatDate(getTodayDate);
-            var getYesterdayDate = new Date(nowYear, nowMonth, nowDay - 1);
-            var getYesterdayDate = formatDate(getYesterdayDate);
-
-            var getMonthStartDate = new Date(nowYear, nowMonth, 1);
-            var getMonthStartDate = formatDate(getMonthStartDate);
-
-            var getWeekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek);
-            var getWeekStartDate = formatDate(getWeekStartDate);
-
-            var getWeekEndDate = new Date(nowYear, nowMonth, nowDay + (6 - nowDayOfWeek));
-            var getWeekEndDate = formatDate(getWeekEndDate);
-
-            var getPreMonthStartDate = new Date(nowYear, nowMonth - 1, 1);
-            var getPreMonthStartDate = formatDate(getPreMonthStartDate);
-
-            var getFirMonthStartDate = new Date(nowYear, nowMonth - 1, nowDay);
-            var getFirMonthStartDate = formatDate(getFirMonthStartDate);
-
-            var getTreeMonthStartDate = new Date(nowYear, nowMonth - 3, nowDay);
-            var getTreeMonthStartDate = formatDate(getTreeMonthStartDate);
-
-            var getYearStartDate = new Date(nowYear, nowMonth - 12, nowDay);
-            var getYearStartDate = formatDate(getYearStartDate);
-
-            function formatDate(date) {
-                var myyear = date.getFullYear();
-                var mymonth = date.getMonth() + 1;
-                var myweekday = date.getDate();
-
-                if (mymonth < 10) {
-                    mymonth = "0" + mymonth;
-                }
-                if (myweekday < 10) {
-                    myweekday = "0" + myweekday;
-                }
-                return (myyear + "-" + mymonth + "-" + myweekday);
-            }
-
+            //#region 日期区间选择事件
             $("#date_select").change(function () {
                 var flag = parseInt($("#date_select").val());
                 switch (flag) {

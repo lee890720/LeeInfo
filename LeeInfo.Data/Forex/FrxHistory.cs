@@ -21,8 +21,8 @@ namespace LeeInfo.Data.Forex
         public string Comment { get; set; }
         public double EntryPrice { get; set; }
         public double ClosingPrice { get; set; }
-        public DateTime EntryTime { get; set; }
-        public DateTime ClosingTime { get; set; }
+        public long EntryTimestamp { get; set; }
+        public long ClosingTimestamp { get; set; }
         public double Commissions { get; set; }
         public double Swap { get; set; }
         public double GrossProfit { get; set; }

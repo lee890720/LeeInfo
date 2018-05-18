@@ -9,20 +9,6 @@
     ViewData["Title"] = controllerName;
     string path = "/" + areaName + "/" + controllerName;
 }
-<!--Style-->
-<style>
-    .table th {
-        text-align: center !important;
-    }
-
-    .table td {
-        text-align: center !important;
-    }
-
-    .description-text {
-        color: darkgray !important;
-    }
-</style>
 <!---Content-Header-->
 <section class="content-header hidden-xs">
     <h1>
@@ -215,9 +201,6 @@
                 </div>
                 <div class="box-body" style="padding:0px 5px;">
                     <div class="mailbox-controls">
-                        @*<button title="全选" type="button" class="btn btn-default btn-sm checkbox-toggle">
-                        <i class="fa fa-square-o"></i>
-                    </button>*@
                         <button id="close-selected2" title="关闭选中的订单" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
                         <div class="pull-right">
                             <div class="btn-group">
@@ -321,12 +304,12 @@
                     </div>
                 </div>
             </div>
+            <!--输出结果-->
             <div class="box box-info">
                 <div class="box-header">
                     <h3 class="box-title">
                         输出结果
                     </h3>
-                    <!-- tools box -->
                     <div class="pull-right box-tools">
                         <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip"
                                 title="Collapse">
@@ -337,9 +320,7 @@
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
-                    <!-- /. tools -->
                 </div>
-                <!-- /.box-header -->
                 <div class="box-body pad">
                     <form>
                         <textarea id="area-info" name="editor1" style="width:100%; height:200px;">
@@ -917,8 +898,8 @@
                     {
                         targets: [9, 10],
                         render: function (data, type, row, meta) {
-                            result = moment(data).format('YYYY-MM-DD hh:mm:ss');
-                            return result;
+                            var temp = new Date(data);
+                            return temp.Format('YYYY-MM-DD hh:mm:ss');
                         }
                     },
                     {
@@ -982,18 +963,25 @@
                     $(api.column(11).footer()).html('$' + pageTotal.toFixed(2) + "/" + '$' + total.toFixed(2));
                 }
             });
+        //#endregion
+
+        //#region 表搜索与刷新事件
         $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
         $("#refresh").click(function () {
             RefreshPosition([]);
         });
-        //显示隐藏列
+        //#endregion
+
+        //#region显示隐藏列
         $('.toggle-vis').on('change', function (e) {
             e.preventDefault();
             console.log($(this).attr('data-column'));
             var column = table_pos.api().column($(this).attr('data-column'));
             column.visible(!column.visible());
         });
+        //#endregion
 
+        //#region 点击input[name="ids"]时触发的事件
         $("#table-pos tbody").on("change", 'tr input[name="ids"]', function () {
             var $tr = $(this).parents('tr');
             var row = table_pos.api().row($tr);
@@ -1018,7 +1006,7 @@
         });
         //#endregion
 
-        //#region Collapse切换
+        //#region Collapse切换(new-amend-order)
         $('#new-tool').on('click', function (e) {
             e.preventDefault();
             if ($("#new-box").hasClass("collapsed-box")) {
@@ -1051,7 +1039,7 @@
         });
         //#endregion
 
-        //#region 设置新建订单和修改订单的值
+        //#region 设置新建订单(new-body)和修改订单的值(amend-body)
 
         //symbolcheck选中状态为false时的事件
         $("#symbolcheck").on("ifUnchecked", function () {
@@ -1132,10 +1120,11 @@
         };
         //#endregion
 
-        //#region 设置select(new-symbol) Select2
-        //初始化Select2
+        //#region 初始化Select2
         $('.select2').select2();
+        //#endregion
 
+        //#region Get Symbol List(new-symbol)
         function GetSymbolList() {
             $.each(_symbols, function () {
                 if(this.symbolId==1)
@@ -1143,54 +1132,6 @@
                 else
                     $("#new-symbol").append("<option value='" + this.symbolId + "'>" + this.symbolName + "</option>");
             });
-        }
-        //#endregion
-
-        //#region 设置一些细节
-        //Enable check and uncheck all functionality
-        //$(".checkbox-toggle").click(function () {
-        //    var clicks = $(this).data('clicks');
-        //    if (clicks) {
-        //        //Uncheck all checkboxes
-        //        $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
-        //        $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
-        //    } else {
-        //        //Check all checkboxes
-        //        $(".mailbox-messages input[type='checkbox']").iCheck("check");
-        //        $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
-        //    }
-        //    $(this).data("clicks", !clicks);
-        //});
-        //$(".checkbox-toggle").click(function () {
-        //    var clicks = $(this).data('clicks');
-        //    if (clicks) {
-        //        //Uncheck all checkboxes
-        //        $(".mailbox-messages input[type='checkbox']").attr("checked",false);
-        //        $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
-        //    } else {
-        //        //Check all checkboxes
-        //        $(".mailbox-messages input[type='checkbox']").attr("checked",true);
-        //        $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
-        //    }
-        //    $(this).data("clicks", !clicks);
-        //});
-        //#endregion
-
-        //#region 日期格式化
-        Date.prototype.Format = function (fmt) { //author: meizz 
-            var o = {
-                "M+": this.getMonth() + 1, //月份 
-                "d+": this.getDate(), //日 
-                "h+": this.getHours(), //小时 
-                "m+": this.getMinutes(), //分 
-                "s+": this.getSeconds(), //秒 
-                "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
-                "S": this.getMilliseconds() //毫秒 
-            };
-            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-            for (var k in o)
-                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-            return fmt;
         }
         //#endregion
 

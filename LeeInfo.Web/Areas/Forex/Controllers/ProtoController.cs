@@ -106,7 +106,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             return Json(new { accountinfo, positions });
         }
 
-        //#region Proto
+        #region Proto
         public JsonResult SendMarketOrder([FromBody]Params param)
         {
             _tcpClient = new TcpClient(param.ApiHost, param.ApiPort); ;
@@ -153,7 +153,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                         tradeType = ProtoTradeSide.BUY;
                     if (p.TradeSide.ToUpper() == "SELL")
                         tradeType = ProtoTradeSide.SELL;
-                    var msg = msgFactory.CreateMarketOrderRequest(param.AccountId, param.AccessToken, p.SymbolName, tradeType, p.Volume,null, null,null ,p.PositionId);
+                    var msg = msgFactory.CreateMarketOrderRequest(param.AccountId, param.AccessToken, p.SymbolName, tradeType, p.Volume, null, null, null, p.PositionId);
                     Transmit(msg);
                 }
             }
@@ -167,7 +167,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                         tradeType = ProtoTradeSide.SELL;
                     if (p.TradeSide.ToUpper() == "SELL")
                         tradeType = ProtoTradeSide.BUY;
-                    var msg = msgFactory.CreateMarketOrderRequest(param.AccountId, param.AccessToken, p.SymbolName, tradeType, p.Volume*2,null, null,null, p.PositionId);
+                    var msg = msgFactory.CreateMarketOrderRequest(param.AccountId, param.AccessToken, p.SymbolName, tradeType, p.Volume * 2, null, null, null, p.PositionId);
                     Transmit(msg);
                 }
             }
@@ -216,7 +216,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             List<string> data = new List<string>();
 
             var msgFactory = new OpenApiMessagesFactory();
-            var msg = msgFactory.CreateAmendPositionProtectionRequest(param.AccountId,param.AccessToken.ToString(),param.PositionId,param.StopLossPrice,param.TakeProfitPrice);
+            var msg = msgFactory.CreateAmendPositionProtectionRequest(param.AccountId, param.AccessToken.ToString(), param.PositionId, param.StopLossPrice, param.TakeProfitPrice);
             Transmit(msg);
             byte[] _message = Listen(_apiSocket);
             var protoMessage = msgFactory.GetMessage(_message);
@@ -224,188 +224,6 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             return Json(new { data });
         }
 
-        //private void SendLimitOrderRequest()
-        //{
-        //    SendAuthorizationRequest();
-        //    var accountID = "1960408";
-        //    var token = _accessToken;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateLimitOrderRequest(Convert.ToInt32(accountID), token, "EURUSD", ProtoTradeSide.BUY, 200000, 1.09);
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
-
-        //private void SendAmendLimitOrderRequest()
-        //{
-        //    SendAuthorizationRequest();
-        //    var accountID = "1960408";
-        //    var token = _accessToken;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateAmendLimitOrderRequest(Convert.ToInt32(accountID), token, 69212987, 1.10);
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
-
-        //private void SendStopOrderRequest()
-        //{
-        //    SendAuthorizationRequest();
-        //    var accountID = "1960408";
-        //    var token = _accessToken;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateStopOrderRequest(Convert.ToInt32(accountID), token, "EURUSD", ProtoTradeSide.BUY, 400000, 1.3);
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
-
-        //private void SubscribeForSpotsRequest()
-        //{
-        //    SendAuthorizationRequest();
-        //    var accountID = "1960408";
-        //    var token = _accessToken;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateSubscribeForSpotsRequest(Convert.ToInt32(accountID), token, "EURUSD");
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
-
-        //private void RefreshToken()
-        //{
-        //    var token = _refreshToken;
-        //    var newToken = AccessToken.RefreshAccessToken(_connectUrl, token, _clientId, _clientSecret);
-
-        //}
-
-        //public JsonResult AmendPosition(int acId, int positionId, double? stopLoss, double? takeProfit)
-        //{
-        //    AppIdentityUser _user = _identitycontext.Users.SingleOrDefault(x => x.UserName == "lee890720");
-        //    _clientId = _user.ClientId;
-        //    _clientSecret = _user.ClientSecret;
-        //    _accessToken = _user.AccessToken;
-        //    _refreshToken = _user.RefreshToken;
-        //    var auth = SendAuthorizationRequest();
-        //    var accountID = acId;
-        //    var token = _accessToken;
-        //    var PositionId = positionId;
-        //    var StopLoss = 0.00;
-        //    var TakeProfit = 0.00;
-        //    if (stopLoss.HasValue)
-        //        StopLoss = (double)stopLoss;
-        //    if (takeProfit.HasValue)
-        //        TakeProfit = (double)takeProfit;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var _msg = ProtoOAAmendPositionStopLossTakeProfitReq.CreateBuilder();
-        //    _msg.SetAccountId(accountID);
-        //    _msg.SetAccessToken(token);
-        //    _msg.SetPositionId(PositionId);
-        //    if (stopLoss.HasValue)
-        //        _msg.SetStopLossPrice(StopLoss);
-        //    if (takeProfit.HasValue)
-        //        _msg.SetTakeProfitPrice(TakeProfit);
-        //    var msg = msgFactory.CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), PositionId.ToString());
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    var amend = OpenApiMessagesPresentation.ToString(protoMessage);
-        //    List<string> data = new List<string>();
-        //    data.Add(auth);
-        //    data.Add(amend);
-        //    return Json(new { data, data.Count });
-        //}
-
-
-
-        //private void UnsubscribeForTradingEvents()
-        //{
-        //    SendAuthorizationRequest();
-        //    var accountID = "1960408";
-        //    var token = _accessToken;
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateUnsubscribeForTradingEventsRequest(Convert.ToInt32(accountID));
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
-
-        //private void SendGetAllSubscriptionsForTradingEventsRequest()
-        //{
-        //    SendAuthorizationRequest();
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateAllSubscriptionsForTradingEventsRequest();
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
-
-        //private void SendGetAllSubscriptionsForSpotEventsRequest()
-        //{
-        //    SendAuthorizationRequest();
-        //    var msgFactory = new OpenApiMessagesFactory();
-        //    var msg = msgFactory.CreateGetAllSpotSubscriptionsRequest();
-        //    Transmit(msg);
-        //    byte[] _message = Listen(_apiSocket);
-        //    var protoMessage = msgFactory.GetMessage(_message);
-        //    //lblResponse.Text = OpenApiMessagesPresentation.ToString(protoMessage);
-        //}
-
-
-        //private void TradingAccountDetails()
-        //{
-        //    var accountID = "1960408";
-        //    var token = _accessToken;
-
-        //    var date = new DateTime(2017, 01, 12);
-        //    var tickDataBid = TickData.GetTickData(_apiUrl, accountID, token, "EURUSD", TickData.TickDataType.Bid, date, 07, 13, 46, 07, 15, 26);
-        //    var tickDataAsk = TickData.GetTickData(_apiUrl, accountID, token, "EURUSD", TickData.TickDataType.Ask, date, 07, 13, 46, 07, 15, 26);
-        //    foreach (var td in tickDataBid)
-        //    {
-        //        var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(td.Timestamp) / 1000d));
-        //        //chrTickData.Series[0].Points.Add(new DataPoint(dt.ToOADate(), Convert.ToDouble(td.Tick)));
-        //    }
-
-        //    foreach (var td in tickDataAsk)
-        //    {
-        //        var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(td.Timestamp) / 1000d));
-        //        //chrTickData.Series[1].Points.Add(new DataPoint(dt.ToOADate(), Convert.ToDouble(td.Tick)));
-        //    }
-        //    //chrTickData.ChartAreas[0].AxisY.Minimum = chrTickData.Series[0].Points.Min(x => x.YValues[0]);
-        //    //chrTickData.ChartAreas[0].AxisY.Maximum = chrTickData.Series[0].Points.Max(x => x.YValues[0]);
-
-        //    var dateFrom = new DateTime(2017, 01, 11, 00, 00, 00);
-        //    var dateTo = new DateTime(2017, 01, 13, 00, 00, 00);
-        //    var trendBarH1 = TrendBar.GetTrendBar(_apiUrl, accountID, token, "EURUSD", TrendBar.TrendBarType.Hour, dateFrom, dateTo);
-
-        //    dateFrom = new DateTime(2017, 01, 12, 23, 00, 00);
-        //    dateTo = new DateTime(2017, 01, 13, 00, 00, 00);
-        //    var trendBarM1 = TrendBar.GetTrendBar(_apiUrl, accountID, token, "EURUSD", TrendBar.TrendBarType.Minute, dateFrom, dateTo);
-
-        //    //chrTrendChartH1.Series[0].Points.Clear();
-        //    foreach (var tb in trendBarH1)
-        //    {
-        //        var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(tb.Timestamp) / 1000d));
-        //        //chrTrendChartH1.Series[0].Points.Add(new DataPoint(dt.ToOADate(), new double[] { Convert.ToDouble(tb.High), Convert.ToDouble(tb.Low), Convert.ToDouble(tb.Open), Convert.ToDouble(tb.Close) }));
-        //    }
-        //    //chrTrendChartH1.ChartAreas[0].AxisY.Minimum = chrTrendChartH1.Series[0].Points.Min(x => x.YValues.Min());
-        //    //chrTrendChartH1.ChartAreas[0].AxisY.Maximum = chrTrendChartH1.Series[0].Points.Max(x => x.YValues.Max());
-
-        //    //chrTrendChartM1.Series[0].Points.Clear();
-        //    foreach (var tb in trendBarM1)
-        //    {
-        //        var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(tb.Timestamp) / 1000d));
-        //        //chrTrendChartM1.Series[0].Points.Add(new DataPoint(dt.ToOADate(), new double[] { Convert.ToDouble(tb.High), Convert.ToDouble(tb.Low), Convert.ToDouble(tb.Open), Convert.ToDouble(tb.Close) }));
-        //    }
-        //    //chrTrendChartM1.ChartAreas[0].AxisY.Minimum = chrTrendChartM1.Series[0].Points.Min(x => x.YValues.Min());
-        //    //chrTrendChartM1.ChartAreas[0].AxisY.Maximum = chrTrendChartM1.Series[0].Points.Max(x => x.YValues.Max());
-        //}
         private void SendAuthorizationRequest(Params param)
         {
             var msgFactory = new OpenApiMessagesFactory();
@@ -460,5 +278,6 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
             return false;
         }
+        #endregion
     }
 }

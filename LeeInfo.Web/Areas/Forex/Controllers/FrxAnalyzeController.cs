@@ -55,7 +55,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fc.AccountId = connect.AccountId;
                 fc.Balance = c.Balance;
                 fc.BalanceVersion = c.BalanceVersion;
-                fc.ChangeTime = ConvertJson.StampToDateTime(c.ChangeTimestamp);
+                fc.ChangeTimestamp = c.ChangeTimestamp;
                 fc.Type = c.Type;
                 fc.Delta = c.Delta / 100;
                 fc.Equity = c.Equity;
@@ -69,15 +69,14 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             #endregion
 
             #region GetHistory
-            DateTime fromtime;
+            long fromTimestamp;
             if (_context.FrxHistory.Count() != 0)
-                fromtime = _context.FrxHistory.OrderByDescending(x => x.ClosingTime).ToList()[0].ClosingTime.AddDays(-1);
+                fromTimestamp = _context.FrxHistory.Select(x => x.ClosingTimestamp).Max() - 86400000;
             else
-                fromtime = connect.TraderRegistrationTime;
-            DateTime utcnow = DateTime.UtcNow;
-            long fromtimestamp = ConvertJson.DateTimeToStamp(fromtime);
-            long totimestamp = ConvertJson.DateTimeToStamp(utcnow.AddDays(1));
-            var deal = Deal.GetDeals(connect.ApiUrl, connect.AccountId.ToString(), connect.AccessToken, fromtimestamp.ToString(), totimestamp.ToString());
+                fromTimestamp = connect.TraderRegistrationTimestamp - 86400000;
+            DateTime utcNow = DateTime.UtcNow;
+            long toTimestamp = ConvertJson.DateTimeToStamp(utcNow.AddDays(1));
+            var deal = Deal.GetDeals(connect.ApiUrl, connect.AccountId.ToString(), connect.AccessToken, fromTimestamp.ToString(), toTimestamp.ToString());
             var deal_history = new List<Deal>();
             foreach (var d in deal)
             {
@@ -93,21 +92,21 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fh.BalanceVersion = h.PositionCloseDetails.BalanceVersion;
                 fh.BaseToUSDConversionRate = h.BaseToUSDConversionRate;
                 fh.ClosedToDepoitConversionRate = h.PositionCloseDetails.ClosedToDepositConversionRate;
-                fh.ClosingTime = ConvertJson.StampToDateTime(h.ExecutionTimestamp);
+                fh.ClosingTimestamp = h.ExecutionTimestamp;
                 fh.ClosingPrice = h.ExecutionPrice;
                 fh.Comment = h.Comment;
                 fh.Commissions = h.PositionCloseDetails.Commission / 100;
                 fh.EntryPrice = h.PositionCloseDetails.EntryPrice;
-                long tempstamp = System.Convert.ToInt64(h.ExecutionTimestamp);
+                long tempTimestamp = h.ExecutionTimestamp;
                 foreach (var d in deal)
                 {
                     if (d.PositionId == h.PositionId)
                     {
-                        if (System.Convert.ToInt64(d.ExecutionTimestamp) < tempstamp)
-                            tempstamp = System.Convert.ToInt64(d.ExecutionTimestamp);
+                        if (d.ExecutionTimestamp < tempTimestamp)
+                            tempTimestamp = d.ExecutionTimestamp;
                     }
                 }
-                fh.EntryTime = ConvertJson.StampToDateTime(tempstamp);
+                fh.EntryTimestamp = tempTimestamp;
                 fh.Equity = h.PositionCloseDetails.Equity / 100;
                 fh.EquityBaseRoi = h.PositionCloseDetails.EquityBasedRoi / 100;
                 fh.GrossProfit = h.PositionCloseDetails.Profit / 100;
@@ -120,19 +119,16 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 fh.SymbolCode = h.SymbolName;
                 fh.Volume = h.PositionCloseDetails.ClosedVolume / 100;
 
-                var tempvolume = Convert.ToDouble(fh.Volume);
-                double tempsub = 100000;
-                if (fh.SymbolCode == "XBRUSD" || fh.SymbolCode == "XTIUSD")
-                    tempsub = 100;
-                if (fh.SymbolCode == "XAGUSD" || fh.SymbolCode == "XAGEUR")
-                    tempsub = 1000;
-                if (fh.SymbolCode == "XAUUSD" || fh.SymbolCode == "XAUEUR")
-                    tempsub = 100;
-                fh.Quantity = tempvolume / tempsub;
+                var symbol = symbols.SingleOrDefault(x => x.SymbolName == h.SymbolName);
+                var minVolume = symbol.MinOrderVolume;
+                var minLot = symbol.MinOrderLot;
+                var pipPosition = symbol.PipPosition;
+                fh.Quantity = fh.Volume/minVolume*minLot;
+
                 fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
                 fh.Roi = h.PositionCloseDetails.Roi;
                 fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
-                fh.Digits = symbols.SingleOrDefault(x => x.SymbolName == fh.SymbolCode).PipPosition;
+                fh.Digits = pipPosition;
                 var result = _context.FrxHistory.SingleOrDefault(x => x.ClosingDealId == fh.ClosingDealId);
                 if (result == null)
                 {
@@ -151,12 +147,13 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             //Get History,Account
             var account = _context.FrxAccount.SingleOrDefault(x => x.AccountId == param.AccountId);
             var positions = Position.GetPositions(param.ApiUrl, param.AccountId.ToString(), param.AccessToken);
-            var histories = _context.FrxHistory.Where(x => x.AccountId == param.AccountId).OrderByDescending(x => x.ClosingTime).ToList();
+            var histories = _context.FrxHistory.Where(x => x.AccountId == param.AccountId).OrderByDescending(x => x.ClosingTimestamp).ToList();
             var cashflow = _context.FrxCashflow.Where(x => x.AccountId == param.AccountId);
             #region Get MonthBaseData
             //Get XData
             var lastHistory = histories[0];
-            var lastHisTime = lastHistory.ClosingTime;
+            var lastHisTimestamp = lastHistory.ClosingTimestamp;
+            var lastHisTime = ConvertJson.StampToDateTime(lastHistory.ClosingTimestamp);
             var lastHisTimeYear = lastHisTime.Year;
             var lastHisTimeMonth = lastHisTime.Month;
             List<XData> xDatas = new List<XData>();
@@ -171,7 +168,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             }
             //Add Year,Total
             var yearBeginTime = new DateTime(lastHisTimeYear, 1, 1);
-            var totalBeginTime = account.TraderRegistrationTime;
+            var totalBeginTime = ConvertJson.StampToDateTime(account.TraderRegistrationTimestamp);
             var yearXData = new XData("全年", yearBeginTime);
             var totalXData = new XData("总计", totalBeginTime);
             xDatas.Add(yearXData);
@@ -182,13 +179,13 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             {
                 MonthBaseData mdata = new MonthBaseData();
                 var tempHis = new List<FrxHistory>();
-                DateTime endTime = new DateTime();
+                long endTimestamp;
                 mdata.XData = xDatas[i];
                 if (i < 12)
-                    endTime = mdata.XData.XTime.AddMonths(1);
+                    endTimestamp = ConvertJson.DateTimeToStamp(mdata.XData.XTime.AddMonths(1));
                 else
-                    endTime = lastHisTime.AddDays(2);
-                tempHis = histories.Where(x => x.ClosingTime > mdata.XData.XTime && x.ClosingTime < endTime).OrderBy(y => y.ClosingTime).ToList();
+                    endTimestamp = lastHisTimestamp+86400000;
+                tempHis = histories.Where(x => x.ClosingTimestamp> ConvertJson.DateTimeToStamp(mdata.XData.XTime) && x.ClosingTimestamp < endTimestamp).OrderBy(y => y.ClosingTimestamp).ToList();
                 if (tempHis.Count() != 0)
                 {
                     var list_bsData = tempHis.GroupBy(g => new
@@ -264,9 +261,9 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
             if (positions.Count != 0)
                 unrnet = (double)positions.Sum(x => x.Commission * 2 + x.Swap + x.Profit) / 100;
             var maxbalance = histories.Select(x => x.Balance).Max();
-            DateTime maxtime = histories.FirstOrDefault(x => x.Balance == maxbalance).ClosingTime.Date;
+            long maxtimestamp = histories.FirstOrDefault(x => x.Balance == maxbalance).ClosingTimestamp;
             var maxdrawdown = histories.Select(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4)).Max();
-            DateTime maxdrawtime = histories.FirstOrDefault(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4) == maxdrawdown).ClosingTime.Date;
+            long maxdrawtimestamp = histories.FirstOrDefault(x => Math.Round((x.Balance - x.Equity) / x.Balance, 4) == maxdrawdown).ClosingTimestamp;
             var totalswap = histories.Select(x => x.Swap).Sum();
             var twr = 1.00;
             foreach (var m in monthBaseData)
@@ -276,27 +273,27 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     twr = (1 + m.Gain) * twr;
                 }
             }
-            DateTime lasttradetime;
+            long lasttradetimestamp;
             if (histories.Count() > 0)
-                lasttradetime = histories.OrderByDescending(x => x.ClosingTime).ToList()[0].ClosingTime;
+                lasttradetimestamp = lastHisTimestamp;
             else
-                lasttradetime = account.TraderRegistrationTime;
+                lasttradetimestamp = account.TraderRegistrationTimestamp;
             var accountinfo = new AccountInfo
             {
                 Gain = Math.Round(twr - 1, 4) * 100,
                 AbsGain = Math.Round((account.Balance - deposit + withdraw) / deposit, 4) * 100,
                 MaxDraw = maxdrawdown * 100,
-                MaxDrawTime = maxdrawtime,
+                MaxDrawTimestamp = maxdrawtimestamp,
                 Deposit = deposit,
                 Withdraw = withdraw,
                 Balance = account.Balance,
                 Equity = account.Balance + (double)unrnet,
                 MaxBalance = maxbalance,
-                MaxBalanceTime = maxtime,
+                MaxBalanceTimestamp = maxtimestamp,
                 TotalProfit = account.Balance - deposit + withdraw,
                 TotalSwap = Math.Round(totalswap, 2),
-                LastTradeTime = lasttradetime,
-                RigistrationTime = account.TraderRegistrationTime
+                LastTradeTimestamp = lasttradetimestamp,
+                RigistrationTimestamp = account.TraderRegistrationTimestamp
             };
             #endregion
             return Json(new { monthBaseData, accountinfo });
