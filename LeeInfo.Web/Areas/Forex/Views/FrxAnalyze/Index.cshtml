@@ -67,47 +67,95 @@
                     </div>
                 </div>
                 <div class="box-body no-margin">
-                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 hidden-xs">
                         <div id="BalanceChart" style="height:300px;"></div>
                     </div>
                     <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 table-responsive" style="padding:30px">
                         <table class="table">
                             <tbody>
-                                <tr>
+                                <tr class="hidden-xs">
                                     <td class="brr">收益率：</td>
                                     <td class="brl"><strong id="accountinfo-gain" style="color:coral"></strong></td>
                                     <td class="brr">余额：</td>
                                     <td id="accountinfo-balance" class="brl"></td>
                                 </tr>
-                                <tr>
+                                <tr class="hidden-xs">
                                     <td class="brr">绝对收益率：</td>
                                     <td class="brl"><strong id="accountinfo-absgain" style="color:coral"></strong></td>
                                     <td class="brr">净值：</td>
                                     <td id="accountinfo-equity" class="brl"></td>
                                 </tr>
-                                <tr>
+                                <tr class="hidden-xs">
                                     <td class="brr">最大回撤率： </td>
                                     <td id="accountinfo-maxdraw" class="brl"></td>
                                     <td class="brr">最高净值： </td>
                                     <td id="accountinfo-maxbalance" class="brl"></td>
                                 </tr>
-                                <tr>
+                                <tr class="hidden-xs">
                                     <td class="brr">入金： </td>
                                     <td id="accountinfo-deposit" class="brl"></td>
                                     <td class="brr">利润：</td>
                                     <td class="brl"><strong id="accountinfo-totalprofit" style="color:coral"></strong></td>
                                 </tr>
-                                <tr>
+                                <tr class="hidden-xs">
                                     <td class="brr">出金： </td>
                                     <td id="accountinfo-withdraw" class="brl"></td>
                                     <td class="brr">利息： </td>
                                     <td class="brl"><strong id="accountinfo-totalswap" style="color:coral"></strong></td>
                                 </tr>
-                                <tr>
+                                <tr class="hidden-xs">
                                     <td class="brr">统计起始：</td>
                                     <td id="accountinfo-rigistrationtime" class="brl"></td>
                                     <td class="brr">最后交易：</td>
                                     <td id="accountinfo-lasttradetime" class="brl"></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">收益率：</td>
+                                    <td class="brl"><strong id="accountinfo-gain2" style="color:coral"></strong></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">余额：</td>
+                                    <td id="accountinfo-balance2" class="brl"></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">绝对收益率：</td>
+                                    <td class="brl"><strong id="accountinfo-absgain2" style="color:coral"></strong></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">净值：</td>
+                                    <td id="accountinfo-equity2" class="brl"></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">最大回撤率： </td>
+                                    <td id="accountinfo-maxdraw2" class="brl"></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">最高净值： </td>
+                                    <td id="accountinfo-maxbalance2" class="brl"></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">入金： </td>
+                                    <td id="accountinfo-deposit2" class="brl"></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">利润：</td>
+                                    <td class="brl"><strong id="accountinfo-totalprofit2" style="color:coral"></strong></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">出金： </td>
+                                    <td id="accountinfo-withdraw2" class="brl"></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">利息： </td>
+                                    <td class="brl"><strong id="accountinfo-totalswap2" style="color:coral"></strong></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">统计起始：</td>
+                                    <td id="accountinfo-rigistrationtime2" class="brl"></td>
+                                </tr>
+                                <tr class="hidden-lg hidden-md hidden-sm">
+                                    <td class="brr">最后交易：</td>
+                                    <td id="accountinfo-lasttradetime2" class="brl"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -117,7 +165,7 @@
         </div>
     </div>
     <!--月数据分析-->
-    <div class="row">
+    <div class="row hidden-xs">
         <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
@@ -155,7 +203,7 @@
         </div>
     </div>
     <!--多空比-->
-    <div class="row">
+    <div class="row hidden-xs">
         <div class="col-md-12">
             <div class="box box-info">
                 <div class="box-header with-border">
@@ -280,7 +328,7 @@
         </div>
     </div>
     <!--历史记录-->
-    <div class="row hidden-xs">
+    <div class="row">
         <div class="col-md-12">
             <div class="box box-info collapsed-box">
                 <div class="box-header with-border">
@@ -330,7 +378,7 @@
                     <table id="table-his" class="table  table-bordered table-striped table-hover" width="100%">
                         <thead>
                             <tr>
-                                <th>
+                                <th class="hidden-xs col-hidden">
                                     ID(标签/注释)
                                 </th>
                                 <th>
@@ -339,29 +387,29 @@
                                 <th>
                                     多空
                                 </th>
-                                <th>
+                                <th class="hidden-xs col-hidden">
                                     开仓时间
                                 </th>
-                                <th>
+                                <th class="hidden-xs col-hidden">
                                     闭仓时间
                                 </th>
 
-                                <th>
+                                <th class="hidden-xs col-hidden">
                                     开仓价
                                 </th>
-                                <th>
+                                <th class="hidden-xs col-hidden">
                                     闭仓价
                                 </th>
                                 <th>
                                     手数
                                 </th>
-                                <th>
+                                <th class="hidden-xs col-hidden">
                                     佣金
                                 </th>
-                                <th>
+                                <th class="hidden-xs col-hidden">
                                     利息
                                 </th>
-                                <th>
+                                <th class="hidden-xs col-hidden">
                                     点数
                                 </th>
                                 <th>
@@ -369,8 +417,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
-                        <tfoot>
+                        <tfoot class="hidden-xs">
                             <tr>
                                 <th colspan="11" style="text-align:right !important">合计:</th>
                                 <th></th>
@@ -462,6 +509,18 @@
                     $("#accountinfo-totalswap").html(data.totalSwap.toFixed(2));
                     $("#accountinfo-rigistrationtime").html(moment(data.rigistrationTime).format('YYYY-MM-DD hh:mm'));
                     $("#accountinfo-lasttradetime").html(moment(data.lastTradeTime).format('YYYY-MM-DD hh:mm'));
+                    $("#accountinfo-gain2").html(data.gain.toFixed(2) + "%");
+                    $("#accountinfo-balance2").html(data.balance.toFixed(2));
+                    $("#accountinfo-absgain2").html(data.absGain.toFixed(2) + "%");
+                    $("#accountinfo-equity2").html(data.equity.toFixed(2));
+                    $("#accountinfo-maxdraw2").html("-" + data.maxDraw.toFixed(2) + "%" + "(" + moment(data.maxDrawTime).format('YYYY-MM-DD') + ")");
+                    $("#accountinfo-maxbalance2").html(data.maxBalance.toFixed(2) + "(" + moment(data.maxBalanceTime).format('YYYY-MM-DD') + ")");
+                    $("#accountinfo-deposit2").html(data.deposit.toFixed(2));
+                    $("#accountinfo-totalprofit2").html(data.totalProfit.toFixed(2));
+                    $("#accountinfo-withdraw2").html(data.withdraw.toFixed(2));
+                    $("#accountinfo-totalswap2").html(data.totalSwap.toFixed(2));
+                    $("#accountinfo-rigistrationtime2").html(moment(data.rigistrationTime).format('YYYY-MM-DD hh:mm'));
+                    $("#accountinfo-lasttradetime2").html(moment(data.lastTradeTime).format('YYYY-MM-DD hh:mm'));
                 }
             };
             //#endregion
@@ -1080,6 +1139,12 @@
                         { data: "netProfit" }
                     ],
                     columnDefs: [
+                        {
+                            targets: "col-hidden",
+                            createdCell: function (td, cellData, rowData, row, col) {
+                                $(td).addClass(" hidden-xs");
+                            },
+                        },
                         {
                             targets: 0,
                             render: function (data, type, row, meta) {

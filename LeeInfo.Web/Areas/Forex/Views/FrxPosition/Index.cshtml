@@ -46,7 +46,7 @@
                         <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                     </div>
                 </div>
-                <div class="box-body" style="margin:30px">
+                <div id="posGroup-body" class="box-body" style="margin:30px">
                     <div class="row">
                         <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
                             <div class="table-responsive">
@@ -61,7 +61,7 @@
                                             <th>手数</th>
                                             <th class="hidden-xs col2-color-hidden">利息</th>
                                             <th class="hidden-xs col2-color-hidden">点数</th>
-                                            <th class="hidden-xs col2-color-hidden">利润</th>
+                                            <th class=" col2-color">利润</th>
                                             <th class="hidden-xs col2-color-hidden">收益率</th>
                                             <th class="col2-visible">位数</th>
                                             <th class="col2-visible">类别</th>
@@ -71,7 +71,7 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12 hidden-xs">
                             <div id="PosGroupChart" style="height:300px"></div>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-plus"></i>
                         </button>
-                        <div class="btn-group">
+                        <div class="btn-group  hidden-xs">
                             <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
                                 <i class="fa fa-table"></i>
                             </button>
@@ -819,6 +819,10 @@
                     PosGroupChart.resize();
                 }
             }, 200);
+            if (document.body.clientWidth < 768) {
+                $("#posGroup-body").css("margin", "0");
+                $(".description-block").removeClass("border-right");
+            }
             //#endregion
         });
     </script>

@@ -216,8 +216,8 @@
                 <div class="box-body" style="padding:0px 5px;">
                     <div class="mailbox-controls">
                         @*<button title="全选" type="button" class="btn btn-default btn-sm checkbox-toggle">
-                                <i class="fa fa-square-o"></i>
-                            </button>*@
+                        <i class="fa fa-square-o"></i>
+                    </button>*@
                         <button id="close-selected2" title="关闭选中的订单" type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
                         <div class="pull-right">
                             <div class="btn-group">
@@ -226,12 +226,12 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-left" role="menu">
                                     @foreach (var f in Model.Item2)
-                                    {
-                                        <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
-                                    }
+                            {
+                                <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
+                    }
                                 </ul>
                             </div>
-                            <div class="btn-group">
+                            <div class="btn-group  hidden-xs">
                                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
                                     <i class="fa fa-th-list"></i>
                                 </button>
@@ -248,14 +248,14 @@
                                     <li><input type="checkbox" class="toggle-vis" data-column="18" />&emsp;<small>点数</small></li>
                                 </ul>
                             </div>
-                            <button id="refrash" title="刷新持仓明细" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+                            <button id="refresh" title="刷新持仓明细" type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
                         </div>
                     </div>
                     <div class="table-responsive  mailbox-messages">
                         <table id="table-pos" class="table table-hover" width="100%">
                             <thead>
                                 <tr>
-                                    <th>ID</th>  
+                                    <th>ID</th>
                                     <th class="col-visible">品种ID</th>
                                     <th class="col-visible">标签</th>
                                     <th class="col-visible">注释</th>
@@ -263,7 +263,7 @@
                                     <th>品种</th>
                                     <th>多空</th>
                                     <th>数量</th>
-                                    <th  class="col-visible">手数</th>
+                                    <th class="col-visible">手数</th>
                                     <th class="hidden-xs col-hidden">开仓时间</th>
                                     <th class="col-visible">修改时间</th>
                                     <th class="hidden-xs col-hidden">开仓价</th>
@@ -319,6 +319,32 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        输出结果
+                    </h3>
+                    <!-- tools box -->
+                    <div class="pull-right box-tools">
+                        <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip"
+                                title="Collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip"
+                                title="Remove">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    <!-- /. tools -->
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body pad">
+                    <form>
+                        <textarea id="area-info" name="editor1" style="width:100%; height:200px;">
+                    </textarea>
+                    </form>
                 </div>
             </div>
         </div>
@@ -404,9 +430,28 @@
         };
         //#endregion
 
-        //#region Ajax RefrashPosition
-        function RefrashPosition() {
-            GetAccountInfo();
+        //#region Ajax RefreshPosition
+        function RefreshPosition(data) {
+            optionAjax.url = "/Forex/Proto/GetAccountInfo";
+            optionAjax.data = JSON.stringify({ accountId: _connect.accountId, apiUrl: _connect.apiUrl, accessToken: _connect.accessToken, balance: _connect.balance, preciseLeverage: _connect.preciseLeverage });
+            optionAjax.success = function (result) {
+                //计算账号数据
+                CalculateAccount(result.accountinfo);
+                //重绘表格
+                table_pos.api().clear();
+                table_pos.api().rows.add(result.positions).draw();
+                //填充返回时的选择订单
+                _selectedPositions = [];
+                _allPositions = [];
+                FillterAllPositions(result.positions);
+                var area_info = document.getElementById("area-info");
+                var date = new Date();
+                if (data != null && data.length > 0)
+                    area_info.value = date.Format("hh:mm:ss") + ":  " + data.toString() + "\r\n\r\n" + area_info.value;
+                area_info.value = date.Format("hh:mm:ss") + ":  " + "刷新成功"+"\r\n"+ area_info.value;
+            };
+
+            $.ajax(optionAjax);
         };
         //#endregion
 
@@ -423,6 +468,8 @@
                 //填充返回时的选择订单
                 _allPositions = [];
                 FillterAllPositions(result.positions);
+                var date = new Date();
+                $("#area-info").html(date.Format("hh:mm:ss") + ":  " + "数据加载成功");
             };
 
             $.ajax(optionAjax);
@@ -450,7 +497,7 @@
                 comment:$("#new-comment").val(),
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
             };
 
             $.ajax(optionAjax);
@@ -475,7 +522,7 @@
                 selectedPositions:_selectedPositions,
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
                 _selectedPositions = [];
             };
 
@@ -501,7 +548,7 @@
                 selectedPositions: _selectedPositions,
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
                 _selectedPositions = [];
             };
 
@@ -528,7 +575,7 @@
                 takeProfitPrice: $("#amend-takeprofitprice").val(),
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
             };
 
             $.ajax(optionAjax);
@@ -553,7 +600,7 @@
                 selectedPositions:_selectedPositions,
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
                 _selectedPositions = [];
             };
 
@@ -579,7 +626,7 @@
                 selectedPositions:_allPositions,
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
                 _selectedPositions = [];
             };
 
@@ -609,7 +656,7 @@
                 selectedPositions: _allPositions,
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
                 _selectedPositions = [];
             };
 
@@ -639,7 +686,7 @@
                 selectedPositions: _allPositions,
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
                 _selectedPositions = [];
             };
 
@@ -669,7 +716,7 @@
                 selectedPositions: _allPositions,
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
                 _selectedPositions = [];
             };
 
@@ -699,7 +746,7 @@
                 selectedPositions: _allPositions,
             });
             optionAjax.success = function (result) {
-                RefrashPosition();
+                RefreshPosition(result.data);
                 _selectedPositions = [];
             };
 
@@ -750,6 +797,8 @@
                 order: [[9, "desc"]],
                 info: false,
                 paging: false,
+                scrollY: "300px",
+                scrollCollapse:true,
                 dom:
                     "<'row'<'col-sm-6'><'col-sm-6'>>" +
                     "<'row'<'col-sm-12'tr>>" +
@@ -836,7 +885,7 @@
                         targets: 0,
                         orderable: false,
                         render: function (data, type, row, meta) {
-                            return '<span title="' + row.label + '/' + row.comment + '">' + '<input class="icheckbox_flat-blue" type="checkbox" data-id="'+row.positionId+'" style="margin:0;"  name="ids" value="' + row.volume + '">' + "  " + data + '</span>';
+                            return '<span title="' + row.label + '/' + row.comment + '">' + '<input class="icheckbox_flat-blue" type="checkbox" data-id="' + row.positionId + '" style="vertical-align:middle"  name="ids" value="' + row.volume + '">' + "  " + '<strong class="hidden-xs" style="vertical-align:middle">'+data+'</strong>' + '</span>';
                         }
                     },
                     {
@@ -934,8 +983,8 @@
                 }
             });
         $("#search").keyup(function () { table_pos.api().search($("#search").val()).draw(); });
-        $("#refrash").click(function () {
-            RefrashPosition();
+        $("#refresh").click(function () {
+            RefreshPosition([]);
         });
         //显示隐藏列
         $('.toggle-vis').on('change', function (e) {
@@ -1127,10 +1176,31 @@
         //});
         //#endregion
 
+        //#region 日期格式化
+        Date.prototype.Format = function (fmt) { //author: meizz 
+            var o = {
+                "M+": this.getMonth() + 1, //月份 
+                "d+": this.getDate(), //日 
+                "h+": this.getHours(), //小时 
+                "m+": this.getMinutes(), //分 
+                "s+": this.getSeconds(), //秒 
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+                "S": this.getMilliseconds() //毫秒 
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+        //#endregion
+
         //#region 页面加载时执行的方法
         GetSymbol();
         GetAccountInfo();
         setTimeout(GetPrice(), 1000);
+        if (document.body.clientWidth < 768) {
+            $(".description-block").removeClass("border-right");
+        }
         //#endregion
         });
     </script>
