@@ -50,21 +50,21 @@
                                             @Html.DisplayFor(modelItem => role.Name)
                                         </td>
                                         @*<td>
-                                            @{
-                                                List<AppIdentityUser> members = new List<AppIdentityUser>();
-                                                List<AppIdentityUser> nonMembers = new List<AppIdentityUser>();
-                                                foreach (AppIdentityUser user in _userManager2.Users)
-                                                {
-                                                    var list = await _userManager2.IsInRoleAsync(user, role.Name)
-                                                        ? members : nonMembers;
-                                                    list.Add(user);
+                                                @{
+                                                    List<AppIdentityUser> members = new List<AppIdentityUser>();
+                                                    List<AppIdentityUser> nonMembers = new List<AppIdentityUser>();
+                                                    foreach (AppIdentityUser user in _userManager2.Users)
+                                                    {
+                                                        var list = await _userManager2.IsInRoleAsync(user, role.Name)
+                                                            ? members : nonMembers;
+                                                        list.Add(user);
+                                                    }
+                                                    foreach (AppIdentityUser m in members)
+                                                    {
+                                                        <span>@m.UserName &emsp;</span>
+                                                    }
                                                 }
-                                                foreach (AppIdentityUser m in members)
-                                                {
-                                                    <span>@m.UserName &emsp;</span>
-                                                }
-                                            }
-                                        </td>*@
+                                            </td>*@
                                         <td identity-role="@role.Id"></td>
                                         <td style="min-width:150px">
                                             <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@role.Id" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">

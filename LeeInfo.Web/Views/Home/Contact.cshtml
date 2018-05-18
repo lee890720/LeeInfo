@@ -1,17 +1,115 @@
-﻿@{
-    ViewData["Title"] = "Contact";
+﻿<section class="content-header hidden-xs"></section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+            <a href="/" class="btn btn-primary btn-block margin-bottom">返回主页</a>
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">联系方式</h3>
+                    <div class="box-tools">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body no-padding">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="#"><i class="fa fa-phone"></i><strong class="pull-right text-red"> 15368305935</strong></a></li>
+                        <li><a href="#"><i class="fa fa-qq"></i><strong class="pull-right text-red"> 3117972639</strong></a></li>
+                        <li><a href="#"><i class="fa fa-envelope-o"></i><strong class="pull-right text-red"> lee_890720@126.com</strong></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-8 col-sm-6 col-xs-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">在线反馈</h3>
+                </div>
+                <div class="box-body">
+                    <div class="form-group">
+                        <input id="contact-title" class="form-control" placeholder="问题概要">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="contact-content" class="form-control" style="height: 300px" placeholder="详细描述"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input id="contact-mail" class="form-control" placeholder="留下您的联系邮箱，便于我们及时回复您。">
+                    </div>
+                    <div class="form-group">
+                        <input id="contact-phone" class="form-control" placeholder="留下您的联系电话，便于我们及时回复您。">
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="pull-right">
+                        <button id="submit" type="submit" class="btn btn-primary"> 提 交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p>执行中，请稍后&hellip;</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts{
+    <script>
+        //#region Ajax optionAjax
+        var optionAjax = {
+            type: "post",
+            async: true,
+            url: "",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: {},
+            beforeSend: function () { 
+                //$("#submit").attr({ disabled: "disabled" });
+                //$('#modal-default').modal({
+                //    backdrop: 'static'
+                //});
+                $('#modal-default').modal('show');
+            },  
+            success: function (result) {
+            },
+            complete: function () {
+                //$("#submit").removeAttr("disabled");
+                $('#modal-default').modal('hide');
+            }, 
+        };
+        //#endregion
+
+        //#region Ajax 初始化
+        function SendContact() {
+            optionAjax.url = "/Home/SendContact";
+            optionAjax.data = JSON.stringify({
+                title: $("#contact-title").val(),
+                content: $("#contact-content").val(),
+                mail: $("#contact-mail").val(),
+                phone: $("#contact-phone").val(),
+                dispose:false,
+            });
+            optionAjax.success = function (result) {
+                window.location.href = '/';
+            };
+
+            $.ajax(optionAjax);
+        };
+        //#endregion
+
+        $("#submit").click(function () { 
+            SendContact();
+        });
+    </script>
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
-
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
-
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>

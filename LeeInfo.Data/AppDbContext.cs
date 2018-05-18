@@ -8,6 +8,7 @@ namespace LeeInfo.Data
 {
     public partial class AppDbContext : DbContext
     {
+        public virtual DbSet<AppContact> AppContact { get; set; }
         public virtual DbSet<AppMenu> AppMenu { get; set; }
         public virtual DbSet<CcdBill> CcdBill { get; set; }
         public virtual DbSet<CcdData> CcdData { get; set; }
@@ -29,6 +30,11 @@ namespace LeeInfo.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AppContact>(entity =>
+            {
+                entity.ToTable("App_Contact");
+            });
+
             modelBuilder.Entity<AppMenu>(entity =>
             {
                 entity.ToTable("App_Menu");

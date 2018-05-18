@@ -209,9 +209,9 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-left" role="menu">
                                     @foreach (var f in Model.Item2)
-                            {
-                                <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
-                    }
+                                    {
+                                        <li><a href="@Url.Action("Index","Proto",new { acId=f.AccountId })"><i class="fa fa-circle-o text-light-blue"></i>@f.AccountNumber</a></li>
+                                    }
                                 </ul>
                             </div>
                             <div class="btn-group  hidden-xs">
@@ -330,6 +330,21 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p>执行中，请稍后&hellip;</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 @section Scripts{
     <script>
@@ -349,11 +364,19 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: {},
+            beforeSend: function () {
+                //$("#submit").attr({ disabled: "disabled" });
+                //$('#modal-default').modal({
+                //    backdrop: 'static'
+                //});
+                $('#modal-default').modal('show');
+            },
             success: function (result) {
             },
-            error: function (errorMsg) {
-                alert("请求数据失败!");
-            }
+            complete: function () {
+                //$("#submit").removeAttr("disabled");
+                $('#modal-default').modal('hide');
+            }, 
         };
         //#endregion
 
@@ -371,17 +394,41 @@
         //#endregion
 
         //#region Ajax GetPrice
+        var optionAjax2 = {
+            type: "post",
+            async: true,
+            url: "",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: {},
+            beforeSend: function () {
+                //$("#submit").attr({ disabled: "disabled" });
+                //$('#modal-default').modal({
+                //    backdrop: 'static'
+                //});
+                $('#modal-default').modal('show');
+            },
+            success: function (result) {
+            },
+            complete: function () {
+                //$("#submit").removeAttr("disabled");
+                $('#modal-default').modal('hide');
+            },
+        };
+
         function GetPrice() {
             var tempsymbolname = $("#new-symbol").find("option:selected").text();
             if (tempsymbolname.length==0)
                 tempsymbolname = "EURUSD";
-            optionAjax.url = "/Forex/Proto/GetPrice";
-            optionAjax.data = JSON.stringify({
+            optionAjax2.url = "/Forex/Proto/GetPrice";
+            optionAjax2.data = JSON.stringify({
                 accountId: _connect.accountId,
                 apiUrl: _connect.apiUrl,
                 accessToken: _connect.accessToken,
             });
-            optionAjax.success = function (result) {
+            optionAjax2.beforeSend = function () { };
+            optionAjax2.complete = function () { };
+            optionAjax2.success = function (result) {
                 $.each(result.data, function () {
                     if (this.symbolName == tempsymbolname) {
                         $("#new-ask").val(this.lastAsk);
@@ -390,9 +437,8 @@
                 });
                 setTimeout(GetPrice(), 1000);
             };
-            optionAjax.error = function (errorMsg) {};
 
-            $.ajax(optionAjax);
+            $.ajax(optionAjax2);
         };
         //#endregion
 
