@@ -123,12 +123,12 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 var minVolume = symbol.MinOrderVolume;
                 var minLot = symbol.MinOrderLot;
                 var pipPosition = symbol.PipPosition;
-                fh.Quantity = fh.Volume/minVolume*minLot;
+                fh.Lot = fh.Volume/minVolume*minLot;
 
                 fh.QuoteToDepositConversionRate = h.PositionCloseDetails.QuoteToDepositConversionRate;
                 fh.Roi = h.PositionCloseDetails.Roi;
                 fh.TradeType = h.TradeSide == "BUY" ? TradeType.Sell : TradeType.Buy;
-                fh.Digits = pipPosition;
+                fh.PipPosition = pipPosition;
                 var result = _context.FrxHistory.SingleOrDefault(x => x.ClosingDealId == fh.ClosingDealId);
                 if (result == null)
                 {
@@ -195,23 +195,23 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     {
                         SymbolCode = s.Key.SymbolCode,
                         Count = s.Count(),
-                        Lots = s.Sum(a => a.Quantity),
-                        Pips = s.Sum(a => a.Pips * a.Quantity) / s.Sum(a => a.Quantity),
+                        Lots = s.Sum(a => a.Lot),
+                        Pips = s.Sum(a => a.Pips * a.Lot) / s.Sum(a => a.Lot),
                         Profit = s.Sum(a => a.NetProfit),
                         BuyCount = s.Where(a => a.TradeType == TradeType.Buy).Count(),
-                        BuyLots = s.Where(a => a.TradeType == TradeType.Buy).Sum(a => a.Quantity),
-                        BuyPips = s.Where(a => a.TradeType == TradeType.Buy).Sum(a => a.Pips * a.Quantity) / s.Where(a => a.TradeType == TradeType.Buy).Sum(a => a.Quantity),
+                        BuyLots = s.Where(a => a.TradeType == TradeType.Buy).Sum(a => a.Lot),
+                        BuyPips = s.Where(a => a.TradeType == TradeType.Buy).Sum(a => a.Pips * a.Lot) / s.Where(a => a.TradeType == TradeType.Buy).Sum(a => a.Lot),
                         BuyProfit = s.Where(a => a.TradeType == TradeType.Buy).Sum(a => a.NetProfit),
                         BuyRate = s.Where(t => t.TradeType == TradeType.Buy).Count() == 0 ? 0
                         : (s.Where(t => t.TradeType == TradeType.Sell).Count() == 0 ? 1
-                        : Math.Round(s.Where(t => t.TradeType == TradeType.Buy).Sum(a => a.Quantity) / s.Sum(b => b.Quantity), 4)),
+                        : Math.Round(s.Where(t => t.TradeType == TradeType.Buy).Sum(a => a.Lot) / s.Sum(b => b.Lot), 4)),
                         SellCount = s.Where(a => a.TradeType == TradeType.Sell).Count(),
-                        SellLots = s.Where(a => a.TradeType == TradeType.Sell).Sum(a => a.Quantity),
-                        SellPips = s.Where(a => a.TradeType == TradeType.Sell).Sum(a => a.Pips * a.Quantity) / s.Where(a => a.TradeType == TradeType.Sell).Sum(a => a.Quantity),
+                        SellLots = s.Where(a => a.TradeType == TradeType.Sell).Sum(a => a.Lot),
+                        SellPips = s.Where(a => a.TradeType == TradeType.Sell).Sum(a => a.Pips * a.Lot) / s.Where(a => a.TradeType == TradeType.Sell).Sum(a => a.Lot),
                         SellProfit = s.Where(a => a.TradeType == TradeType.Sell).Sum(a => a.NetProfit),
                         SellRate = s.Where(t => t.TradeType == TradeType.Buy).Count() == 0 ? 1
                         : (s.Where(t => t.TradeType == TradeType.Sell).Count() == 0 ? 0
-                        : (1 - Math.Round(s.Where(t => t.TradeType == TradeType.Buy).Sum(a => a.Quantity) / s.Sum(b => b.Quantity), 4))),
+                        : (1 - Math.Round(s.Where(t => t.TradeType == TradeType.Buy).Sum(a => a.Lot) / s.Sum(b => b.Lot), 4))),
                         WinCount = s.Where(a => a.NetProfit > 0).Count(),
                         WinRate = s.Where(a => a.NetProfit > 0).Count() == 0 ? 0
                         : (s.Where(a => a.NetProfit <= 0).Count() == 0 ? 1
@@ -226,7 +226,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                     var gain = net / initBalance;
                     var swap = tempHis.Select(x => x.Swap).Sum();
                     var pips = tempHis.Select(x => x.Pips).Sum();
-                    var lots = tempHis.Select(x => x.Quantity).Sum();
+                    var lots = tempHis.Select(x => x.Lot).Sum();
                     mdata.BuySellData = list_bsData;
                     mdata.Net = Math.Round(net, 2);
                     mdata.Gain = Math.Round(gain, 4);

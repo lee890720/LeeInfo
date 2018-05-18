@@ -633,9 +633,9 @@
                         var totallots = 0.00;
                         for (var i = 0; i < data.length; i++) {
                             names.push(new Date(data[i].closingTimestamp).Format('YYYY-MM-DD'));
-                            totallots += data[i].quantity;
+                            totallots += data[i].lot;
                             bs.push(totallots.toFixed(2));
-                            es.push(data[i].quantity);
+                            es.push(data[i].lot);
                         }
                     }
                     if (type == 4) {
@@ -1120,7 +1120,7 @@
                         { data: "closingTimestamp" },
                         { data: "entryPrice" },
                         { data: "closingPrice" },
-                        { data: "quantity" },
+                        { data: "lot" },
                         { data: "commissions" },
                         { data: "swap" },
                         { data: "pips" },
@@ -1160,7 +1160,7 @@
                             targets: [5, 6],
                             render: function (data, type, row, meta) {
                                 var result = parseFloat(data);
-                                return result.toFixed(parseInt(row.digits));
+                                return result.toFixed(parseInt(row.pipPosition));
                             }
                         },
                         {

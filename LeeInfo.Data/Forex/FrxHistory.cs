@@ -16,7 +16,7 @@ namespace LeeInfo.Data.Forex
         public string SymbolCode { get; set; }
         public TradeType TradeType { get; set; }
         public long Volume { get; set; }
-        public double Quantity { get; set; }
+        public double Lot { get; set; }
         public string Label { get; set; }
         public string Comment { get; set; }
         public double EntryPrice { get; set; }
@@ -38,7 +38,7 @@ namespace LeeInfo.Data.Forex
         public double Equity { get; set; }
         public double Roi { get; set; }
         public double EquityBaseRoi { get; set; }
-        public int? Digits { get; set; }
+        public int? PipPosition { get; set; }
 
         public FrxAccount FrxAccount { get; set; }
     }
