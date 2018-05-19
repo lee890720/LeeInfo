@@ -17,7 +17,7 @@ namespace LeeInfo.Web.Controllers
         public IActionResult Index()
         {
             if (User.IsInRole("Forex"))
-                return Redirect("/Forex/FrxSymbol");
+                return Redirect("/Forex/FrxUserAccount");
             return View();
         }
 
