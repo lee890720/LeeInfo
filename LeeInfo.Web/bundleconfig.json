@@ -11,12 +11,12 @@
       "wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
       "wwwroot/lib/font-awesome/css/font-awesome.min.css",
       "wwwroot/lib/Ionicons/css/ionicons.min.css",
-      "wwwroot/lib/AdminLTE/css/skins/skin-blue.min.css",
       "wwwroot/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
       "wwwroot/lib/datatables.net-bs/css/dataTables.bootstrap.min.css",
       "wwwroot/lib/iCheck/flat/_all.css",
       "wwwroot/lib/iCheck/minimal/_all.css",
       "wwwroot/lib/select2/dist/css/select2.min.css",
+      "wwwroot/lib/AdminLTE/css/skins/skin-blue.min.css",
       "wwwroot/lib/AdminLTE/css/AdminLTE.min.css"
     ]
   },
