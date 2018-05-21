@@ -23,6 +23,21 @@
     <div class="row">
         <div class="col-md-12">
             <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">交易参考</h3>
+                    <div class="box-tools pull-right">
+                        <div class="btn-group  hidden-xs">
+                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
+                                <i class="fa fa-table"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                                <li><input type="checkbox" class="toggle-vis" data-column="1" />&emsp;<small>Volume</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="2" />&emsp;<small>Timer</small></li>
+                                <li><input type="checkbox" class="toggle-vis" data-column="13" />&emsp;<small>Alike</small></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 <div class="box-body table-responsive">
                     <div class="form-group">
                         <div class="col-md-3 col-sm-6 col-xs-12 no-padding hidden-xs" style="margin-bottom:10px;">
@@ -38,26 +53,17 @@
                                 <th>
                                     Symbol
                                 </th>
-                                <th class="hidden-xs">
+                                <th class="hidden-xs col-visible">
                                     Volume
                                 </th>
-                                <th class="hidden-xs">
+                                <th class="hidden-xs col-visible">
                                     Tmr
                                 </th>
                                 <th class="hidden-xs">
-                                    Brk
+                                    Brk/Distance
                                 </th>
                                 <th class="hidden-xs">
-                                    Distance
-                                </th>
-                                <th class="hidden-xs">
-                                    IsTrade
-                                </th>
-                                <th class="hidden-xs">
-                                    IsBreak
-                                </th>
-                                <th class="hidden-xs">
-                                    IsBrkFirst
+                                    Trade/Break/First
                                 </th>
                                 <th class="hidden-xs">
                                     R/A/M/S
@@ -83,7 +89,7 @@
                                 <th>
                                     Sbrk
                                 </th>
-                                <th class="hidden-xs">
+                                <th class="hidden-xs col-visible">
                                     Alike
                                 </th>
                                 @{
@@ -118,19 +124,10 @@
                                         @Html.DisplayFor(modelItem => item.Tmr)
                                     </td>
                                     <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.Brk)
+                                        @item.Brk/@item.Distance
                                     </td>
                                     <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.Distance)
-                                    </td>
-                                    <td class="hidden-xs">
-                                        <input type="checkbox" checked="@item.IsTrade" class="flat-blue" />
-                                    </td>
-                                    <td class="hidden-xs">
-                                        <input type="checkbox" checked="@item.IsBreak" class="flat-blue" />
-                                    </td>
-                                    <td class="hidden-xs">
-                                        <input type="checkbox" checked="@item.IsBrkFirst" class="flat-blue" />
+                                        <input type="checkbox" checked="@item.IsTrade" class="flat-blue" />&emsp;<input type="checkbox" checked="@item.IsBreak" class="flat-blue" />&emsp;<input type="checkbox" checked="@item.IsBrkFirst" class="flat-blue" />
                                     </td>
                                     <td class="hidden-xs">
                                         @item.Result/@item.Average/@item.Magnify/@item.Sub
@@ -184,7 +181,7 @@
         $(function () {
             var table1 = $('#table-1').DataTable(
                 {
-                    order: [[14, "desc"], [15, "desc"]],
+                    order: [[11, "desc"], [12, "desc"]],
                     dom:
                         "<'row'<'col-sm-6'><'col-sm-6'>>" +
                         "<'row'<'col-sm-12'tr>>" +
@@ -213,8 +210,28 @@
                             sortDescending: ": 以降序排列此列"
                         }
                     },
+                    columnDefs: [
+                        {
+                            targets: "col-visible",
+                            visible: false,
+                        },
+                        {
+                            targets: [3, 4, 5, 14],
+                            orderable:false,
+                        }
+                    ]
+
                 });
             $("#search").keyup(function () { table1.search($("#search").val()).draw(); });
+
+            //#region 显示隐藏列
+            $('.toggle-vis').on('change', function (e) {
+                e.preventDefault();
+                console.log($(this).attr('data-column'));
+                var column = table1.column($(this).attr('data-column'));
+                column.visible(!column.visible());
+            });
+            //#endregion
         });
 
         var stop = 1;

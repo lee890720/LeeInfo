@@ -24,94 +24,96 @@
     <div class="row">
         <div class="col-md-12">
             <div class="box">
-                <div class="box-body ">
+                <div class="box-body">
                     <div class="col-lg-3 col-md-4">
                         @Html.Partial("_PartialCreate", new CcdRecord { })
                     </div>
                     <div class="col-lg-9 col-md-8">
-                        <div class="form-group">
-                            <div class="col-md-6 col-sm-6 col-xs-12 no-padding hidden-xs" style="margin-bottom:10px;">
+                        <div class="col-md-12 form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12 no-padding hidden-xs">
                                 <a class="btn btn-primary" style="border-radius:0;width:80px;" href="@path/Index"><i class="glyphicon glyphicon-th-list"></i> Index</a><a class="btn btn-primary" style="border-radius:0;width:80px;" href="@path/RecordList"><i class="glyphicon glyphicon-th"></i> Details</a>
                             </div>
-                            <div class="col-md-3 col-sm-6 col-xs-12 no-padding pull-right"  style="margin-bottom:10px;">
+                            <div class="col-md-3 col-sm-6 col-xs-12 no-padding pull-right">
                                 <input type="text" placeholder="搜索" id="search" class="form-control">
                             </div>
                         </div>
-                        <table id="table-1" class="table table-bordered table-striped table-hover" width="100%">
-                            <thead>
-                                <tr>
-                                    <th class="hidden-xs">
-                                        ID
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.PersonName)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.IssuingBank)
-                                    </th>
-                                    <th class="hidden-xs">
-                                        @Html.DisplayNameFor(model => model.BillAmount)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.OutstandingAmount)
-                                    </th>
-                                    <th class="hidden-xs">
-                                        @Html.DisplayNameFor(model => model.RepaymentDate)
-                                    </th>
-                                    <th class="hidden-xs">
-                                        @Html.DisplayNameFor(model => model.ExpendCount)
-                                    </th>
-                                    <th class="hidden-xs">
-                                        @Html.DisplayNameFor(model => model.ExpendSum)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.Total)
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
+                        <div class="col-md-12 table-responsive no-margin no-border">
+                            <table id="table-1" class="table table-bordered table-striped table-hover" width="100%">
+                                <thead>
                                     <tr>
-                                        <td class="hidden-xs">
-                                            @Html.DisplayFor(modelItem => item.CreditCardId)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.PersonName)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.IssuingBank)
-                                        </td>
-                                        <td class="hidden-xs">
-                                            @Html.DisplayFor(modelItem => item.BillAmount)
-                                        </td>
-                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
-                                            @Html.DisplayFor(modelItem => item.OutstandingAmount)
-                                        </td>
-                                        <td class="hidden-xs" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-                                            @Html.DisplayFor(modelItem => item.RepaymentDate)
-                                        </td>
-                                        <td class="hidden-xs">
-                                            @Html.DisplayFor(modelItem => item.ExpendCount)
-                                        </td>
-                                        <td class="hidden-xs">
-                                            @Html.DisplayFor(modelItem => item.ExpendSum)
-                                        </td>
-                                        <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:fuchsia">
-                                            @Html.DisplayFor(modelItem => item.Total)
-                                        </td>
+                                        <th class="hidden-xs">
+                                            ID
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.PersonName)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.IssuingBank)
+                                        </th>
+                                        <th class="hidden-xs">
+                                            @Html.DisplayNameFor(model => model.BillAmount)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.OutstandingAmount)
+                                        </th>
+                                        <th class="hidden-xs">
+                                            @Html.DisplayNameFor(model => model.RepaymentDate)
+                                        </th>
+                                        <th class="hidden-xs">
+                                            @Html.DisplayNameFor(model => model.ExpendCount)
+                                        </th>
+                                        <th class="hidden-xs">
+                                            @Html.DisplayNameFor(model => model.ExpendSum)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Total)
+                                        </th>
                                     </tr>
-                                }
-                            </tbody>
-                            <tfoot class="hidden-xs">
-                                <tr>
-                                    <th colspan="4" style="text-align:right !important">Total:</th>
-                                    <th style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">@ViewBag.SumOut</th>
-                                    <th colspan="3" style="text-align:right !important">Total:</th>
-                                    <th style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">@ViewBag.SumTotal</th>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="hidden-xs">
+                                                @Html.DisplayFor(modelItem => item.CreditCardId)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.PersonName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.IssuingBank)
+                                            </td>
+                                            <td class="hidden-xs">
+                                                @Html.DisplayFor(modelItem => item.BillAmount)
+                                            </td>
+                                            <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:coral">
+                                                @Html.DisplayFor(modelItem => item.OutstandingAmount)
+                                            </td>
+                                            <td class="hidden-xs" style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                                                @Html.DisplayFor(modelItem => item.RepaymentDate)
+                                            </td>
+                                            <td class="hidden-xs">
+                                                @Html.DisplayFor(modelItem => item.ExpendCount)
+                                            </td>
+                                            <td class="hidden-xs">
+                                                @Html.DisplayFor(modelItem => item.ExpendSum)
+                                            </td>
+                                            <td style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;color:fuchsia">
+                                                @Html.DisplayFor(modelItem => item.Total)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot class="hidden-xs">
+                                    <tr>
+                                        <th colspan="4" style="text-align:right !important">Total:</th>
+                                        <th style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">@ViewBag.SumOut</th>
+                                        <th colspan="3" style="text-align:right !important">Total:</th>
+                                        <th style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">@ViewBag.SumTotal</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -121,7 +123,7 @@
 @section Scripts{
     <script>
         $(function () {
-            var table1=$('#table-1').DataTable(
+            var table1 = $('#table-1').DataTable(
                 {
                     order: [[5, "asc"]],
                     dom:
