@@ -25,18 +25,6 @@
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title">交易参考</h3>
-                    <div class="box-tools pull-right">
-                        <div class="btn-group  hidden-xs">
-                            <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown" title="显示隐藏列">
-                                <i class="fa fa-table"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
-                                <li><input type="checkbox" class="toggle-vis" data-column="1" />&emsp;<small>Volume</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="2" />&emsp;<small>Timer</small></li>
-                                <li><input type="checkbox" class="toggle-vis" data-column="13" />&emsp;<small>Alike</small></li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
                 <div class="box-body table-responsive">
                     <div class="form-group">
@@ -47,26 +35,32 @@
                             <input type="text" placeholder="搜索" id="search" class="form-control">
                         </div>
                     </div>
-                    <table id="table-1" class="table  table-bordered table-striped table-hover" onmouseover="eFresh();" onmouseout="sFresh();" width="100%">
+                    <table id="table-1" class="table  table-bordered table-striped table-hover" onmouseover="eFresh()" onmouseout="sFresh()" width="100%">
                         <thead>
                             <tr>
                                 <th>
                                     Symbol
                                 </th>
-                                <th class="hidden-xs col-visible">
-                                    Volume
-                                </th>
-                                <th class="hidden-xs col-visible">
-                                    Tmr
+                                <th class="hidden-xs">
+                                    V
                                 </th>
                                 <th class="hidden-xs">
-                                    Brk/Distance
+                                    T-R-A
                                 </th>
                                 <th class="hidden-xs">
-                                    Trade/Break/First
+                                    B
                                 </th>
                                 <th class="hidden-xs">
-                                    R/A/M/S
+                                    D
+                                </th>
+                                <th class="hidden-xs">
+                                    M
+                                </th>
+                                <th class="hidden-xs">
+                                    S
+                                </th>
+                                <th class="hidden-xs">
+                                    T-B-F
                                 </th>
                                 <th class="hidden-xs">
                                     Cr
@@ -88,9 +82,6 @@
                                 </th>
                                 <th>
                                     Sbrk
-                                </th>
-                                <th class="hidden-xs col-visible">
-                                    Alike
                                 </th>
                                 @{
                                     if (User.IsInRole("Admins"))
@@ -118,19 +109,25 @@
                                         @Html.DisplayFor(modelItem => item.Symbol)
                                     </td>
                                     <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.InitVolume)
+                                        @item.InitVolume
                                     </td>
                                     <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.Tmr)
+                                        @item.Tmr-@item.Result-@item.Average
                                     </td>
                                     <td class="hidden-xs">
-                                        @item.Brk/@item.Distance
+                                        @item.Brk
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @item.Distance
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @item.Magnify
+                                    </td>
+                                    <td class="hidden-xs">
+                                        @item.Sub
                                     </td>
                                     <td class="hidden-xs">
                                         <input type="checkbox" checked="@item.IsTrade" class="flat-blue" />&emsp;<input type="checkbox" checked="@item.IsBreak" class="flat-blue" />&emsp;<input type="checkbox" checked="@item.IsBrkFirst" class="flat-blue" />
-                                    </td>
-                                    <td class="hidden-xs">
-                                        @item.Result/@item.Average/@item.Magnify/@item.Sub
                                     </td>
                                     <td class="hidden-xs">
                                         @Html.DisplayFor(modelItem => item.Cr)
@@ -153,12 +150,9 @@
                                     <td>
                                         @isbrk
                                     </td>
-                                    <td class="hidden-xs">
-                                        @Html.DisplayFor(modelItem => item.Alike)
-                                    </td>
                                     @if (User.IsInRole("Admins"))
                                     {
-                                        <td class="hidden-xs" style="min-width:150px">
+                                        <td class="hidden-xs">
                                             <a id="editModal" data-toggle="modal" asp-action="Edit" asp-route-id="@item.Id" data-target="#modal-action" class="btn-sm btn-primary" style="width:70px;margin-right:5px; min-width:50px;">
                                                 <i class="glyphicon glyphicon-pencil"></i> Edit
                                             </a>
@@ -181,7 +175,7 @@
         $(function () {
             var table1 = $('#table-1').DataTable(
                 {
-                    order: [[11, "desc"], [12, "desc"]],
+                    order: [[13, "desc"], [14, "desc"]],
                     dom:
                         "<'row'<'col-sm-6'><'col-sm-6'>>" +
                         "<'row'<'col-sm-12'tr>>" +
@@ -212,12 +206,8 @@
                     },
                     columnDefs: [
                         {
-                            targets: "col-visible",
-                            visible: false,
-                        },
-                        {
-                            targets: [3, 4, 5, 14],
-                            orderable:false,
+                            targets: [2, 7, 8, 9, 15],
+                            orderable: false,
                         }
                     ]
 
