@@ -37,10 +37,10 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">历史统计</h3>
                     <div class="box-tools pull-right">
-                        <button id="BalanceProfitBtn" title="余额与净值" type="button" class="btn btn-box-tool  hidden-xs">NET</button>
+                        <button id="BalanceProfitBtn" title="余额与净值" type="button" class="btn btn-box-tool  hidden-xs">BAL</button>
                         <button id="BalanceHandBtn" title="手数" type="button" class="btn btn-box-tool hidden-xs">LOT</button>
                         <button id="BalancePointBtn" title="点数" type="button" class="btn btn-box-tool hidden-xs">PIP</button>
-                        <button id="BalanceProfitRateBtn" title="收益率和利润" type="button" class="btn btn-box-tool hidden-xs">ROI</button>
+                        <button id="BalanceProfitRateBtn" title="收益率和利润" type="button" class="btn btn-box-tool hidden-xs">NET</button>
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
                         </button>
@@ -552,12 +552,12 @@
                         type: "value",
                         name:""
                     },
-                    {
-                        type: 'value',
-                        name: "",
-                        position:"right",
-                        show:false
-                    }
+                    //{
+                    //    type: 'value',
+                    //    name: "",
+                    //    position:"right",
+                    //    show:false
+                    //}
                     ],
                 series: [
                     {
@@ -581,7 +581,7 @@
                     var series1Name = "";
 
                     if (type == 1) {
-                        var series0Name = "收益率";
+                        var series0Name = "总计";
                         var series1Name = "利润";
                     }
                     else if (type == 2) {
@@ -600,23 +600,23 @@
                     optionBalance.series[1].name = series1Name;
                     optionBalance.legend.data.push(series0Name);
                     optionBalance.legend.data.push(series1Name);
-                    if (type == 1) {
-                        optionBalance.yAxis[0].name = series0Name;
-                        optionBalance.yAxis[1].name = series1Name;
-                        optionBalance.yAxis[1].show = true;
-                        optionBalance.series[1].yAxisIndex = 1;
-                    }
-                    else {
-                        optionBalance.yAxis[1].show = false;
-                        optionBalance.series[1].yAxisIndex = 0;
-                    }
+                    //if (type == 1) {
+                    //    optionBalance.yAxis[0].name = series0Name;
+                    //    optionBalance.yAxis[1].name = series1Name;
+                    //    optionBalance.yAxis[1].show = true;
+                    //    optionBalance.series[1].yAxisIndex = 1;
+                    //}
+                    //else {
+                    //    optionBalance.yAxis[1].show = false;
+                    //    optionBalance.series[1].yAxisIndex = 0;
+                    //}
                     if (type == 1) {
                         var totalnet = 0.00;
                         for (var i = 0; i < data.length; i++) {
                             names.push(new Date(data[i].closingTimestamp).Format('YYYY-MM-DD'));
                             totalnet += data[i].netProfit;
-                            bs.push((data[i].roi * 100).toFixed(2));
-                            es.push(totalnet.toFixed(2));
+                            bs.push(totalnet.toFixed(2));
+                            es.push((data[i].netProfit).toFixed(2));
                         }
                     }
                     if (type == 2) {
