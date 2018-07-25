@@ -40,7 +40,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Symbol,InitVolume,Tmr,Brk,Distance,IsTrade,IsBreak,IsBrkFirst,Result,Average,Magnify,Sub,Cr,Ca,Sr,Sa,Signal,Alike")] FrxCbotset frxCbotset)
+        public async Task<IActionResult> Create([Bind("Id,Symbol,InitVolume,Tmr,Brk,Distance,IsTrade,IsBreak,IsBrkFirst,Result,Average,Magnify,Sub,Cr,Ca,Sr,Sa,Signal,Signal2")] FrxCbotset frxCbotset)
         {
             if (ModelState.IsValid)
             {
@@ -72,7 +72,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Symbol,InitVolume,Tmr,Brk,Distance,IsTrade,IsBreak,IsBrkFirst,Result,Average,Magnify,Sub,Cr,Ca,Sr,Sa,Signal,Alike")] FrxCbotset frxCbotset)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Symbol,InitVolume,Tmr,Brk,Distance,IsTrade,IsBreak,IsBrkFirst,Result,Average,Magnify,Sub,Cr,Ca,Sr,Sa,Signal,Signal2")] FrxCbotset frxCbotset)
         {
             if (id != frxCbotset.Id)
             {

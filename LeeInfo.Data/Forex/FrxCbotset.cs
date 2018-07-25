@@ -27,7 +27,8 @@ namespace LeeInfo.Data.Forex
         public double? Ca { get; set; }
         public double? Sr { get; set; }
         public double? Sa { get; set; }
+        public double? SrSa { get; set; }
         public string Signal { get; set; }
-        public string Alike { get; set; }
+        public string Signal2 { get; set; }
     }
 }

@@ -6,8 +6,11 @@
 
   <ItemGroup>
     <Compile Remove="App\**" />
+    <Compile Remove="新建文件夹\**" />
     <EmbeddedResource Remove="App\**" />
+    <EmbeddedResource Remove="新建文件夹\**" />
     <None Remove="App\**" />
+    <None Remove="新建文件夹\**" />
   </ItemGroup>
 
   <ItemGroup>
