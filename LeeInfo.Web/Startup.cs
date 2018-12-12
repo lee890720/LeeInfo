@@ -56,7 +56,8 @@ namespace LeeInfo.Web
                 options.Lockout.AllowedForNewUsers = true;
 
                 // User settings
-                options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = null;
+                options.User.RequireUniqueEmail = false;
             });
 
             services.ConfigureApplicationCookie(options =>

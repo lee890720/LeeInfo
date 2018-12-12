@@ -73,7 +73,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                         if (!string.IsNullOrEmpty(_user.ClientId) && !string.IsNullOrEmpty(_user.ClientSecret))
                             if (!string.IsNullOrEmpty(_user.AccessToken) && !string.IsNullOrEmpty(_user.RefreshToken))
                                 if (!string.IsNullOrEmpty(_user.ConnectUrl) && !string.IsNullOrEmpty(_user.ApiUrl))
-                                    if (!string.IsNullOrEmpty(_user.ApiHost) && _user.ApiPort!=0)
+                                    if (!string.IsNullOrEmpty(_user.ApiHost) && _user.ApiPort != 0)
                                     {
                                         result.ClientId = _user.ClientId;
                                         result.ClientSecret = _user.ClientSecret;

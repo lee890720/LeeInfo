@@ -48,7 +48,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return PartialView("~/Areas/Forex/Views/FrxCbotset/CreateEdit.cshtml",frxCbotset);
+            return PartialView("~/Areas/Forex/Views/FrxCbotset/CreateEdit.cshtml", frxCbotset);
         }
 
         // GET: Forex/FrxCbotset/Edit/5
@@ -123,7 +123,7 @@ namespace LeeInfo.Web.Areas.Forex.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int? id,IFormCollection form)
+        public async Task<IActionResult> Delete(int? id, IFormCollection form)
         {
             var frxCbotset = await _context.FrxCbotset.SingleOrDefaultAsync(m => m.Id == id);
             _context.FrxCbotset.Remove(frxCbotset);

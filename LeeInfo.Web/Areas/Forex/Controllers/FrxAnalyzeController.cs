@@ -1,26 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Security;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Connect_API.Accounts;
-using Connect_API.Trading;
-using System.Security.Cryptography.X509Certificates;
+﻿using Connect_API.Accounts;
 using LeeInfo.Data;
 using LeeInfo.Data.AppIdentity;
-using Microsoft.AspNetCore.Identity;
-using ChartJSCore.Models;
-using ChartJSCore.Helpers;
-using ChartJSCore.Plugins;
-using LeeInfo.Lib;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using LeeInfo.Data.Forex;
-using System.Drawing;
-using Microsoft.AspNetCore.Http;
+using LeeInfo.Lib;
 using LeeInfo.Web.Areas.Forex.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LeeInfo.Web.Areas.Forex.Controllers
 {
